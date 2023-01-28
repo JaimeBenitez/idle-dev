@@ -1,6 +1,6 @@
 
 <template>  
-  <Index msg="Welcome to Your Vue.js App"/>
+  <Index />
 </template>
 
 <script>
