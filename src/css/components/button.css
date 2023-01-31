@@ -1,0 +1,16 @@
+.button{
+    font-family: var(--title-font);
+    font-size: var(--subtitle-size);
+    border-radius: 30px;
+    width: 20%;  
+    min-width: 208px;  
+    text-align: center;    
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    text-decoration: none;
+    cursor: pointer;    
+}
+
+.button:hover{
+      transform: scale(1.05);
+}

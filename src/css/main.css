@@ -1,77 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Fira+Mono&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Fira+Mono&family=Libre+Franklin:wght@100&display=swap');
+@import './variables/variables.css';
 
-:root{
-    --primary-color: #282922;
-    --secondary-color: #5A8E98;
-    --text-color: #FFFFFF;
-    --title-font: 'Fira Mono', monospace;
-    --text-font: 'Libre Franklin', monospace;
-    --title-size: 2rem;
-    --subtitle-size: 1.5rem;
-    --text-size: 1rem;    
-    background-color: var(--primary-color);
+@import './base/reset.css';
 
-}
+@import './components/header.css';
+@import './components/button.css';
 
-
-.contenedor-logo-inicio{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.logo {
-    margin-top: 20vh;
-}
-.button-nav{
-    display: flex;
-    width: 100%;
-    justify-content: space-evenly;
-    margin-top: 5vh;    
-}
-.button{
-    font-family: var(--title-font);
-    font-size: var(--subtitle-size);
-    border-radius: 30px;
-    width: 20%;  
-    min-width: 208px;  
-    text-align: center;    
-    background-color: var(--secondary-color);
-    color: var(--text-color);
-    text-decoration: none;
-    cursor: pointer;    
-}
-
-.button:hover{
-      transform: scale(1.05);
-}
-
-header {    
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.logo-header{
-    height: 80px;
-    width: 160px;
-}
-.logout{
-    width: 40px;    
-    background-color: var(--secondary-color);
-    border-radius: 30px;
-    cursor: pointer; 
-    text-decoration: none;
-    justify-content: center;
-    height: 35px;
-    display: flex;
-    align-items: center;
-    
-}
-.logout-icon{
-    filter: invert(81%) sepia(99%) saturate(15%) hue-rotate(252deg) brightness(112%) contrast(100%);
-}
-.version{
-    color: var(--text-color);
-    font-family: var(--title-font);    
-}
+@import './views/index.css';
+@import 'views/contact.css';
+@import 'views/register.css';
+@import 'views/login.css';
+@import 'views/game.css';

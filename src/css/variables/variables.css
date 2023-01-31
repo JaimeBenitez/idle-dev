@@ -1,0 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Mono&family=Libre+Franklin:wght@100&display=swap');
+
+:root{
+    --primary-color: #282922;
+    --secondary-color: #5A8E98;
+    --text-color: #FFFFFF;
+    --title-font: 'Fira Mono', monospace;
+    --text-font: 'Libre Franklin', monospace;
+    --title-size: 2rem;
+    --subtitle-size: 1.5rem;
+    --text-size: 1rem;    
+    background-color: var(--primary-color);
+
+}

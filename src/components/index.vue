@@ -1,17 +1,21 @@
 <template>
-  <div class="contenedor-logo-inicio">
+  <div class="logo-index-container">
     <img src="../assets/idledev-logo.png" alt="logo" class="logo">
   </div>
   <nav class="button-nav">
-    <a href="registro.html" class="button">Registrarse</a>
-    <a href="login" class="button">Login</a>
-    <a href="contacto" class="button">Contacto</a>
+    <Button direction="register" text="Registrarse" />
+    <Button direction="login" text="Login" />
+    <Button direction="contact" text="Contacto" />    
   </nav>
 </template>
 
 <script>
+import Button from './button.vue'
 export default {
-  name: 'IndexPage'  
+  name: 'IndexPage',
+  components: {
+    Button
+  }  
 }
 </script>
 

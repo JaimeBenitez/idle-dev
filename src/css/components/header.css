@@ -1,0 +1,30 @@
+header {    
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.logo-header{
+    height: 80px;
+    width: 150px;
+}
+.logout{
+    width: 40px;    
+    background-color: var(--secondary-color);
+    border-radius: 30px;
+    cursor: pointer; 
+    text-decoration: none;
+    justify-content: center;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+    
+}
+.logout-icon{
+    filter: invert(81%) sepia(99%) saturate(15%) hue-rotate(252deg) brightness(112%) contrast(100%);
+}
+.version{
+    color: var(--text-color);
+    font-family: var(--title-font);  
+    margin-left: 10px;  
+}
