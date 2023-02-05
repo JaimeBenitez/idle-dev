@@ -9,9 +9,9 @@
 
 .login-container{
     background-color: var(--secondary-color);
+    padding: 20px;
     min-height: 320px;
-    width: 400px;
-    height: 45vh;
+    width: 400px;    
     border-radius: 20px;
     display: flex;
     flex-direction: column;
@@ -24,17 +24,15 @@
     align-items: center;    
     flex-direction: column;
 }
-.login-title{
-    margin-top: 5%;
+.login-title{    
     font-family: var(--title-font);
     color: var(--primary-color);
     font-size: var(--title-size);
-
 }
 .login-input {
-    margin-top: 5%;
-    height: 10%;
-    margin-bottom: 5%;
+    margin-top: 1.5rem;
+    height: 3rem;
+    margin-bottom: 1.5rem;
     display: block;
     border-radius: 20px;
     background-color: var(--text-color);
@@ -46,19 +44,19 @@
     text-decoration: none;    
 }
 .toRegisterQuestion{
-    margin-top: 5%;    
+    margin-top: 1.5rem;    
     color: var(--text-color);
     border-radius: 30px;
     width: 45%;
     text-align: center;
-    height: 7%;        
+    height: 2rem;        
 }
 .toRegister{        
     color: var(--text-color);
     border-radius: 30px;
     width: 45%;
     text-align: center;
-    height: 7%;    
+    height: 2rem;    
 }
 
 .toRegister:hover{
@@ -67,10 +65,11 @@
 }
 
 .login-submit{
-    margin-top: 5%;
+    margin-top: 1.5rem;
+    padding-top: 10px;
     background-color: var(--primary-color);
     color: var(--text-color);
-    height: 10%;
+    height: 3rem;
     width: 50%;
     text-align: center;
     text-decoration: none;

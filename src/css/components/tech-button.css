@@ -2,7 +2,7 @@
     width: 90%;
     height: 55px;
     background-color: var(--text-color);
-    margin-top: 20px;
+    margin-top: 1.5rem;
     border-radius: 20px;
     padding: 5px;
     display: flex;
@@ -17,7 +17,7 @@
 .tech-logo{
     width: 30px;
     height: 30px;
-    padding-left: 5px;
+    padding-left: 25px;
 }
 .tech-middlePart{
     width: 20%;
@@ -28,7 +28,7 @@
     background-color: var(--primary-color);
     color: var(--text-color);
     font-family: var(--text-font);
-    width: 50%;
+    width: 90%;
     text-align: center;
     border-radius: 10px;
 }
@@ -55,6 +55,13 @@
     display: flex;
     justify-content: space-evenly;
     align-items: center;
+}
+
+.tech-addButton:hover{
+    transform: scale(1.02);
+}
+.tech-addButton:disabled{
+    opacity: 50%;   
 }
 
 .improve-logo{

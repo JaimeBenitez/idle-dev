@@ -8,9 +8,9 @@
 
 .contact-container{
     background-color: var(--secondary-color);
-    min-height: 505px;
-    width: 400px;
-    height: 70vh;
+    padding: 20px;
+    min-height: 465px;
+    width: 400px;    
     border-radius: 20px;
     display: flex;
     flex-direction: column;
@@ -23,16 +23,15 @@
     align-items: center;    
     flex-direction: column;
 }
-.contact-title{
-    margin-top: 5%;
+.contact-title{    
     font-family: var(--title-font);
     color: var(--primary-color);
     font-size: var(--title-size);
 
 }
 .contact-input {
-    margin-top: 5%;
-    margin-bottom: 5%;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
     display: block;
     border-radius: 20px;
     background-color: var(--text-color);    
@@ -42,19 +41,19 @@
     font-size: var(--text-size);    
 }
 .textarea {
-    height: 40%;
+    height: 12rem;
     padding: 15px;
     resize: none;
 }
 .contact-email{
-    height: 10%;
+    height: 3rem;
     padding-left: 15px;   
 }
 .contact-submit{
-    margin-top: 5%;
+    margin-top: 1.5rem;
     background-color: var(--primary-color);
     color: var(--text-color);
-    height: 8%;
+    height: 3rem;
     width: 50%;
     font-family: var(--title-font);
     font-size: var(--subtitle-size);
@@ -63,4 +62,42 @@
 
 .contact-submit:hover{
     transform: scale(1.05);
+}
+.contact-modal{
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background-color: #282922bd;
+    display: flex;
+}
+.contact-modal-container{
+    width: 30%;
+    height: 20vh;
+    background-color: var(--secondary-color);
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px;
+    padding: 10px;
+}
+.contact-modal-message{
+    font-family: var(--title-font);
+    font-size: var(--subtitle-size);
+    margin-bottom: 1.5rem;
+}
+.contact-redirect{
+    font-family: var(--title-font);
+    font-size: var(--subtitle-size);
+    text-decoration: none;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    border-radius: 20px;
+    width: 30%;
+    text-align: center;
+    height: 3rem;
+    padding-top: 15px;
 }

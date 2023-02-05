@@ -2,7 +2,9 @@
     font-family: var(--title-font);
     font-size: var(--subtitle-size);
     border-radius: 30px;
-    width: 20%;  
+    height: 40px;
+    padding-top: 10px;
+    width: 15%;  
     min-width: 208px;  
     text-align: center;    
     background-color: var(--secondary-color);

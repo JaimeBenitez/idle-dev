@@ -5,10 +5,10 @@
 }
 
 .tech-container{
-    margin-left: 12%;
+    margin-left: 8rem;
     background-color: var(--secondary-color);
     min-height: 575px;
-    width: 400px;
+    width: 550px;
     height: 86vh;
     border-radius: 20px;
     display: flex;
@@ -19,7 +19,7 @@
     display: flex;
     justify-content: space-evenly;
     width: 100%;
-    margin-top: 5%;
+    margin-top: 1.5rem;
 }
 
 .multiplier-button{
@@ -27,5 +27,19 @@
     color: var(--text-color);
     border-radius: 20px;
     width: 25%;
-    height: 20px
+    height: 30px
+}
+
+.money{
+    margin-right: 8rem;
+    color: var(--text-color);
+    font-family: var(--title-font);
+    font-size: 5rem;
+    display:block;
+}
+.generation{
+    color: var(--text-color);
+    font-family: var(--title-font);
+    font-size: 1rem;
+    
 }

@@ -2,71 +2,48 @@
     <div class="tech">
         <section class="tech-leftPart">
             <img :src="logo" :alt="techName" class="tech-logo"/>
-            <p class="tech-actual-quantity">{{ quantityToShow }}</p>
+            <p class="tech-actual-quantity">{{ formattedQuantity }}</p>
         </section>
         <section class="tech-middlePart">
             <span class="techname">{{ techName }}</span>
-            <span class="actualProfit">{{ totalProfit }} €/s</span>
+            <span class="actualProfit">{{ formattedTotalProfit }}</span>
         </section>        
-        <button class="tech-addButton" v-on:click = buy(techName,quantityToBuy)>
-           <span>{{ quantityToBuy }} x {{ costPerUnit * quantityToBuy }}€</span> 
+        <button class="tech-addButton" v-on:click = buy() :disabled="!canBuy">
+           <span>{{ quantityToBuy }} x {{ formattedTotalCost }}</span> 
            <img src="../assets/sd-card-outline-rounded.svg" alt="mejora" class="improve-logo"/>
-        </button>
-        
+        </button>        
     </div>
 </template>
-
 <script>
-
+import formatNumber from '@/utils/formatters'
 
 export default {
   name: 'TechButton',
   props: {
+    id: Number,
     logo: String,
     techName: String, 
-    quantityToBuy: Number     
-  },
-  data(){
-    return {      
-        
-        
-        profitPerUnit: 0,
-        costPerUnit: 5,
-        quantity: 0,
-        totalProfit: 0,
-        tech: "",
-        quantityToShow: "0"
-        
-    }
-  },    
-  methods:{
-    
-       
-    calculateProfitPerUnit(techName){
-        this.tech = techName
-        if(this.tech == "Html"){
-            this.profitPerUnit = 5;
-        }
+    quantityToBuy: Number, 
+    currentCost: Number,   
+    quantity: Number,
+    totalProfit: Number,
+    canBuy: Boolean 
+  }, 
+  computed:{    
+    formattedQuantity(){
+      return formatNumber(this.quantity,"", true)      
     },
-    buy(techName, quantity){
-        this.calculateProfitPerUnit(techName)
-        this.quantity += quantity;
+    formattedTotalProfit(){
+      return formatNumber(this.totalProfit,"€/s")      
+    },
+    formattedTotalCost(){
+      return formatNumber(this.currentCost,"€")      
     }
-    
-  },
-  watch:{
-    quantity:   function(newValue){
-        this.quantityToShow = newValue.toString()
-        
-        if(this.quantity > 999){
-
-            this.quantityToShow = (this.quantity / 1000).toFixed(2) + "k"
-            console.log(this.quantityToShow)
-        }
-        this.totalProfit = newValue * this.costPerUnit;
-        
-    }
-  }
-
+  },   
+  methods:{        
+    buy(){         
+        this.$emit('buy', this.id)                       
+    }    
+  }  
 }
 </script>

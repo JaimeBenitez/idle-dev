@@ -6,6 +6,8 @@
 @import './components/button.css';
 @import './components/tech-button.css';
 
+@import './layouts/base.css';
+
 @import './views/index.css';
 @import 'views/contact.css';
 @import 'views/register.css';

@@ -26,5 +26,6 @@ header {
 .version{
     color: var(--text-color);
     font-family: var(--title-font);  
-    margin-left: 10px;  
+    margin-left: 10px;
+    padding-bottom: 1rem;  
 }
