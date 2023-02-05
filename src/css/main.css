@@ -5,6 +5,7 @@
 @import './components/header.css';
 @import './components/button.css';
 @import './components/tech-button.css';
+@import './components/modal.css';
 
 @import './layouts/base.css';
 

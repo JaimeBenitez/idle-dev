@@ -1,55 +1,61 @@
-.contact{ 
-    margin-top: 5vh;   
+.contact {
+    margin-top: 5vh;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.contact-container{
+.contact-container {
     background-color: var(--secondary-color);
     padding: 20px;
     min-height: 465px;
-    width: 400px;    
+    width: 400px;
     border-radius: 20px;
     display: flex;
     flex-direction: column;
-    align-items: center;    
+    align-items: center;
 }
-.contact-form{
+
+.contact-form {
     width: 100%;
     height: 100%;
     display: flex;
-    align-items: center;    
+    align-items: center;
     flex-direction: column;
 }
-.contact-title{    
+
+.contact-title {
     font-family: var(--title-font);
     color: var(--primary-color);
     font-size: var(--title-size);
 
 }
+
 .contact-input {
     margin-top: 1.5rem;
     margin-bottom: 1.5rem;
     display: block;
     border-radius: 20px;
-    background-color: var(--text-color);    
+    background-color: var(--text-color);
     width: 80%;
     font-family: var(--title-font);
     color: var(--primary-color);
-    font-size: var(--text-size);    
+    font-size: var(--text-size);
 }
+
 .textarea {
     height: 12rem;
     padding: 15px;
     resize: none;
 }
-.contact-email{
+
+.contact-email {
     height: 3rem;
-    padding-left: 15px;   
+    padding-left: 15px;
 }
-.contact-submit{
+
+.contact-submit {
     margin-top: 1.5rem;
     background-color: var(--primary-color);
     color: var(--text-color);
@@ -60,44 +66,7 @@
     border-radius: 20px;
 }
 
-.contact-submit:hover{
+.contact-submit:hover {
     transform: scale(1.05);
 }
-.contact-modal{
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: 0;
-    bottom: 0;
-    background-color: #282922bd;
-    display: flex;
-}
-.contact-modal-container{
-    width: 30%;
-    height: 20vh;
-    background-color: var(--secondary-color);
-    margin: auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border-radius: 20px;
-    padding: 10px;
-}
-.contact-modal-message{
-    font-family: var(--title-font);
-    font-size: var(--subtitle-size);
-    margin-bottom: 1.5rem;
-}
-.contact-redirect{
-    font-family: var(--title-font);
-    font-size: var(--subtitle-size);
-    text-decoration: none;
-    background-color: var(--primary-color);
-    color: var(--text-color);
-    border-radius: 20px;
-    width: 30%;
-    text-align: center;
-    height: 3rem;
-    padding-top: 15px;
-}
+

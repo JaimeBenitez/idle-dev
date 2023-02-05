@@ -1,10 +1,10 @@
-.game{    
+.game {
     width: 100%;
-    display: flex;    
+    display: flex;
     justify-content: space-between;
 }
 
-.tech-container{
+.tech-container {
     margin-left: 8rem;
     background-color: var(--secondary-color);
     min-height: 575px;
@@ -13,16 +13,17 @@
     border-radius: 20px;
     display: flex;
     flex-direction: column;
-    align-items: center;    
+    align-items: center;
 }
-.multipliers-nav{
+
+.multipliers-nav {
     display: flex;
     justify-content: space-evenly;
     width: 100%;
     margin-top: 1.5rem;
 }
 
-.multiplier-button{
+.multiplier-button {
     background-color: var(--primary-color);
     color: var(--text-color);
     border-radius: 20px;
@@ -30,16 +31,17 @@
     height: 30px
 }
 
-.money{
+.money {
     margin-right: 8rem;
     color: var(--text-color);
     font-family: var(--title-font);
     font-size: 5rem;
-    display:block;
+    display: block;
 }
-.generation{
+
+.generation {
     color: var(--text-color);
     font-family: var(--title-font);
     font-size: 1rem;
-    
+
 }

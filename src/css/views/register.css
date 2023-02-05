@@ -82,3 +82,6 @@
 .register-submit:hover{
     transform: scale(1.05);
 }
+.password-error{
+    text-align: center;
+}

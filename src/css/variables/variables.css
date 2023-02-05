@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Mono&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Fira+Mono&family=Libre+Franklin:wght@100&display=swap');
 
-:root{
+:root {
     --primary-color: #282922;
     --secondary-color: #5A8E98;
     --text-color: #FFFFFF;
@@ -9,8 +9,8 @@
     --text-font: 'Libre Franklin', monospace;
     --title-size: 2rem;
     --subtitle-size: 1.5rem;
-    --text-size: 1rem;   
-    --icon-color:  invert(98%) sepia(0%) saturate(7468%) hue-rotate(275deg) brightness(104%) contrast(103%); 
+    --text-size: 1rem;
+    --icon-color: invert(98%) sepia(0%) saturate(7468%) hue-rotate(275deg) brightness(104%) contrast(103%);
     background-color: var(--primary-color);
 
 }
