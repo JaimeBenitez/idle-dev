@@ -17,7 +17,7 @@
           <button type="submit" class="register-submit">Enviar</button>
         </form>
       </section>
-      <Modal :submitted="submitted" msg="Registro exitoso, hora de comenzar tu viaje" buttonMsg="Entrar" redirect="/game" />
+      <Modal :submitted="submitted" msg="Registro exitoso, hora de comenzar tu viaje" buttonMsg="Entrar" redirect="/login" />
     </div>
 </template>
   
