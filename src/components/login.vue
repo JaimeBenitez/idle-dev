@@ -1,5 +1,5 @@
 <template>
-    <Header/>
+    <Header icon="arrow-back.svg"/>
     <div class="login">
       <section class="login-container">
         <form class="login-form">

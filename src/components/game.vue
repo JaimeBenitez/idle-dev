@@ -1,5 +1,5 @@
 <template>
-  <Header />
+  <Header icon="logout.svg"/>
   <div class="game">
     <section class="tech-container">
       <nav class="multipliers-nav">
@@ -25,7 +25,12 @@ import MultiplierButton from './multiplier-button.vue'
 import TechButton from './tech-button.vue'
 import HTML from '@/assets/html.svg'
 import CSS from '@/assets/css.svg'
+import JS from '@/assets/js.svg'
+import Node from '@/assets/nodejs.svg'
+import Java from '@/assets/java.svg'
+import PHP from '@/assets/php.svg'
 import formatNumber from '@/utils/formatters'
+
 //Meter en base de datos principalMoney,unlocked, quantity owned
 
 export default {
@@ -38,7 +43,7 @@ export default {
   data() {
     return {
       quantityToBuy: 1,
-      principalMoney: 10,
+      principalMoney: 5,
       moneyPerSecond: 0,
       totalProfit: 0,
       techs: [
@@ -46,28 +51,81 @@ export default {
           "id": 1,
           "name": "Html",
           "logo": HTML,
-          "initialCost": 5,
-          "profitPerUnit": 5,
+          "initialCost": 3.7,
+          "profitPerUnit": 1.67,
           "growthRatio": 1.07,
           "minMoneyToUnlock": 0,
           "unlocked": true,
           "quantityOwned": 0,
-          "currentCost": 5,
+          "currentCost": 3.7,
           "totalProfit": 0,
         },
         {
           "id": 2,
           "name": "Css",
           "logo": CSS,
-          "initialCost": 10,
-          "profitPerUnit": 10,
+          "initialCost": 60,
+          "profitPerUnit": 20,
           "growthRatio": 1.15,
-          "minMoneyToUnlock": 40,
+          "minMoneyToUnlock": 60,
           "unlocked": false,
           "quantityOwned": 0,
-          "currentCost": 10,
+          "currentCost": 60,
           "totalProfit": 0,
-        }
+        },
+        {
+          "id": 3,
+          "name": "JavaScript",
+          "logo": JS,
+          "initialCost": 720,
+          "profitPerUnit": 90,
+          "growthRatio": 1.14,
+          "minMoneyToUnlock": 720,
+          "unlocked": false,
+          "quantityOwned": 0,
+          "currentCost": 720,
+          "totalProfit": 0,
+        },
+        {
+          "id": 4,
+          "name": "NodeJS",
+          "logo": Node,
+          "initialCost": 8640,
+          "profitPerUnit": 360,
+          "growthRatio": 1.13,
+          "minMoneyToUnlock": 8640,
+          "unlocked": false,
+          "quantityOwned": 0,
+          "currentCost": 8640,
+          "totalProfit": 0,
+        },
+        {
+          "id": 5,
+          "name": "Java",
+          "logo": Java,
+          "initialCost": 103680,
+          "profitPerUnit": 2160,
+          "growthRatio": 1.12,
+          "minMoneyToUnlock": 103680,
+          "unlocked": false,
+          "quantityOwned": 0,
+          "currentCost": 103680,
+          "totalProfit": 0,
+        },
+        {
+          "id": 6,
+          "name": "PHP",
+          "logo": PHP,
+          "initialCost": 1244160,
+          "profitPerUnit": 6480,
+          "growthRatio": 1.11,
+          "minMoneyToUnlock": 1244160 ,
+          "unlocked": false,
+          "quantityOwned": 0,
+          "currentCost": 1244160,
+          "totalProfit": 0,
+        },
+
       ]
     }
   },

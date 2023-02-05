@@ -1,5 +1,5 @@
 <template>
-  <Header />
+  <Header icon="arrow-back.svg"/>
   <div class="contact">
     <section class="contact-container">
       <form class="contact-form" v-on:submit.prevent="submit">
@@ -21,6 +21,7 @@
 <script>
 import Header from './header.vue'
 import Modal from './modal.vue'
+import validator from '@/utils/validator'
 export default {
   name: 'ContactPage',
   components: {
@@ -34,29 +35,19 @@ export default {
       textArea: "",
       email: "",
       submitted: false,
+      suggestionRegexp: new RegExp(/^[\w',]+\s[\w',]+\s[\w',]+/gm),
+      emailRegexp:  new RegExp(/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/)
     }
   },
   methods: {
     validTextArea() {
-      //Esta regexp nos permite establecer que minimo se necesiten 3 palabras para que sea válido el campo
-      const suggestionRegexp = new RegExp(/^[\w',]+\s[\w',]+\s[\w',]+/gm);
-      const isValid = suggestionRegexp.test(this.textArea);
-      if (!isValid) {
-        this.textAreaError = true
-      } else {
-        this.textAreaError = false
-      }
+      //Esta regexp nos permite establecer que minimo se necesiten 3 palabras para que sea válido el campo      
+      this.textAreaError = validator(this.suggestionRegexp, this.textArea)
     },
     validEmail() {
       /*El email puede tener cualquier caracter en cualquier cantidad siempre y cuando no sea una @, espacio o tabulación en la primera parte
-        Luego tendrá una @, luego otro set igual que en la primera parte, un punto y finalmente otro set del mismo tipo*/
-      const emailRegexp = new RegExp(/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/);
-      const isValid = emailRegexp.test(this.email);
-      if (!isValid) {
-        this.emailError = true
-      } else {
-        this.emailError = false
-      }
+        Luego tendrá una @, luego otro set igual que en la primera parte, un punto y finalmente otro set del mismo tipo*/      
+      this.emailError = validator(this.emailRegexp, this.email)
     },
     submit() {
       if (!this.textAreaError && !this.emailError) {

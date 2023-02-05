@@ -1,5 +1,5 @@
 <template>
-    <Header/>
+    <Header icon="arrow-back.svg"/>
     <div class="register">
       <section class="register-container">
         <form class="register-form" v-on:submit.prevent="submit">
@@ -17,13 +17,14 @@
           <button type="submit" class="register-submit">Enviar</button>
         </form>
       </section>
-      <Modal :submitted="submitted" msg="Registro exitoso, hora de comenzar tu viaje" buttonMsg="Entrar" redirect="/login" />
+      <Modal :submitted="submitted" msg="Registro exitoso, haz login de comenzar tu viaje" buttonMsg="Entrar" redirect="/login" />
     </div>
 </template>
   
   <script>
   import Header from './header.vue'
-  import Modal from './modal.vue'
+  import Modal from './modal.vue'  
+  import validator from '@/utils/validator'
   export default {
     name: 'RegisterPage',
     components: {
@@ -40,41 +41,26 @@
         emailError: false,
         passwordError: false,
         passwordConfirmError: false,
-        submitted: false
+        submitted: false,
+        usernameRegexp: new RegExp(/^[\S]{3,20}$/),
+        emailRegexp: new RegExp(/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/),
+        passwordRegexp: new RegExp(/^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{8,16}$/)
       }
     },
     methods: {
       validUsername(){
-        //El usuario admitirá cualquier caracter pero tendrá entre 3 y 20 caracteres
-        const usernameRegexp = new RegExp(/^[\S]{3,20}$/);
-        const isValid = usernameRegexp.test(this.username);
-        if (!isValid) {
-        this.usernameError = true
-      } else {
-        this.usernameError = false
-      }
+        //El usuario admitirá cualquier caracter pero tendrá entre 3 y 20 caracteres     
+        this.usernameError = validator(this.usernameRegexp, this.username)
       },
       validEmail() {
       /*El email puede tener cualquier caracter en cualquier cantidad siempre y cuando no sea una @, espacio o tabulación en la primera parte
-        Luego tendrá una @, luego otro set igual que en la primera parte, un punto y finalmente otro set del mismo tipo*/
-      const emailRegexp = new RegExp(/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/);
-      const isValid = emailRegexp.test(this.email);
-      if (!isValid) {
-        this.emailError = true
-      } else {
-        this.emailError = false
-      }
+        Luego tendrá una @, luego otro set igual que en la primera parte, un punto y finalmente otro set del mismo tipo*/      
+      this.emailError = validator(this.emailRegexp, this.email)
     },
     validPassword() {
       /*La contraseña debera tener al menos una mayuscula, minuscula y digito, permite caracteres especiales y 
-      contara de entre 8 y 16 caracteres*/
-      const passwordRegexp = new RegExp(/^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{8,16}$/);
-      const isValid = passwordRegexp.test(this.password);
-      if (!isValid) {
-        this.passwordError = true
-      } else {
-        this.passwordError = false
-      }
+      contara de entre 8 y 16 caracteres*/     
+      this.passwordError = validator(this.passwordRegexp, this.password)
     },
     passwordConfirmed(){      
       if(this.confirmPassword != this.password){
