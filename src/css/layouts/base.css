@@ -1,6 +1,6 @@
 .error-message {
-    color: #85161E;
+    color: var(--text-color);;
     font-size: var(--text-size);
-    font-family: var(--text-font);
-    font-weight: bold;    
+    font-family: var(--title-font);
+    background: var(--primary-color);  
 }

@@ -13,7 +13,7 @@
         <button type="submit" class="contact-submit">Enviar</button>
       </form>
     </section>
-    <Modal :submitted="submitted" msg="Sugerencia enviada con exito" buttonMsg="Volver" redirect="/" />
+    <Modal v-if="startModal" msg="Sugerencia enviada con exito" buttonMsg="Volver" redirect="/" textClass="modal-message" :isGame=false />
   </div>
 
 </template>

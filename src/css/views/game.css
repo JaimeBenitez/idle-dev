@@ -30,9 +30,21 @@
     width: 25%;
     height: 30px
 }
-
+.principal{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;   
+    width: 50%;
+    margin-right: 5rem
+    
+}
+.principal-score{
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
+}
 .money {
-    margin-right: 8rem;
+    
     color: var(--text-color);
     font-family: var(--title-font);
     font-size: 5rem;
@@ -44,6 +56,35 @@
     font-family: var(--title-font);
     font-size: 1rem;
     float: right;
-    margin-right: 8rem;
+    
 
+}
+.computer-button{
+    background-color: transparent;
+    cursor: pointer;
+}
+.principal-pc{
+    display: block;
+    width: 25rem;
+    height: 25rem;
+    
+}
+
+.animated{
+    animation: bounce .5s alternate  ease-in;
+}
+.click{
+    filter: var(--icon-color);
+}
+
+@keyframes bounce{
+    0%{
+        transform: scale(1)
+    }
+    50%{
+        transform: scale(1.1)
+    }
+    100%{
+        transform: scale(1)
+    }
 }

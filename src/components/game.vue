@@ -11,10 +11,17 @@
         :totalProfit="tech.totalProfit" :quantity="tech.quantityOwned" :quantityToBuy="quantityToBuy"
         :currentCost="tech.currentCost" @buy="handleBuy" :canBuy="tech.currentCost <= principalMoney" />
     </section>
-    <section class="principal-score">
-      <span class="money">{{ formattedPrincipalMoney }}</span>
-      <span class="generation">{{ formattedMoneyPerSecond }}</span>
-    </section>
+    <section class="principal">
+      <section class="principal-score">
+        <span class="money">{{ formattedPrincipalMoney }}</span>
+        <span class="generation">{{ formattedMoneyPerSecond }}</span>
+        <span class="generation">{{ formattedMoneyPerClick }}<img src='@/assets/hand-click.svg' alt="click" class="click"/></span>        
+      </section>
+      <button class="computer-button" @click="handleClicks"><img :class="bounce" src="@/assets/ordenador.png" alt="click me" /></button>  
+    </section> 
+    <Modal v-if="showstartmodal" msg="Bienvenido al fantástico mundo de la programación. Te espera un gran viaje a traves de la historia de la informática.
+     Haz click en el ordenador para ganar beneficios y empezar a comprar las tecnologías que irás aprendiendo" buttonMsg="Comencemos" redirect="/game" 
+    textClass="modal-game-message" :isGame=true @close="handleStartClose" /> 
   </div>
 </template>
 
@@ -30,6 +37,7 @@ import Node from '@/assets/nodejs.svg'
 import Java from '@/assets/java.svg'
 import PHP from '@/assets/php.svg'
 import formatNumber from '@/utils/formatters'
+import Modal from './modal.vue'
 
 //Meter en base de datos principalMoney,unlocked, quantity owned
 
@@ -38,14 +46,18 @@ export default {
   components: {
     Header,
     MultiplierButton,
-    TechButton
+    TechButton,
+    Modal
   },
   data() {
     return {
       quantityToBuy: 1,
-      principalMoney: 5,
+      principalMoney: 0,
       moneyPerSecond: 0,
-      totalProfit: 0,
+      moneyPerClick: 0.1,
+      totalProfit: 0,      
+      bounce: "principal-pc",
+      showstartmodal: true,
       techs: [
         {
           "id": 1,
@@ -54,8 +66,8 @@ export default {
           "initialCost": 3.7,
           "profitPerUnit": 1.67,
           "growthRatio": 1.07,
-          "minMoneyToUnlock": 0,
-          "unlocked": true,
+          "minMoneyToUnlock": 3.7,
+          "unlocked": false,
           "quantityOwned": 0,
           "currentCost": 3.7,
           "totalProfit": 0,
@@ -136,12 +148,19 @@ export default {
     formattedMoneyPerSecond() {
       return formatNumber(this.moneyPerSecond, "€/s")
     },
+    formattedMoneyPerClick() {
+      return formatNumber(this.moneyPerClick, "€/")
+    },
     activeTechs() {
       //Nos dice que tecnologias mostrar con nuestras ganancias actuales
       return this.techs.filter((tech) => tech.unlocked == true)
     }
   },
   methods: {
+    handleStartClose(){
+      
+      this.showstartmodal = false;
+    },
     setQuantityToBuy(quantity) {
       //Establecemos la cantidad a comprar y seteamos el coste actual
       this.quantityToBuy = quantity
@@ -161,7 +180,7 @@ export default {
           tech.unlocked = true
         }
       }
-    },
+    },    
     setMoneyPerSecondInterval() {
       setInterval(this.handleMoney, 1000);
     },
@@ -181,11 +200,19 @@ export default {
         tech.currentCost = tech.initialCost * ((tech.growthRatio ** tech.quantityOwned * ((tech.growthRatio ** this.quantityToBuy) - 1)) / (tech.growthRatio - 1))
         //Añadimos la nueva ganancia a la ganancia/segundo actual
         this.moneyPerSecond += profitDiff
+        this.moneyPerClick = this.moneyPerSecond * 0.1
       }
     },
+    handleClicks(){      
+      //Añadimos la animación de rebote y el dinero al principal. Seteamos la perdida de la clase al tiempo que dura la animación y nos queda perfecta
+      this.bounce = "principal-pc animated" 
+      this.principalMoney += this.moneyPerClick 
+      setTimeout(() => {this.bounce = "principal-pc"},500)              
+    }
   },
   mounted() {
     this.setMoneyPerSecondInterval();
+         
   }
 }
 </script>

@@ -1,21 +1,31 @@
 <template>
-    <section class="modal" v-if="submitted">
+    <section class="modal">
         <div class="modal-container">
-            <p class="modal-message">{{ msg }}</p>
-            <RouterLink :to="redirect" class="redirect">{{ buttonMsg }}</RouterLink>
+            <p :class="textClass">{{ msg }}</p>
+            <RouterLink v-if="!isGame" :to="redirect" class="redirect">{{ buttonMsg }}</RouterLink>
+            <button v-if="isGame" @click="closeModal" class="close">{{ buttonMsg }}</button>
         </div>
     </section>
 </template>
 <script>
-
 export default {
     name: "ModalComponent",
-    props: {
-        submitted: Boolean,
+    props: {        
         msg: String,
         buttonMsg: String,
         redirect: String,
+        textClass: String,
+        isGame: Boolean,
+    },
+    data(){
+        return{
+            close: true
+        }
+    },
+    methods:{
+        closeModal(){
+            this.$emit("close")
+        }
     }
-
 }
 </script>

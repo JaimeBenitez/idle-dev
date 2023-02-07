@@ -5,7 +5,7 @@
         <form class="register-form" v-on:submit.prevent="submit">
           <h1 class="register-title">Registro</h1>
           <input type="text" class="register-username register-input" v-model="username" v-on:blur="validUsername" placeholder="Nombre de usuario">
-          <p v-if="usernameError" class="error-message">El nombre debe tener entre 3 y 20 caracteres</p>
+          <p v-if="usernameError" class="error-message username-error">El nombre debe tener entre 3 y 20 caracteres</p>
           <input type="email" class="register-email register-input" v-model="email" v-on:blur="validEmail" placeholder="Correo electrónico">
           <p v-if="emailError" class="error-message">Introduce un email valido</p>
           <input type="password" class="register-password register-input" v-model="password" v-on:blur="validPassword" placeholder="Contraseña">
@@ -17,7 +17,7 @@
           <button type="submit" class="register-submit">Enviar</button>
         </form>
       </section>
-      <Modal :submitted="submitted" msg="Registro exitoso, haz login de comenzar tu viaje" buttonMsg="Entrar" redirect="/login" />
+      <Modal v-if="submitted" msg="Registro exitoso, haz login de comenzar tu viaje" buttonMsg="Entrar" redirect="/login" textClass="modal-message" :isGame=false />
     </div>
 </template>
   
