@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: contact.vue</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: contact.vue</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>&lt;template>
+  &lt;Header icon="arrow-back.svg" :isGame=false />
+  &lt;div class="contact">
+    &lt;section class="contact-container">
+      &lt;form class="contact-form" v-on:submit.prevent="submit">
+        &lt;h1 class="contact-title">Contacto&lt;/h1>
+        &lt;textarea cols="30" rows="5" class="textarea contact-input" v-model="textArea" v-on:blur="validTextArea"
+          placeholder="Escríbenos para ayudarnos a mejorar">&lt;/textarea>
+        &lt;p v-if="textAreaError" class="error-message">Escribe al menos 3 palabras&lt;/p>
+        &lt;input type="email" class="contact-email contact-input" v-model="email" v-on:blur="validEmail"
+          placeholder="Correo electrónico">
+        &lt;p v-if="emailError" class="error-message">El email no es valido.&lt;/p>
+        &lt;button type="submit" class="contact-submit">Enviar&lt;/button>
+      &lt;/form>
+    &lt;/section>
+    &lt;Modal v-if="submitted" msg="Sugerencia enviada con exito" buttonMsg="Volver" redirect="/"  :isGame=false />
+  &lt;/div>
+
+&lt;/template>
+
+&lt;script>
+/**
+ * @file contact.vue - Pagina de contacto
+ * @author Jaime Benitez
+ * @see &lt;a href="https://jaimebenitez.com" target="_blank">Jaime Benitez &lt;/a>
+ */
+
+
+import Header from './header.vue'
+import Modal from './modal.vue'
+import validator from '@/utils/validator'
+/**
+ * @vue-data {Boolean} [textAreaError = false]  - Establece si el error en el campo del textArea se muestra o no
+ * @vue-data {Boolean} [emailError = false] - Establece si el error en el campo email se muestra o no
+ * @vue-data {String} [textArea = ""] - Campo que toma el valor del input textArea
+ * @vue-data {String} [email = ""] - Campo que toma el valor del input email
+ * @vue-data {Boolean} [submitted = false] - Establece cuando se valida el formulario
+ * @vue-data {String} suggestionRegexp - Expresion regular que testea si el campo textArea tiene al menos 3 palabras. &lt;br> Valor inicial = new RegExp(/^[\w',]+\s[\w',]+\s[\w',]+/gm), (A causa de las comas JSDOC no pilla bien el valor inicial)
+ * @vue-data {String} [emailRegexp = new RegExp(/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/)] - Expresion regular que testea si el campo email es valido (por ejemplo ejemplo@test.com)
+ */
+export default {
+  name: 'ContactPage',
+  components: {
+    Header,
+    Modal
+  },
+  data() {
+    return {
+      textAreaError: false,
+      emailError: false,
+      textArea: "",
+      email: "",
+      submitted: false,
+      suggestionRegexp: new RegExp(/^[\w',]+\s[\w',]+\s[\w',]+/gm),
+      emailRegexp:  new RegExp(/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/)
+    }
+  },
+  methods: {
+    /**    
+     * Funcion que valida el textArea
+     */
+    validTextArea() {
+      //Esta regexp nos permite establecer que minimo se necesiten 3 palabras para que sea válido el campo      
+      this.textAreaError = validator(this.suggestionRegexp, this.textArea)
+    },
+    /**    
+     * Funcion que valida el email
+     */
+    validEmail() {
+      /*El email puede tener cualquier caracter en cualquier cantidad siempre y cuando no sea una @, espacio o tabulación en la primera parte
+        Luego tendrá una @, luego otro set igual que en la primera parte, un punto y finalmente otro set del mismo tipo*/      
+      this.emailError = validator(this.emailRegexp, this.email)
+    },
+    /**    
+     * Funcion que controla que cuando todo sea válido, se haga el submit
+     */
+    submit() {
+      if (!this.textAreaError &amp;&amp; !this.emailError) {
+        this.submitted = true;
+      }
+    }
+  },
+  /*Estos watcher meten en las variables de data el valor de los input cada vez que estos cambian, pero como no queremos hacer nada
+  extra al cambiar dicho valor, sino solo vigilarlo, las funciones se dejan vacias*/
+  watch: {
+    textArea: function () {
+    },
+    email: function () {
+    },
+  }
+
+
+}
+&lt;/script></code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-button.html">button</a></li><li><a href="module-contact.html">contact</a></li><li><a href="module-modal.html">modal</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Fri Feb 10 2023 14:54:21 GMT+0100 (hora estándar de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

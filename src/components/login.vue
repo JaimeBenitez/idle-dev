@@ -9,8 +9,7 @@
           <p v-if="loginError" class="error-message username-error">El usuario introducido o la contraseña no es correcta</p>        
           <p class="toRegisterQuestion">¿Aun no tienes una cuenta?</p>
           <RouterLink to="/register" class="toRegister">Registrate</RouterLink>   
-          <button type="submit" class="login-submit">Entrar</button> 
-          <!-- <RouterLink to="/game" class="login-submit">Entrar</RouterLink> -->
+          <button type="submit" class="login-submit">Entrar</button>           
         </form>
       </section>
       <Modal v-if="submitted" :msg='modalMsg' buttonMsg="Entrar" redirect="/game" :isGame=false />
@@ -20,6 +19,7 @@
   <script>
   import Header from './header.vue'
   import Modal from './modal.vue'
+  import sha1 from '@/utils/hash1.js'
   export default {
     name: 'LoginPage',
     components: {
@@ -47,9 +47,11 @@
           const response = await fetch(`http://localhost:3001/api/V1/users/${username}`)
           this.user = await response.json();
           //Comprobamos si el usuario que hemos buscado existe en la base de datos y si los datos introducidos son correctos
-          if(this.user.username == username && this.user.password == password){
+          if(this.user.username == username && this.user.password == sha1(password)){
             localStorage.setItem("user",username)
             this.submitted = true;
+          }else{
+            this.loginError = true
           }
           
         }catch(error){

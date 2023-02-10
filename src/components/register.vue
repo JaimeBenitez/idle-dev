@@ -25,6 +25,9 @@
   import Header from './header.vue'
   import Modal from './modal.vue'  
   import validator from '@/utils/validator'
+  import sha1 from '@/utils/hash1.js'
+  
+  
   export default {
     name: 'RegisterPage',
     components: {
@@ -52,8 +55,7 @@
       async getAllUsers(){
         try {
           const response = await fetch('http://localhost:3001/api/V1/users');
-          this.users = await response.json();
-          console.log(this.users)
+          this.users = await response.json();          
         } catch (error) {
           console.error(error);
         }
@@ -84,6 +86,7 @@
         /*La contraseña debera tener al menos una mayuscula, minuscula y digito, permite caracteres especiales y 
         contara de entre 8 y 16 caracteres*/     
        this.passwordError = validator(this.passwordRegexp, this.password)
+       console.log(sha1(this.password))
       },
       passwordConfirmed(){      
         if(this.confirmPassword != this.password){
@@ -97,8 +100,9 @@
         const user = {
             "username": this.username,
             "email": this.email,
-            "password": this.password 
+            "password": sha1(this.password)
         }
+        
         this.postUser(user)
         this.submitted = true;
       }
