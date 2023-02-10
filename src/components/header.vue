@@ -2,7 +2,10 @@
     <header>
         <span class="version">V 0.1</span>
         <RouterLink to="/" ><img src="../assets/idledev-logo.png" alt="logo" class="logo-header"></RouterLink>
-        <RouterLink to="/" class="logout" @click="logout"><img :src="require(`@/assets/${icon}`)" class="logout-icon"></RouterLink>
+        <nav class="header-nav">
+        <RouterLink to="/contact" class="header-button" v-if="isGame"><img :src="require('@/assets/contact.svg')" class="icon" alt="A contacto" /> </RouterLink>
+        <RouterLink to="/" class="header-button" @click="logout"><img :src="require(`@/assets/${icon}`)" class="icon" alt="Logout"></RouterLink>
+        </nav>
     </header>
   </template>
   
