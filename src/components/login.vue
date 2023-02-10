@@ -17,9 +17,22 @@
 </template>
   
   <script>
+  /**
+ * @file login.vue - Página de login
+ * @author Jaime Benitez
+ * @see <a href="https://jaimebenitez.com" target="_blank">Jaime Benitez </a>
+ */
   import Header from './header.vue'
   import Modal from './modal.vue'
   import sha1 from '@/utils/hash1.js'
+  /**
+   * @vue-data {Object}[user = {}] - Guardará los datos del usuario actual
+   * @vue-data {Boolean}[loginError = false] - Maneja la aparición de los mensajes de error
+   * @vue-data {Boolean}[submitted = false] - Maneja el submit del formulario
+   * @vue-data {String}[username = ''] - Toma el valor del input de nombre de usuario
+   * @vue-data {String}[password = ''] - Toma el valor del input de contraseña
+   * @vue-computed {String} ModalMsg - Mensaje que mostrará el modal al loguearte
+   */
   export default {
     name: 'LoginPage',
     components: {
@@ -41,7 +54,11 @@
       }
     },
     methods: {
-     
+      /**
+       * Funcion que comprueba si los datos introducidos coinciden con algun usuario de la base de datos
+       * @param {String} username - Nombre de usuario
+       * @param {String} password - Contraseña
+       */
       async checkUser(username,password){
         try{
           const response = await fetch(`http://localhost:3001/api/V1/users/${username}`)
@@ -58,6 +75,9 @@
           this.loginError = true;
         }
       },
+      /**
+       * Funcion que de estar ya logueado al entrar en la página redirige al juego
+       */
       redirect(){
       if(localStorage.getItem("user")){
         this.$router.push('/game')

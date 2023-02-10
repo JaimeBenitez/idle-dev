@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: contact</title>
+    <title>JSDoc: Module: login</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: contact</h1>
+    <h1 class="page-title">Module: login</h1>
 
     
 
@@ -50,44 +50,50 @@
     </tr>
     </thead>
     <tbody><tr>
-        <td><code>textAreaError</code></td>
+        <td><code>user</code></td>
+        <td>Object</td>
+        <td><code>{}</code></td>
+        <td>Guardará los datos del usuario actual</td>
+    </tr><tr>
+        <td><code>loginError</code></td>
         <td>Boolean</td>
         <td><code>false</code></td>
-        <td>Establece si el error en el campo del textArea se muestra o no</td>
-    </tr><tr>
-        <td><code>emailError</code></td>
-        <td>Boolean</td>
-        <td><code>false</code></td>
-        <td>Establece si el error en el campo email se muestra o no</td>
-    </tr><tr>
-        <td><code>textArea</code></td>
-        <td>String</td>
-        <td><code>""</code></td>
-        <td>Campo que toma el valor del input textArea</td>
-    </tr><tr>
-        <td><code>email</code></td>
-        <td>String</td>
-        <td><code>""</code></td>
-        <td>Campo que toma el valor del input email</td>
+        <td>Maneja la aparición de los mensajes de error</td>
     </tr><tr>
         <td><code>submitted</code></td>
         <td>Boolean</td>
         <td><code>false</code></td>
-        <td>Establece cuando se valida el formulario</td>
+        <td>Maneja el submit del formulario</td>
     </tr><tr>
-        <td><code>suggestionRegexp</code></td>
+        <td><code>username</code></td>
         <td>String</td>
-        <td><code>new RegExp(/^[\w,]+\s[\w,]+\s[\w,]+/gm)</code></td>
-        <td>Expresion regular que testea si el campo textArea tiene al menos 3 palabras.</td>
+        <td><code>''</code></td>
+        <td>Toma el valor del input de nombre de usuario</td>
     </tr><tr>
-        <td><code>emailRegexp</code></td>
+        <td><code>password</code></td>
         <td>String</td>
-        <td><code>new RegExp(/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/)</code></td>
-        <td>Expresion regular que testea si el campo email es valido (por ejemplo ejemplo@test.com)</td>
+        <td><code>''</code></td>
+        <td>Toma el valor del input de contraseña</td>
     </tr></tbody>
 </table>
 
 
+
+<h3 class="subsection-title" style="margin-top: 1em" data-jsdoc-vuejs="section-computed">Computed</h3>
+<table data-jsdoc-vuejs="table-computed">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+    </thead>
+    <tbody><tr>
+        <td><code>ModalMsg</code></td>
+        <td>String</td>
+        <td>Mensaje que mostrará el modal al loguearte</td>
+    </tr></tbody>
+</table>
 
 
 
@@ -163,7 +169,7 @@
     
 
     
-    <h4 class="name" id="submit"><span class="type-signature"></span>submit<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="checkUser"><span class="type-signature"></span>checkUser<span class="signature">(username, password)</span><span class="type-signature"></span></h4>
     
 
     
@@ -171,7 +177,7 @@
 
 
 <div class="description">
-    Funcion que controla que cuando todo sea válido, se haga el submit
+    Funcion que comprueba si los datos introducidos coinciden con algun usuario de la base de datos
 </div>
 
 
@@ -180,6 +186,78 @@
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>username</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Nombre de usuario</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>password</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Contraseña</td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -215,7 +293,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="contact.vue.html">contact.vue</a>, <a href="contact.vue.html#line77">line 77</a>
+        <a href="login.vue.html">login.vue</a>, <a href="login.vue.html#line62">line 62</a>
     </li></ul></dd>
     
 
@@ -251,7 +329,7 @@
     
 
     
-    <h4 class="name" id="validEmail"><span class="type-signature"></span>validEmail<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="redirect"><span class="type-signature"></span>redirect<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
@@ -259,7 +337,7 @@
 
 
 <div class="description">
-    Funcion que valida el email
+    Funcion que de estar ya logueado al entrar en la página redirige al juego
 </div>
 
 
@@ -303,95 +381,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="contact.vue.html">contact.vue</a>, <a href="contact.vue.html#line69">line 69</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="validTextArea"><span class="type-signature"></span>validTextArea<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Funcion que valida el textArea
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="contact.vue.html">contact.vue</a>, <a href="contact.vue.html#line62">line 62</a>
+        <a href="login.vue.html">login.vue</a>, <a href="login.vue.html#line81">line 81</a>
     </li></ul></dd>
     
 

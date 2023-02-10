@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: login.vue</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: login.vue</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>&lt;template>
+    &lt;Header icon="arrow-back.svg" :isGame=false />
+    &lt;div class="login">
+      &lt;section class="login-container" v-on:submit.prevent="checkUser(username,password)">
+        &lt;form class="login-form">
+          &lt;h1 class="login-title">Login&lt;/h1>
+          &lt;input type="text" class="login-username login-input" v-model="username" placeholder="Nombre de usuario">          
+          &lt;input type="password" class="login-password login-input" v-model="password" placeholder="Contraseña">  
+          &lt;p v-if="loginError" class="error-message username-error">El usuario introducido o la contraseña no es correcta&lt;/p>        
+          &lt;p class="toRegisterQuestion">¿Aun no tienes una cuenta?&lt;/p>
+          &lt;RouterLink to="/register" class="toRegister">Registrate&lt;/RouterLink>   
+          &lt;button type="submit" class="login-submit">Entrar&lt;/button>           
+        &lt;/form>
+      &lt;/section>
+      &lt;Modal v-if="submitted" :msg='modalMsg' buttonMsg="Entrar" redirect="/game" :isGame=false />
+    &lt;/div>
+&lt;/template>
+  
+  &lt;script>
+  /**
+ * @file login.vue - Página de login
+ * @author Jaime Benitez
+ * @see &lt;a href="https://jaimebenitez.com" target="_blank">Jaime Benitez &lt;/a>
+ */
+  import Header from './header.vue'
+  import Modal from './modal.vue'
+  import sha1 from '@/utils/hash1.js'
+  /**
+   * @vue-data {Object}[user = {}] - Guardará los datos del usuario actual
+   * @vue-data {Boolean}[loginError = false] - Maneja la aparición de los mensajes de error
+   * @vue-data {Boolean}[submitted = false] - Maneja el submit del formulario
+   * @vue-data {String}[username = ''] - Toma el valor del input de nombre de usuario
+   * @vue-data {String}[password = ''] - Toma el valor del input de contraseña
+   * @vue-computed {String} ModalMsg - Mensaje que mostrará el modal al loguearte
+   */
+  export default {
+    name: 'LoginPage',
+    components: {
+      Header,
+      Modal
+    },
+    data(){
+      return{        
+        user: {},        
+        loginError: false,
+        submitted: false,
+        username: '',
+        password: '',
+      }
+    },
+    computed: {
+      modalMsg(){
+        return `Login exitoso. Bienvenido de vuelta ${this.username}`
+      }
+    },
+    methods: {
+      /**
+       * Funcion que comprueba si los datos introducidos coinciden con algun usuario de la base de datos
+       * @param {String} username - Nombre de usuario
+       * @param {String} password - Contraseña
+       */
+      async checkUser(username,password){
+        try{
+          const response = await fetch(`http://localhost:3001/api/V1/users/${username}`)
+          this.user = await response.json();
+          //Comprobamos si el usuario que hemos buscado existe en la base de datos y si los datos introducidos son correctos
+          if(this.user.username == username &amp;&amp; this.user.password == sha1(password)){
+            localStorage.setItem("user",username)
+            this.submitted = true;
+          }else{
+            this.loginError = true
+          }
+          
+        }catch(error){
+          this.loginError = true;
+        }
+      },
+      /**
+       * Funcion que de estar ya logueado al entrar en la página redirige al juego
+       */
+      redirect(){
+      if(localStorage.getItem("user")){
+        this.$router.push('/game')
+      }
+      }
+    },
+    watch:{
+      username: function(){
+      },
+      password: function(){
+      }
+    },
+    mounted(){
+      this.redirect();
+    }
+   
+  }
+  &lt;/script></code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-button.html">button</a></li><li><a href="module-contact.html">contact</a></li><li><a href="module-game.html">game</a></li><li><a href="module-header.html">header</a></li><li><a href="module-login.html">login</a></li><li><a href="module-modal.html">modal</a></li><li><a href="module-multiplier-button.html">multiplier-button</a></li><li><a href="module-register.html">register</a></li><li><a href="module-tech-button.html">tech-button</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Fri Feb 10 2023 19:47:51 GMT+0100 (hora estándar de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

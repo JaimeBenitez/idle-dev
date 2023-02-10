@@ -13,7 +13,7 @@
         <button type="submit" class="contact-submit">Enviar</button>
       </form>
     </section>
-    <Modal v-if="submitted" msg="Sugerencia enviada con exito" buttonMsg="Volver" redirect="/"  :isGame=false />
+    <Modal v-if="submitted" msg="Sugerencia enviada con exito" buttonMsg="Volver" redirect="/" :isGame=false />
   </div>
 
 </template>
@@ -35,7 +35,7 @@ import validator from '@/utils/validator'
  * @vue-data {String} [textArea = ""] - Campo que toma el valor del input textArea
  * @vue-data {String} [email = ""] - Campo que toma el valor del input email
  * @vue-data {Boolean} [submitted = false] - Establece cuando se valida el formulario
- * @vue-data {String} suggestionRegexp - Expresion regular que testea si el campo textArea tiene al menos 3 palabras. <br> Valor inicial = new RegExp(/^[\w',]+\s[\w',]+\s[\w',]+/gm), (A causa de las comas JSDOC no pilla bien el valor inicial)
+ * @vue-data {String} [suggestionRegexp = new RegExp(/^[\w,]+\s[\w,]+\s[\w,]+/gm)] - Expresion regular que testea si el campo textArea tiene al menos 3 palabras. 
  * @vue-data {String} [emailRegexp = new RegExp(/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/)] - Expresion regular que testea si el campo email es valido (por ejemplo ejemplo@test.com)
  */
 export default {
@@ -52,7 +52,7 @@ export default {
       email: "",
       submitted: false,
       suggestionRegexp: new RegExp(/^[\w',]+\s[\w',]+\s[\w',]+/gm),
-      emailRegexp:  new RegExp(/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/)
+      emailRegexp: new RegExp(/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/)
     }
   },
   methods: {
@@ -68,7 +68,7 @@ export default {
      */
     validEmail() {
       /*El email puede tener cualquier caracter en cualquier cantidad siempre y cuando no sea una @, espacio o tabulación en la primera parte
-        Luego tendrá una @, luego otro set igual que en la primera parte, un punto y finalmente otro set del mismo tipo*/      
+        Luego tendrá una @, luego otro set igual que en la primera parte, un punto y finalmente otro set del mismo tipo*/
       this.emailError = validator(this.emailRegexp, this.email)
     },
     /**    
@@ -88,7 +88,5 @@ export default {
     email: function () {
     },
   }
-
-
 }
 </script>

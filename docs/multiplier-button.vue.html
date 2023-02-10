@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: button</title>
+    <title>JSDoc: Source: multiplier-button.vue</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,129 +17,37 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: button</h1>
+    <h1 class="page-title">Source: multiplier-button.vue</h1>
 
     
 
 
 
-
-<section>
-
-<header>
     
-</header>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>&lt;template>    
+    &lt;button class="multiplier-button">{{ text }}&lt;/button>
+&lt;/template>
 
-<article>
-    <div class="container-overview">
-    
-        
-            <div class="description"></p></div></div> 
-
-
-<h3 class="subsection-title" style="margin-top: 1em" data-jsdoc-vuejs="section-props">Props</h3>
-<table data-jsdoc-vuejs="table-props">
-    <thead>
-    <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Default value</th>
-        <th>Required?</th>
-        <th>Description</th>
-    </tr>
-    </thead>
-    <tbody><tr>
-        <td><code>direction</code></td>
-        <td>String</td>
-        <td>-</td>
-        <td><b>Yes</b></td>
-        <td>Establece la dirección del enlace</td>
-    </tr><tr>
-        <td><code>text</code></td>
-        <td>String</td>
-        <td>-</td>
-        <td><b>Yes</b></td>
-        <td>Establece el texto del boton</td>
-    </tr></tbody>
-</table>
-
-
-
-
-
-
-
-
-
-<div class="container-overview"><div><p> 
-</div>
-        
-
-        
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+&lt;script>
+/**
+ * @file multiplier-button.vue - Componente Boton para establecer la cantidad de recurso a comprar
+ * @author Jaime Benitez
+ * @see &lt;a href="https://jaimebenitez.com" target="_blank">Jaime Benitez &lt;/a>
+ */
+/**
+ * @vue-prop {String} text - El texto del interior del botón
+ */
+export default {
+  name: 'MultiplierButton',
+  props: {    
+    text: String
+  }
+}
+&lt;/script></code></pre>
+        </article>
+    </section>
 
 
 

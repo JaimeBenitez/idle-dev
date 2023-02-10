@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: modal</title>
+    <title>JSDoc: Module: tech-button</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: modal</h1>
+    <h1 class="page-title">Module: tech-button</h1>
 
     
 
@@ -49,59 +49,83 @@
     </tr>
     </thead>
     <tbody><tr>
-        <td><code>msg</code></td>
+        <td><code>id</code></td>
+        <td>Number</td>
+        <td>-</td>
+        <td><b>Yes</b></td>
+        <td>Id de la tecnología</td>
+    </tr><tr>
+        <td><code>logo</code></td>
         <td>String</td>
         <td>-</td>
         <td><b>Yes</b></td>
-        <td>Establece el mensaje que aparecerá en el modal</td>
+        <td>Ruta al logo</td>
     </tr><tr>
-        <td><code>buttonMsg</code></td>
+        <td><code>techname</code></td>
         <td>String</td>
         <td>-</td>
         <td><b>Yes</b></td>
-        <td>Establece el texto del boton de cierre o redirección del modal</td>
+        <td>Nombre de la tecnología</td>
     </tr><tr>
-        <td><code>buttonMsg</code></td>
-        <td>String</td>
+        <td><code>quantityToBuy</code></td>
+        <td>Number</td>
         <td>-</td>
         <td><b>Yes</b></td>
-        <td>Establece el texto del boton de cierre o redirección del modal</td>
+        <td>Cantidad de la tecnología a comprar</td>
     </tr><tr>
-        <td><code>redirect</code></td>
-        <td>String</td>
+        <td><code>currentCost</code></td>
+        <td>Number</td>
         <td>-</td>
         <td><b>Yes</b></td>
-        <td>Establece la ruta de redirección del botón de cierre del modal, en caso de que la haya</td>
+        <td>Coste actual de comprar las unidades especificadas de la tecnología</td>
     </tr><tr>
-        <td><code>isGame</code></td>
+        <td><code>quanity</code></td>
+        <td>Number</td>
+        <td>-</td>
+        <td><b>Yes</b></td>
+        <td>Cantidad en posesión actual</td>
+    </tr><tr>
+        <td><code>totalProfit</code></td>
+        <td>Number</td>
+        <td>-</td>
+        <td><b>Yes</b></td>
+        <td>Cantidad de dinero que genera esta tecnología con su cantidad total actual</td>
+    </tr><tr>
+        <td><code>canBuy</code></td>
         <td>Boolean</td>
         <td>-</td>
         <td><b>Yes</b></td>
-        <td>Establece si el modal está o no en la pantalla de juego para modificar su comportamiento</td>
+        <td>Controla si se puede o no hacer la compra especificada con la cantidad de dinero actual</td>
     </tr></tbody>
 </table>
 
 
 
-<h3 class="subsection-title" style="margin-top: 1em" data-jsdoc-vuejs="section-data">Data</h3>
-<table data-jsdoc-vuejs="table-data">
+
+
+<h3 class="subsection-title" style="margin-top: 1em" data-jsdoc-vuejs="section-computed">Computed</h3>
+<table data-jsdoc-vuejs="table-computed">
     <thead>
     <tr>
         <th>Name</th>
         <th>Type</th>
-        <th>Default value</th>
         <th>Description</th>
     </tr>
     </thead>
     <tbody><tr>
-        <td><code>close</code></td>
-        <td>Boolean</td>
-        <td>-</td>
-        <td>Valor que se emitira al componente padre para decirle cuando debe cerrarse el modal</td>
+        <td><code>formattedQuantity</code></td>
+        <td>String</td>
+        <td>Devuelve la cantidad de producto formateada</td>
+    </tr><tr>
+        <td><code>formattedTotalProfit</code></td>
+        <td>String</td>
+        <td>Devuelve la generación de dinero de la tecnología formateada</td>
+    </tr><tr>
+        <td><code>formattedTotalCost</code></td>
+        <td>String</td>
+        <td>Devuelve el coste actual de compra formateado</td>
     </tr></tbody>
 </table>
-
-
 
 
 
@@ -116,9 +140,9 @@
     </tr>
     </thead>
     <tbody><tr>
-        <td><code>close</code></td>
-        <td>Boolean</td>
-        <td>Emite al padre la señal de cuando el modal debe cerrarse</td>
+        <td><code>buy</code></td>
+        <td>Number</td>
+        <td>Emite al padre la id de la tecnología que se esta comprando</td>
     </tr></tbody>
 </table>
 

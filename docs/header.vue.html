@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: button.vue</title>
+    <title>JSDoc: Source: header.vue</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: button.vue</h1>
+    <h1 class="page-title">Source: header.vue</h1>
 
     
 
@@ -26,27 +26,46 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>&lt;template>    
-      &lt;RouterLink :to="direction" class="button">{{ text }}&lt;/RouterLink>
+            <pre class="prettyprint source linenums"><code>&lt;template>
+  &lt;header>
+    &lt;span class="version">V 0.1&lt;/span>
+    &lt;RouterLink to="/">&lt;img src="../assets/idledev-logo.png" alt="logo" class="logo-header">&lt;/RouterLink>
+    &lt;nav class="header-nav">
+      &lt;RouterLink to="/contact" class="header-button" v-if="isGame">&lt;img :src="require('@/assets/contact.svg')"
+          class="icon" alt="A contacto" /> &lt;/RouterLink>
+      &lt;RouterLink to="/" class="header-button" @click="logout">&lt;img :src="require(`@/assets/${icon}`)" class="icon"
+          alt="Logout">&lt;/RouterLink>
+    &lt;/nav>
+  &lt;/header>
 &lt;/template>
-  
+
 &lt;script>
 /**
- * @file button.vue - Componente botón para la página principal
+ * @file header.vue - Componente Header
  * @author Jaime Benitez
  * @see &lt;a href="https://jaimebenitez.com" target="_blank">Jaime Benitez &lt;/a>
  */
 /**
- * @vue-prop {String} direction - Establece la dirección del enlace
- * @vue-prop {String} text - Establece el texto del boton
- */
-  export default {
-    name: 'ButtonComponent',
-    props: {
-      direction: String,
-      text: String
+* @vue-prop {String} icon - Establece la ruta del icono a usar en el boton de logout
+* @vue-prop {Boolean} isGame - Le dice al header si estamos en la pantalla de juego para adaptar su comportamiento a dicha pantalla
+*/
+export default {
+  name: 'HeaderComponent',
+  props: {
+    icon: String,
+    isGame: Boolean,
+  },
+  methods: {
+    /**
+     * Si estamos en la pantalla de juego quita al usuario del localStorage lo que causará el logout del mismo
+     */
+    logout() {
+      //Solo lo haremos en el caso de que pulsemos el boton desde la pantalla de juego, esto evitara que desde el contacto, al pulsar atras nos desloguee
+      if (this.isGame)
+        localStorage.removeItem('user')
     }
   }
+}
 &lt;/script></code></pre>
         </article>
     </section>

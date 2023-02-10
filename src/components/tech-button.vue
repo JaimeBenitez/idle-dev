@@ -15,8 +15,26 @@
   </div>
 </template>
 <script>
+/**
+ * @file tech-button.vue - Componente de botón de tecnología
+ * @author Jaime Benitez
+ * @see <a href="https://jaimebenitez.com" target="_blank">Jaime Benitez </a>
+ */
 import formatNumber from '@/utils/formatters'
-
+/**
+ * @vue-prop {Number} id - Id de la tecnología
+ * @vue-prop {String} logo - Ruta al logo
+ * @vue-prop {String} techname - Nombre de la tecnología
+ * @vue-prop {Number} quantityToBuy - Cantidad de la tecnología a comprar
+ * @vue-prop {Number} currentCost - Coste actual de comprar las unidades especificadas de la tecnología
+ * @vue-prop {Number} quanity - Cantidad en posesión actual
+ * @vue-prop {Number} totalProfit - Cantidad de dinero que genera esta tecnología con su cantidad total actual
+ * @vue-prop {Boolean} canBuy - Controla si se puede o no hacer la compra especificada con la cantidad de dinero actual
+ * @vue-computed {String} formattedQuantity - Devuelve la cantidad de producto formateada
+ * @vue-computed {String} formattedTotalProfit - Devuelve la generación de dinero de la tecnología formateada
+ * @vue-computed {String} formattedTotalCost - Devuelve el coste actual de compra formateado
+ * @vue-event {Number} buy - Emite al padre la id de la tecnología que se esta comprando 
+ */
 export default {
   name: 'TechButton',
   props: {

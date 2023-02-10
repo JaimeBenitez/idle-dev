@@ -1,37 +1,65 @@
-<template>
-  <Header icon="logout.svg" :isGame=true />
-  <div class="game">
-    <section class="tech-container">
-      <nav class="multipliers-nav">
-        <MultiplierButton text="x1" v-on:click="setQuantityToBuy(1)" />
-        <MultiplierButton text="x10" v-on:click="setQuantityToBuy(10)" />
-        <MultiplierButton text="x100" v-on:click="setQuantityToBuy(100)" />
-      </nav>
-      <TechButton v-for="tech in activeTechs" :key="tech.id" :id="tech.id" :logo="tech.logo" :techName="tech.name"
-        :totalProfit="tech.totalProfit" :quantity="tech.quantityOwned" :quantityToBuy="quantityToBuy"
-        :currentCost="tech.currentCost" @buy="handleBuy" :canBuy="tech.currentCost <= principalMoney" />
-    </section>
-    <section class="principal">
-      <section class="principal-score">
-        <span class="money">{{ formattedPrincipalMoney }}</span>
-        <span class="generation">{{ formattedMoneyPerSecond }}</span>
-        <span class="generation">{{ formattedMoneyPerClick }}<img src='@/assets/hand-click.svg' alt="click"
-            class="click" /></span>
-      </section>
-      <button class="computer-button" @click="handleClicks"><img :class="bounce" src="@/assets/ordenador.png"
-          alt="click me" /></button>
-      <button class="button save-button" @click="saveData">Guardar</button>
-    </section>
-    <Modal v-if="modalmsg != ''" :msg="modalmsg" buttonMsg="Continuar" textClass="modal-game-message" :isGame=true
-      @close="handleClose" />
-  </div>
-</template>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: game.vue</title>
 
-<script>
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: game.vue</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>&lt;template>
+  &lt;Header icon="logout.svg" :isGame=true />
+  &lt;div class="game">
+    &lt;section class="tech-container">
+      &lt;nav class="multipliers-nav">
+        &lt;MultiplierButton text="x1" v-on:click="setQuantityToBuy(1)" />
+        &lt;MultiplierButton text="x10" v-on:click="setQuantityToBuy(10)" />
+        &lt;MultiplierButton text="x100" v-on:click="setQuantityToBuy(100)" />
+      &lt;/nav>
+      &lt;TechButton v-for="tech in activeTechs" :key="tech.id" :id="tech.id" :logo="tech.logo" :techName="tech.name"
+        :totalProfit="tech.totalProfit" :quantity="tech.quantityOwned" :quantityToBuy="quantityToBuy"
+        :currentCost="tech.currentCost" @buy="handleBuy" :canBuy="tech.currentCost &lt;= principalMoney" />
+    &lt;/section>
+    &lt;section class="principal">
+      &lt;section class="principal-score">
+        &lt;span class="money">{{ formattedPrincipalMoney }}&lt;/span>
+        &lt;span class="generation">{{ formattedMoneyPerSecond }}&lt;/span>
+        &lt;span class="generation">{{ formattedMoneyPerClick }}&lt;img src='@/assets/hand-click.svg' alt="click"
+            class="click" />&lt;/span>
+      &lt;/section>
+      &lt;button class="computer-button" @click="handleClicks">&lt;img :class="bounce" src="@/assets/ordenador.png"
+          alt="click me" />&lt;/button>
+      &lt;button class="button save-button" @click="saveData">Guardar&lt;/button>
+    &lt;/section>
+    &lt;Modal v-if="modalmsg != ''" :msg="modalmsg" buttonMsg="Continuar" textClass="modal-game-message" :isGame=true
+      @close="handleClose" />
+  &lt;/div>
+&lt;/template>
+
+&lt;script>
 /**
  * @file game.vue - Pagina de juego
  * @author Jaime Benitez
- * @see <a href="https://jaimebenitez.com" target="_blank">Jaime Benitez </a>
+ * @see &lt;a href="https://jaimebenitez.com" target="_blank">Jaime Benitez &lt;/a>
  */
 //Para poder usar las imagenes correctamente como props tenemos que importarlas aqui y usarlas como variable de Data
 import Header from './header.vue'
@@ -47,30 +75,30 @@ import formatNumber from '@/utils/formatters'
 import Modal from './modal.vue'
 /**
  * @vue-data {Object} [userData = {}] -  Almacenara los datos de partida del usuario actual
- * @vue-data {Array<Object>} [allUsersData = []] -  Almacenara los datos de partida de todos los jugadores registrados, para poder guardar partida
+ * @vue-data {Array&lt;Object>} [allUsersData = []] -  Almacenara los datos de partida de todos los jugadores registrados, para poder guardar partida
  * @vue-data {Number} [quantityToBuy = 1] - Establece la cantidad de recurso a comprar
  * @vue-data {Number} [principalMoney = 0] - Establece la cantidad de dinero actual del jugador
  * @vue-data {Number} [moneyPerSecond = 0] - Establece la generación de dinero por segundo
  * @vue-data {Number} [moneyPerClick = 0.1] - Establece la generación de dinero por click
  * @vue-data {String} [bounce = "principal-pc"] - Establece el cambio de clase necesaria para la animación de rebote del pc
  * @vue-data {String} [modalMsg = ''] - Establece el mensaje que se mostrará en el modal. Tambien sirve para controlar cuando este aparece y desaparece
- * @vue-data {Array<Object>} techs - Contiene los datos de las diferentes tecnologías. Registra los siguientes campos: <br>
- * <strong>id</strong> - Id del lenguaje <br>
- * <strong>name</strong> - Nombre del lenguaje <br>
- * <strong>logo</strong> - Ruta al logo <br>
- * <strong>initialCost</strong> - Coste inicial del lenguaje. Irá incrementando a medida que se compre <br>
- * <strong>profitPerUnit</strong> - La cantidad de beneficios que aporta cada unidad <br>
- * <strong>growthRatio</strong> - El ratio de aumento del coste por compra de la unidad <br>
- * <strong>minMoneyToUnlock</strong> - El minimo necesario de dinero para poder desbloquear el lenguaje por primera vez <br>
- * <strong>unlocked</strong> - Si el lenguaje esta o no desbloqueado <br>
- * <strong>quantityOwned</strong> - La contidad actual de tecnologia obtenida <br>
- * <strong>currentCost</strong> - El coste actual del lenguaje <br>
- * <strong>totalProfit</strong> - El beneficio actual que reporta el total de unidades de esta tecnología <br>
- * <strong>msg</strong> - El mensaje que se mostrará en el modal al ser desbloqueada por primera vez 
+ * @vue-data {Array&lt;Object>} techs - Contiene los datos de las diferentes tecnologías. Registra los siguientes campos: &lt;br>
+ * &lt;strong>id&lt;/strong> - Id del lenguaje &lt;br>
+ * &lt;strong>name&lt;/strong> - Nombre del lenguaje &lt;br>
+ * &lt;strong>logo&lt;/strong> - Ruta al logo &lt;br>
+ * &lt;strong>initialCost&lt;/strong> - Coste inicial del lenguaje. Irá incrementando a medida que se compre &lt;br>
+ * &lt;strong>profitPerUnit&lt;/strong> - La cantidad de beneficios que aporta cada unidad &lt;br>
+ * &lt;strong>growthRatio&lt;/strong> - El ratio de aumento del coste por compra de la unidad &lt;br>
+ * &lt;strong>minMoneyToUnlock&lt;/strong> - El minimo necesario de dinero para poder desbloquear el lenguaje por primera vez &lt;br>
+ * &lt;strong>unlocked&lt;/strong> - Si el lenguaje esta o no desbloqueado &lt;br>
+ * &lt;strong>quantityOwned&lt;/strong> - La contidad actual de tecnologia obtenida &lt;br>
+ * &lt;strong>currentCost&lt;/strong> - El coste actual del lenguaje &lt;br>
+ * &lt;strong>totalProfit&lt;/strong> - El beneficio actual que reporta el total de unidades de esta tecnología &lt;br>
+ * &lt;strong>msg&lt;/strong> - El mensaje que se mostrará en el modal al ser desbloqueada por primera vez 
  * @vue-computed {String} formattedPrincipalMoney - Devuelve el dinero principal formateado
  * @vue-computed {String} formattedMoneyPerSecond - Devuelve el dinero por segundo formateado
  * @vue-computed {String} formattedMoneyPerClick - Devuelve el dinero por click formateado
- * @vue-computed {Array<Object>} activeTechs - Devuleve las tecnologias activas actualmente
+ * @vue-computed {Array&lt;Object>} activeTechs - Devuleve las tecnologias activas actualmente
  */
 export default {
   name: 'GamePage',
@@ -232,7 +260,7 @@ export default {
         this.techs[4].unlocked = this.userData.PHPUnlocked
         this.modalmsg = ''
         //Volvemos a hacer los calculos necesarios usando la info de la api        
-        for (let i = 0; i < this.techs.length; i++) {
+        for (let i = 0; i &lt; this.techs.length; i++) {
           let tech = this.techs[i]
           tech.currentCost = tech.initialCost * ((tech.growthRatio ** tech.quantityOwned * ((tech.growthRatio ** this.quantityToBuy) - 1)) / (tech.growthRatio - 1))
           tech.totalProfit = tech.profitPerUnit * tech.quantityOwned
@@ -301,13 +329,13 @@ export default {
     setQuantityToBuy(quantity) {
       //Establecemos la cantidad a comprar y seteamos el coste actual
       this.quantityToBuy = quantity
-      for (let i = 0; i < this.techs.length; i++) {
+      for (let i = 0; i &lt; this.techs.length; i++) {
         let tech = this.techs[i]
         tech.currentCost = tech.initialCost * ((tech.growthRatio ** tech.quantityOwned * ((tech.growthRatio ** this.quantityToBuy) - 1)) / (tech.growthRatio - 1))
       }
     },
     /**
-     * Función que va añadiendo al dinero principal el dinero por segundo y establece cuando las tecnologias se desbloquean, mostrando el modal necesario en cada ocasion.<br>
+     * Función que va añadiendo al dinero principal el dinero por segundo y establece cuando las tecnologias se desbloquean, mostrando el modal necesario en cada ocasion.&lt;br>
      * Se activa cada segundo
      */
     handleMoney() {
@@ -315,9 +343,9 @@ export default {
       this.principalMoney += this.moneyPerSecond
       const lockedTechs = this.techs.filter((tech) => tech.unlocked == false)
       //Establecemos la condición para desbloquear la siguiente tecnologia
-      for (let i = 0; i < lockedTechs.length; i++) {
+      for (let i = 0; i &lt; lockedTechs.length; i++) {
         let tech = lockedTechs[i]
-        if (tech.minMoneyToUnlock <= this.principalMoney && tech.unlocked == false) {
+        if (tech.minMoneyToUnlock &lt;= this.principalMoney &amp;&amp; tech.unlocked == false) {
           tech.unlocked = true
           this.modalmsg = tech.msg
         }
@@ -427,4 +455,26 @@ export default {
     this.getData()
   }
 }
-</script>
+&lt;/script></code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-button.html">button</a></li><li><a href="module-contact.html">contact</a></li><li><a href="module-game.html">game</a></li><li><a href="module-header.html">header</a></li><li><a href="module-login.html">login</a></li><li><a href="module-modal.html">modal</a></li><li><a href="module-multiplier-button.html">multiplier-button</a></li><li><a href="module-register.html">register</a></li><li><a href="module-tech-button.html">tech-button</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Fri Feb 10 2023 19:47:51 GMT+0100 (hora estándar de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

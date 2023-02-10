@@ -1,37 +1,65 @@
-<template>
-  <Header icon="arrow-back.svg" :isGame=false />
-  <div class="register">
-    <section class="register-container">
-      <form class="register-form" v-on:submit.prevent="submit">
-        <h1 class="register-title">Registro</h1>
-        <input type="text" class="register-username register-input" v-model="username" v-on:blur="validUsername"
-          placeholder="Nombre de usuario">
-        <p v-if="usernameError" class="error-message username-error">El nombre debe tener entre 3 y 20 caracteres</p>
-        <input type="email" class="register-email register-input" v-model="email" v-on:blur="validEmail"
-          placeholder="Correo electrónico">
-        <p v-if="emailError" class="error-message">Introduce un email valido</p>
-        <input type="password" class="register-password register-input" v-model="password" v-on:blur="validPassword"
-          placeholder="Contraseña">
-        <p v-if="passwordError" class="error-message password-error">La contraseña debe tener al menos una mayuscula,
-          una minuscula, un digito y entre 8 y 16 caracteres</p>
-        <input type="password" class="register-password-confirm register-input" v-model="confirmPassword"
-          v-on:blur="passwordConfirmed" placeholder="Repite la contraseña">
-        <p v-if="passwordConfirmError" class="error-message">Las contraseñas no coinciden</p>
-        <p class="toLoginQuestion">¿Ya tienes una cuenta?</p>
-        <RouterLink to="/login" class="toLogin">Ve al login</RouterLink>
-        <button type="submit" class="register-submit">Enviar</button>
-      </form>
-    </section>
-    <Modal v-if="submitted" msg="Registro exitoso, haz login de comenzar tu viaje" buttonMsg="Entrar" redirect="/login"
-      :isGame=false />
-  </div>
-</template>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: register.vue</title>
 
-<script>
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: register.vue</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>&lt;template>
+  &lt;Header icon="arrow-back.svg" :isGame=false />
+  &lt;div class="register">
+    &lt;section class="register-container">
+      &lt;form class="register-form" v-on:submit.prevent="submit">
+        &lt;h1 class="register-title">Registro&lt;/h1>
+        &lt;input type="text" class="register-username register-input" v-model="username" v-on:blur="validUsername"
+          placeholder="Nombre de usuario">
+        &lt;p v-if="usernameError" class="error-message username-error">El nombre debe tener entre 3 y 20 caracteres&lt;/p>
+        &lt;input type="email" class="register-email register-input" v-model="email" v-on:blur="validEmail"
+          placeholder="Correo electrónico">
+        &lt;p v-if="emailError" class="error-message">Introduce un email valido&lt;/p>
+        &lt;input type="password" class="register-password register-input" v-model="password" v-on:blur="validPassword"
+          placeholder="Contraseña">
+        &lt;p v-if="passwordError" class="error-message password-error">La contraseña debe tener al menos una mayuscula,
+          una minuscula, un digito y entre 8 y 16 caracteres&lt;/p>
+        &lt;input type="password" class="register-password-confirm register-input" v-model="confirmPassword"
+          v-on:blur="passwordConfirmed" placeholder="Repite la contraseña">
+        &lt;p v-if="passwordConfirmError" class="error-message">Las contraseñas no coinciden&lt;/p>
+        &lt;p class="toLoginQuestion">¿Ya tienes una cuenta?&lt;/p>
+        &lt;RouterLink to="/login" class="toLogin">Ve al login&lt;/RouterLink>
+        &lt;button type="submit" class="register-submit">Enviar&lt;/button>
+      &lt;/form>
+    &lt;/section>
+    &lt;Modal v-if="submitted" msg="Registro exitoso, haz login de comenzar tu viaje" buttonMsg="Entrar" redirect="/login"
+      :isGame=false />
+  &lt;/div>
+&lt;/template>
+
+&lt;script>
 /**
  * @file register.vue - Pagina de registro
  * @author Jaime Benitez
- * @see <a href="https://jaimebenitez.com" target="_blank">Jaime Benitez </a>
+ * @see &lt;a href="https://jaimebenitez.com" target="_blank">Jaime Benitez &lt;/a>
  */
 import Header from './header.vue'
 import Modal from './modal.vue'
@@ -39,7 +67,7 @@ import validator from '@/utils/validator'
 import sha1 from '@/utils/hash1.js'
 
 /**
- * @vue-data {Array<Object>} [users = []] - Lista de usuarios registrados
+ * @vue-data {Array&lt;Object>} [users = []] - Lista de usuarios registrados
  * @vue-data {String} [username = ""] - Toma el valor del input de nombre de usuario
  * @vue-data {String} [email = ""] - Toma el valor del input de email
  * @vue-data {String} [password = ""] - Toma el valor del input de contraseña
@@ -142,7 +170,7 @@ export default {
      * Función que, si todos los datos son correctos, encripta la contraseña e invoca a la función que introduce los datos en la BD
      */
     submit() {
-      if (!this.usernameError && !this.emailError && !this.passwordError && !this.passwordConfirmError) {
+      if (!this.usernameError &amp;&amp; !this.emailError &amp;&amp; !this.passwordError &amp;&amp; !this.passwordConfirmError) {
         const user = {
           "username": this.username,
           "email": this.email,
@@ -177,4 +205,26 @@ export default {
     this.getAllUsers();
   }
 }
-</script>
+&lt;/script></code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-button.html">button</a></li><li><a href="module-contact.html">contact</a></li><li><a href="module-game.html">game</a></li><li><a href="module-header.html">header</a></li><li><a href="module-login.html">login</a></li><li><a href="module-modal.html">modal</a></li><li><a href="module-multiplier-button.html">multiplier-button</a></li><li><a href="module-register.html">register</a></li><li><a href="module-tech-button.html">tech-button</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Fri Feb 10 2023 19:47:51 GMT+0100 (hora estándar de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

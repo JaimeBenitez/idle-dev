@@ -5,29 +5,38 @@
   <nav class="button-nav">
     <Button direction="register" text="Registrarse" />
     <Button direction="login" text="Login" />
-    <Button direction="contact" text="Contacto" />    
+    <Button direction="contact" text="Contacto" />
   </nav>
 </template>
 
 <script>
+/**
+ * @file index.vue - Pagina de inicio
+ * @author Jaime Benitez
+ * @see <a href="https://jaimebenitez.com" target="_blank">Jaime Benitez </a>
+ */
 import Button from './button.vue'
+
 export default {
   name: 'IndexPage',
   components: {
     Button
   },
-  methods:{
-    redirect(){
-      if(localStorage.getItem("user")){
+  methods: {
+    /**
+     * Función que, si entramos en la pag estando aun logueados, nos redirige al juego
+     */
+    redirect() {
+      if (localStorage.getItem("user")) {
         this.$router.push('/game')
       }
     }
   },
-  mounted(){
+  mounted() {
     this.redirect()
-  }  
+  }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
+
 
