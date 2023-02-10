@@ -21,17 +21,12 @@
 }
 
 .modal-message {
-    font-family: var(--title-font);
+    font-family: var(--storyteller-font);
     font-size: var(--subtitle-size);
     margin-bottom: 1.5rem;
     text-align: center;
 }
-.modal-game-message {
-    font-family: var(--storyteller-font);
-    font-size: var(--text-size);
-    margin-bottom: 1.5rem;
-    text-align: center;
-}
+
 
 .redirect {
     font-family: var(--title-font);

@@ -1,5 +1,5 @@
 <template>
-    <Header icon="arrow-back.svg"/>
+    <Header icon="arrow-back.svg" :isGame=false />
     <div class="register">
       <section class="register-container">
         <form class="register-form" v-on:submit.prevent="submit">
@@ -17,7 +17,7 @@
           <button type="submit" class="register-submit">Enviar</button>
         </form>
       </section>
-      <Modal v-if="submitted" msg="Registro exitoso, haz login de comenzar tu viaje" buttonMsg="Entrar" redirect="/login" textClass="modal-message" :isGame=false />
+      <Modal v-if="submitted" msg="Registro exitoso, haz login de comenzar tu viaje" buttonMsg="Entrar" redirect="/login" :isGame=false />
     </div>
 </template>
   
@@ -33,6 +33,7 @@
     },
     data(){
       return{
+        users: [],
         username:"",
         email:"",
         password:"",
@@ -48,6 +49,28 @@
       }
     },
     methods: {
+      async getAllUsers(){
+        try {
+          const response = await fetch('http://localhost:3001/api/V1/users');
+          this.users = await response.json();
+          console.log(this.users)
+        } catch (error) {
+          console.error(error);
+        }
+      },
+      async postUser(user){
+        try {
+          const response = await fetch("http://localhost:3001/api/V1/users", {
+            method: "POST",
+            body: JSON.stringify(user),
+            headers: {'Content-Type': 'application/json; charset=utf-8'},
+          });
+          const createdUser = await response.json();
+          this.users = [...this.users, createdUser]
+        } catch(error){
+          console.log(error)
+        }
+      },
       validUsername(){
         //El usuario admitirá cualquier caracter pero tendrá entre 3 y 20 caracteres     
         this.usernameError = validator(this.usernameRegexp, this.username)
@@ -56,23 +79,33 @@
       /*El email puede tener cualquier caracter en cualquier cantidad siempre y cuando no sea una @, espacio o tabulación en la primera parte
         Luego tendrá una @, luego otro set igual que en la primera parte, un punto y finalmente otro set del mismo tipo*/      
       this.emailError = validator(this.emailRegexp, this.email)
-    },
-    validPassword() {
-      /*La contraseña debera tener al menos una mayuscula, minuscula y digito, permite caracteres especiales y 
-      contara de entre 8 y 16 caracteres*/     
-      this.passwordError = validator(this.passwordRegexp, this.password)
-    },
-    passwordConfirmed(){      
-      if(this.confirmPassword != this.password){
-        this.passwordConfirmError = true
-        console.log(this.passwordConfirmError)
-      }else{
-        this.passwordConfirmError = false
-      }
+      },
+      validPassword() {
+        /*La contraseña debera tener al menos una mayuscula, minuscula y digito, permite caracteres especiales y 
+        contara de entre 8 y 16 caracteres*/     
+       this.passwordError = validator(this.passwordRegexp, this.password)
+      },
+      passwordConfirmed(){      
+        if(this.confirmPassword != this.password){
+          this.passwordConfirmError = true          
+        }else{
+          this.passwordConfirmError = false
+        }
     },
     submit(){
       if (!this.usernameError && !this.emailError && !this.passwordError && !this.passwordConfirmError) {
+        const user = {
+            "username": this.username,
+            "email": this.email,
+            "password": this.password 
+        }
+        this.postUser(user)
         this.submitted = true;
+      }
+    },
+    redirect(){
+      if(localStorage.getItem("user")){
+        this.$router.push('/game')
       }
     }
     },
@@ -85,6 +118,10 @@
     },
     confirmPassword: function () {      
     },    
+    },
+    mounted(){
+      this.redirect()
+      this.getAllUsers();      
     }
   }
   </script>

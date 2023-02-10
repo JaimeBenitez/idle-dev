@@ -1,5 +1,5 @@
 <template>
-  <Header icon="arrow-back.svg"/>
+  <Header icon="arrow-back.svg" :isGame=false />
   <div class="contact">
     <section class="contact-container">
       <form class="contact-form" v-on:submit.prevent="submit">
@@ -13,7 +13,7 @@
         <button type="submit" class="contact-submit">Enviar</button>
       </form>
     </section>
-    <Modal v-if="startModal" msg="Sugerencia enviada con exito" buttonMsg="Volver" redirect="/" textClass="modal-message" :isGame=false />
+    <Modal v-if="submitted" msg="Sugerencia enviada con exito" buttonMsg="Volver" redirect="/"  :isGame=false />
   </div>
 
 </template>

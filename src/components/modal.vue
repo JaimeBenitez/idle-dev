@@ -1,7 +1,7 @@
 <template>
     <section class="modal">
         <div class="modal-container">
-            <p :class="textClass">{{ msg }}</p>
+            <p class="modal-message">{{ msg }}</p>
             <RouterLink v-if="!isGame" :to="redirect" class="redirect">{{ buttonMsg }}</RouterLink>
             <button v-if="isGame" @click="closeModal" class="close">{{ buttonMsg }}</button>
         </div>
@@ -13,8 +13,7 @@ export default {
     props: {        
         msg: String,
         buttonMsg: String,
-        redirect: String,
-        textClass: String,
+        redirect: String,        
         isGame: Boolean,
     },
     data(){

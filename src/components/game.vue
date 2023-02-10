@@ -1,5 +1,5 @@
 <template>
-  <Header icon="logout.svg"/>
+  <Header icon="logout.svg" :isGame=true />
   <div class="game">
     <section class="tech-container">
       <nav class="multipliers-nav">
@@ -15,13 +15,15 @@
       <section class="principal-score">
         <span class="money">{{ formattedPrincipalMoney }}</span>
         <span class="generation">{{ formattedMoneyPerSecond }}</span>
-        <span class="generation">{{ formattedMoneyPerClick }}<img src='@/assets/hand-click.svg' alt="click" class="click"/></span>        
+        <span class="generation">{{ formattedMoneyPerClick }}<img src='@/assets/hand-click.svg' alt="click"
+            class="click" /></span>
       </section>
-      <button class="computer-button" @click="handleClicks"><img :class="bounce" src="@/assets/ordenador.png" alt="click me" /></button>  
-    </section> 
-    <Modal v-if="showstartmodal" msg="Bienvenido al fantástico mundo de la programación. Te espera un gran viaje a traves de la historia de la informática.
-     Haz click en el ordenador para ganar beneficios y empezar a comprar las tecnologías que irás aprendiendo" buttonMsg="Comencemos" redirect="/game" 
-    textClass="modal-game-message" :isGame=true @close="handleStartClose" /> 
+      <button class="computer-button" @click="handleClicks"><img :class="bounce" src="@/assets/ordenador.png"
+          alt="click me" /></button>
+      <button class="button save-button" @click="saveData">Guardar</button>
+    </section>
+    <Modal v-if="modalmsg != ''" :msg="modalmsg" buttonMsg="Continuar" textClass="modal-game-message" :isGame=true
+      @close="handleClose" />
   </div>
 </template>
 
@@ -39,25 +41,25 @@ import PHP from '@/assets/php.svg'
 import formatNumber from '@/utils/formatters'
 import Modal from './modal.vue'
 
-//Meter en base de datos principalMoney,unlocked, quantity owned
-
 export default {
   name: 'GamePage',
   components: {
     Header,
     MultiplierButton,
     TechButton,
-    Modal
+    Modal,
   },
   data() {
     return {
+      userData: {},
+      allUsersData: [],
       quantityToBuy: 1,
       principalMoney: 0,
       moneyPerSecond: 0,
       moneyPerClick: 0.1,
-      totalProfit: 0,      
+      totalProfit: 0,
       bounce: "principal-pc",
-      showstartmodal: true,
+      modalmsg: '',
       techs: [
         {
           "id": 1,
@@ -71,6 +73,7 @@ export default {
           "quantityOwned": 0,
           "currentCost": 3.7,
           "totalProfit": 0,
+          "msg": "HTML es el lenguaje esqueleto de cualquier web, con el podrás comenzar a construir la estructura de una web"
         },
         {
           "id": 2,
@@ -84,6 +87,7 @@ export default {
           "quantityOwned": 0,
           "currentCost": 60,
           "totalProfit": 0,
+          "msg": "CSS te permitirá dotar de estilos a tu web. Hazla brillar e impresiona a todo el mundo con tus animaciones"
         },
         {
           "id": 3,
@@ -97,6 +101,7 @@ export default {
           "quantityOwned": 0,
           "currentCost": 720,
           "totalProfit": 0,
+          "msg": "JS es el nucleo duro de toda página web. Con el podras dotar a tu web de interactividad."
         },
         {
           "id": 4,
@@ -110,6 +115,7 @@ export default {
           "quantityOwned": 0,
           "currentCost": 8640,
           "totalProfit": 0,
+          "msg": "¿Por que no montar nuestro servidor usando también JS? Node lo hará posible"
         },
         {
           "id": 5,
@@ -123,6 +129,7 @@ export default {
           "quantityOwned": 0,
           "currentCost": 103680,
           "totalProfit": 0,
+          "msg": "Java fue durante mucho tiempo uno de los lenguajes mas usados del mundo y aún hoy se usa mucho. Piensa, hasta minecraft está hecho en Java"
         },
         {
           "id": 6,
@@ -131,11 +138,12 @@ export default {
           "initialCost": 1244160,
           "profitPerUnit": 6480,
           "growthRatio": 1.11,
-          "minMoneyToUnlock": 1244160 ,
+          "minMoneyToUnlock": 1244160,
           "unlocked": false,
           "quantityOwned": 0,
           "currentCost": 1244160,
           "totalProfit": 0,
+          "msg": "PHP es un lenguaje ampliamente usado en web desde la parte del servidor ¿Te gusta concatenar con un punto? Con PHP tienes la oportunidad"
         },
 
       ]
@@ -157,9 +165,96 @@ export default {
     }
   },
   methods: {
-    handleStartClose(){
-      
-      this.showstartmodal = false;
+    async getAllUsersData() {
+      try {
+        const response = await fetch(`http://localhost:3001/api/V1/gameData`)
+        this.allUsersData = await response.json();
+      } catch (error) {
+        this.modalmsg = "Ha ocurrido un error y los datos no se han cargado"
+      }
+    },
+
+    async getData() {
+      const user = localStorage.getItem("user")
+      try {
+        const response = await fetch(`http://localhost:3001/api/V1/gameData/${user}`)
+        
+        this.userData = await response.json()
+        //Seteamos las variables que necesitamos con la información de la api
+        
+        this.principalMoney = this.userData.principalMoney
+        this.techs[0].quantityOwned = this.userData.HTMLAmount
+        this.techs[0].unlocked = this.userData.HTMLUnlocked
+        this.techs[1].quantityOwned = this.userData.CSSAmount
+        this.techs[1].unlocked = this.userData.CSSUnlocked
+        this.techs[2].quantityOwned = this.userData.JSAmount
+        this.techs[2].unlocked = this.userData.JSUnlocked
+        this.techs[3].quantityOwned = this.userData.NodeAmount
+        this.techs[3].unlocked = this.userData.NodeUnlocked
+        this.techs[4].quantityOwned = this.userData.JavaAmount
+        this.techs[4].unlocked = this.userData.JavaUnlocked
+        this.techs[4].quantityOwned = this.userData.PHPAmount
+        this.techs[4].unlocked = this.userData.PHPUnlocked
+        this.modalmsg = ''
+        //Volvemos a hacer los calculos necesarios usando la info de la api        
+        for (let i = 0; i < this.techs.length; i++) {
+          let tech = this.techs[i]
+          tech.currentCost = tech.initialCost * ((tech.growthRatio ** tech.quantityOwned * ((tech.growthRatio ** this.quantityToBuy) - 1)) / (tech.growthRatio - 1))
+          tech.totalProfit = tech.profitPerUnit * tech.quantityOwned
+          this.moneyPerSecond += tech.totalProfit
+        }
+        if(this.moneyPerSecond){
+        this.moneyPerClick = this.moneyPerSecond * 0.1
+        }
+        
+      } catch (error) {
+        //Si no encuentra datos de partida simplemente se considera que inicia una nueva partida y se crean los datos de partida,
+        //haremos las mismas comprobaciones que con el PUT
+        const userData = {
+          "playerName": localStorage.getItem("user"),
+          "principalMoney": this.principalMoney,
+          "HTMLAmount": this.techs[0].quantityOwned,
+          "HTMLUnlocked": this.techs[0].unlocked,
+          "CSSAmount": this.techs[1].quantityOwned,
+          "CSSUnlocked": this.techs[1].unlocked,
+          "JSAmount": this.techs[2].quantityOwned,
+          "JSUnlocked": this.techs[2].unlocked,
+          "NodeAmount": this.techs[3].quantityOwned,
+          "NodeUnlocked": this.techs[3].unlocked,
+          "JavaAmount": this.techs[4].quantityOwned,
+          "JavaUnlocked": this.techs[4].unlocked,
+          "PHPAmount": this.techs[5].quantityOwned,
+          "PHPUnlocked": this.techs[5].unlocked,
+        }        
+        try {
+          const response = await fetch(`http://localhost:3001/api/V1/gameData`, {
+            method: "POST",
+            body: JSON.stringify(userData),
+            headers: { 'Content-type': 'application/json; charset=UTF-8' },
+          });
+          const createdUser = await response.json()
+          console.log(createdUser)
+          const createdKeys = Object.keys(createdUser);
+          const inputKeys = Object.keys(userData);
+
+          if (createdKeys.length !== inputKeys.length) {
+            this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"
+            return false
+          }
+          for (let key of createdKeys) {
+            if (createdUser[key] !== userData[key]) {
+              this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"
+              return false
+            }
+          }
+        } catch (error) {
+          this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"
+        }
+        this.modalmsg = "Bienvenido al fantástico mundo de la programación. Te espera un gran viaje a traves de la historia de la informática. Haz click en el ordenador para ganar beneficios y empezar a comprar las tecnologías que irás aprendiendo"
+      }
+    },
+    handleClose() {
+      this.modalmsg = '';
     },
     setQuantityToBuy(quantity) {
       //Establecemos la cantidad a comprar y seteamos el coste actual
@@ -176,11 +271,12 @@ export default {
       //Establecemos la condición para desbloquear la siguiente tecnologia
       for (let i = 0; i < lockedTechs.length; i++) {
         let tech = lockedTechs[i]
-        if (tech.minMoneyToUnlock <= this.principalMoney) {
+        if (tech.minMoneyToUnlock <= this.principalMoney && tech.unlocked == false) {
           tech.unlocked = true
+          this.modalmsg = tech.msg
         }
       }
-    },    
+    },
     setMoneyPerSecondInterval() {
       setInterval(this.handleMoney, 1000);
     },
@@ -203,16 +299,65 @@ export default {
         this.moneyPerClick = this.moneyPerSecond * 0.1
       }
     },
-    handleClicks(){      
+    handleClicks() {
       //Añadimos la animación de rebote y el dinero al principal. Seteamos la perdida de la clase al tiempo que dura la animación y nos queda perfecta
-      this.bounce = "principal-pc animated" 
-      this.principalMoney += this.moneyPerClick 
-      setTimeout(() => {this.bounce = "principal-pc"},500)              
+      this.bounce = "principal-pc animated"
+      this.principalMoney += this.moneyPerClick
+      setTimeout(() => { this.bounce = "principal-pc" }, 500)
+    },
+    async saveData() {
+      //Cogemos los datos que queremos guardar
+      const userData = {
+        "playerName": localStorage.getItem("user"),
+        "principalMoney": this.principalMoney,
+        "HTMLAmount": this.techs[0].quantityOwned,
+        "HTMLUnlocked": this.techs[0].unlocked,
+        "CSSAmount": this.techs[1].quantityOwned,
+        "CSSUnlocked": this.techs[1].unlocked,
+        "JSAmount": this.techs[2].quantityOwned,
+        "JSUnlocked": this.techs[2].unlocked,
+        "NodeAmount": this.techs[3].quantityOwned,
+        "NodeUnlocked": this.techs[3].unlocked,
+        "JavaAmount": this.techs[4].quantityOwned,
+        "JavaUnlocked": this.techs[4].unlocked,
+        "PHPAmount": this.techs[5].quantityOwned,
+        "PHPUnlocked": this.techs[5].unlocked,
+      }
+
+      try {
+        const response = await fetch(`http://localhost:3001/api/V1/gameData/${userData.playerName}`, {
+          method: "PUT",
+          body: JSON.stringify(userData),
+          headers: { 'Content-type': 'application/json; charset=UTF-8' },
+        })
+
+        const updatedUser = await response.json();
+
+        //Como no podemos comparar directamente dos objetos usaremos sus keys para hacer las comprobaciones
+        const updatedKeys = Object.keys(updatedUser);
+        const inputKeys = Object.keys(userData);
+
+        if (updatedKeys.length !== inputKeys.length) {
+          this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"
+          return false
+        }
+        for (let key of updatedKeys) {
+          if (updatedUser[key] !== userData[key]) {
+            this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"
+            return false
+          }
+        }
+        this.modalmsg = "Partida guardada correctamente"
+      } catch (error) {
+        this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"
+      }
     }
   },
   mounted() {
     this.setMoneyPerSecondInterval();
-         
+    this.getAllUsersData()
+    this.getData()
+
   }
 }
 </script>

@@ -25,6 +25,7 @@
 
 .multiplier-button {
     background-color: var(--primary-color);
+    font-family: var(--title-font);
     color: var(--text-color);
     border-radius: 20px;
     width: 25%;
@@ -75,6 +76,10 @@
 }
 .click{
     filter: var(--icon-color);
+}
+
+.save-button{
+    padding-top: 0;
 }
 
 @keyframes bounce{

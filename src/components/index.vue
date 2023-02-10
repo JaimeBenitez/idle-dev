@@ -15,6 +15,16 @@ export default {
   name: 'IndexPage',
   components: {
     Button
+  },
+  methods:{
+    redirect(){
+      if(localStorage.getItem("user")){
+        this.$router.push('/game')
+      }
+    }
+  },
+  mounted(){
+    this.redirect()
   }  
 }
 </script>
