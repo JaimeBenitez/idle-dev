@@ -262,7 +262,7 @@ export default {
           "PHPUnlocked": this.techs[5].unlocked,
         }
         try {
-          const response = await fetch(`http://idle-dev-apirest.onrender.com/api/V1/gameData`, {
+          const response = await fetch(`http://idleback-production.up.railway.app/api/V1/gameData`, {
             method: "POST",
             body: JSON.stringify(userData),
             headers: { 'Content-type': 'application/json; charset=UTF-8' },            
@@ -384,7 +384,7 @@ export default {
       }
 
       try {
-        const response = await fetch(`http://idle-dev-apirest.onrender.com/api/V1/gameData/${userData.playerName}`, {
+        const response = await fetch(`http://idleback-production.up.railway.app/api/V1/gameData/${userData.playerName}`, {
           method: "PUT",
           body: JSON.stringify(userData),
           headers: { 'Content-type': 'application/json; charset=UTF-8' },

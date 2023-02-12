@@ -61,7 +61,7 @@
        */
       async checkUser(username,password){
         try{
-          const response = await fetch(`http://idle-dev-apirest.onrender.com/api/V1/users/${username}`)
+          const response = await fetch(`http://idleback-production.up.railway.app/api/V1/users/${username}`)
           this.user = await response.json();
           //Comprobamos si el usuario que hemos buscado existe en la base de datos y si los datos introducidos son correctos
           if(this.user.username == username && this.user.password == sha1(password)){
