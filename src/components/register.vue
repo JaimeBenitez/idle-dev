@@ -82,8 +82,9 @@ export default {
      */
     async getAllUsers() {
       try {
-        const response = await fetch('http://localhost:3001/api/V1/users');
+        const response = await fetch('http://idle-dev-apirest.onrender.com/api/V1/users');
         this.users = await response.json();
+        console.log(response)
       } catch (error) {
         console.error("Error");
       }
@@ -94,10 +95,10 @@ export default {
      */
     async postUser(user) {
       try {
-        const response = await fetch("http://localhost:3001/api/V1/users", {
+        const response = await fetch("http://idle-dev-apirest.onrender.com/api/V1/users", {
           method: "POST",
           body: JSON.stringify(user),
-          headers: { 'Content-Type': 'application/json; charset=utf-8' },
+          headers: { 'Content-Type': 'application/json; charset=utf-8' }         
         });
         const createdUser = await response.json();
         this.users = [...this.users, createdUser]
