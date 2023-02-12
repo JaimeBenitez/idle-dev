@@ -200,7 +200,7 @@ export default {
      */
     async getAllUsersData() {
       try {
-        const response = await fetch(`https://idle-dev-apirest.onrender.com/api/V1/gameData`)
+        const response = await fetch(`https://idleback-production.up.railway.app//api/V1/gameData`)
         this.allUsersData = await response.json();
       } catch (error) {
         this.modalmsg = "Ha ocurrido un error y los datos no se han cargado"
@@ -212,7 +212,7 @@ export default {
     async getData() {
       const user = localStorage.getItem("user")
       try {
-        const response = await fetch(`https://idle-dev-apirest.onrender.com/api/V1/gameData/${user}`)
+        const response = await fetch(`https://idleback-production.up.railway.app//api/V1/gameData/${user}`)
 
         this.userData = await response.json()
         //Seteamos las variables que necesitamos con la información de la api
