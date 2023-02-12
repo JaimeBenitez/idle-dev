@@ -82,7 +82,7 @@ export default {
      */
     async getAllUsers() {
       try {
-        const response = await fetch('http://idleback-production.up.railway.app/api/V1/users');
+        const response = await fetch('https://idleback-production.up.railway.app/api/V1/users');
         this.users = await response.json();
         console.log(response)
       } catch (error) {
@@ -95,7 +95,7 @@ export default {
      */
     async postUser(user) {
       try {
-        const response = await fetch("http://idleback-production.up.railway.app/api/V1/users", {
+        const response = await fetch("https://idleback-production.up.railway.app/api/V1/users", {
           method: "POST",
           body: JSON.stringify(user),
           headers: { 'Content-Type': 'application/json; charset=utf-8' }         
