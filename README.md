@@ -1,11 +1,11 @@
-# Digimon Information
+# IdleDev
 
 [![Desarrollo Web en Entorno Cliente](https://img.shields.io/badge/Asignatura-DWEC-blue?style=for-the-badge)](https://iesrafaelalberti.es/c-f-g-s-desarrollo-de-aplicaciones-web/)
 
 ![Logo](/src/assets/idledev-logo.png)
 
 [![Hecho con Visual Studio Code](https://badges.aleen42.com/src/visual_studio_code.svg)](https://code.visualstudio.com/)
-[![Vue.js](https://img.shields.io/badge/vuejs-%2335495e.svg?style=for-the-badge&logo=vuedotjs&logoColor=%234FC08D)
+[![Vue.js](https://img.shields.io/badge/vuejs-%2335495e.svg?style=for-the-badge&logo=vuedotjs&logoColor=%234FC08D)](https://vuejs.org/)
 
 Primera versión del juego idle IdleDev en el que irás desbloqueando tecnologías a medida que vas consiguiendo dinero.
 
