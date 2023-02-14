@@ -19,7 +19,8 @@
         <p v-if="passwordConfirmError" class="error-message">Las contraseñas no coinciden</p>
         <p class="toLoginQuestion">¿Ya tienes una cuenta?</p>
         <RouterLink to="/login" class="toLogin">Ve al login</RouterLink>
-        <button type="submit" class="register-submit">Enviar</button>
+        <button v-if="!loading" type="submit" class="register-submit">Enviar</button>
+        <button v-if="loading" type="submit" class="register-submit">Enviar</button>
       </form>
     </section>
     <Modal v-if="submitted" msg="Registro exitoso, haz login de comenzar tu viaje" buttonMsg="Entrar" redirect="/login"
@@ -49,6 +50,7 @@ import sha1 from '@/utils/hash1.js'
  * @vue-data {Boolean} [passwordError = false] - Controla cuando aparece el error de contraseña
  * @vue-data {Boolean} [passwordConfirmError = false] - Controla cuando aparece el error de confirmación de contraseña
  * @vue-data {Boolean} [submitted = false] - Controla cuando se hace submit en el formulario
+ * @vue-data {Boolean}[loading = false] - Maneja el texto del boton de submit del formulario durante la carga de la API
  * @vue-data {String} [usernameRegexp = new RegExp(/^[\S]{3,20}$/)] - Regex para validar nombre de usuario
  * @vue-data {String} [emailRegexp = new RegExp(/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/)] - Regex para validar el email
  * @vue-data {String} [passwordRegexp = new RegExp(/^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{8,16}$/)]  - Regex para validar la contraseña
@@ -71,6 +73,7 @@ export default {
       passwordError: false,
       passwordConfirmError: false,
       submitted: false,
+      loading: false,
       usernameRegexp: new RegExp(/^[\S]{3,20}$/),
       emailRegexp: new RegExp(/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/),
       passwordRegexp: new RegExp(/^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{8,16}$/)
@@ -83,8 +86,7 @@ export default {
     async getAllUsers() {
       try {
         const response = await fetch('https://idle-dev-apirest.onrender.com/api/V1/users');
-        this.users = await response.json();
-        console.log(response)
+        this.users = await response.json();        
       } catch (error) {
         console.error("Error");
       }
@@ -95,12 +97,14 @@ export default {
      */
     async postUser(user) {
       try {
+        this.loading = true;
         const response = await fetch("https://idle-dev-apirest.onrender.com/api/V1/users", {
           method: "POST",
           body: JSON.stringify(user),
           headers: { 'Content-Type': 'application/json; charset=utf-8' }         
         });
         const createdUser = await response.json();
+        this.loading = false;
         this.users = [...this.users, createdUser]
       } catch (error) {
         console.log("Error")

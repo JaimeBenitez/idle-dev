@@ -20,10 +20,17 @@
       </section>
       <button class="computer-button" @click="handleClicks"><img :class="bounce" src="@/assets/ordenador.png"
           alt="click me" /></button>
-      <button class="button save-button" @click="saveData">Guardar</button>
+      <button v-if="!saving" class="button save-button" @click="saveData">Guardar</button>
+      <button v-if="saving" class="button save-button" @click="saveData">Guardando...</button>
     </section>
     <Modal v-if="modalmsg != ''" :msg="modalmsg" buttonMsg="Continuar" textClass="modal-game-message" :isGame=true
       @close="handleClose" />
+      <!-- Modal que se mostrará mientras cargan los datos de partida -->
+    <section v-if="loading" class="modal">
+        <div class="modal-container">
+            <p class="modal-message">Cargando partida</p>            
+        </div>
+    </section>
   </div>
 </template>
 
@@ -54,6 +61,8 @@ import Modal from './modal.vue'
  * @vue-data {Number} [moneyPerClick = 0.1] - Establece la generación de dinero por click
  * @vue-data {String} [bounce = "principal-pc"] - Establece el cambio de clase necesaria para la animación de rebote del pc
  * @vue-data {String} [modalMsg = ''] - Establece el mensaje que se mostrará en el modal. Tambien sirve para controlar cuando este aparece y desaparece
+ * @vue-data {Boolean} [loading = false] - Controla lo que se mostrará mientras cargan los datos de la api
+ * @vue-data {Boolean} [saving = false] - Controla lo que se mostrará mientras se guardan los datos en la api
  * @vue-data {Array<Object>} techs - Contiene los datos de las diferentes tecnologías. Registra los siguientes campos: <br>
  * <strong>id</strong> - Id del lenguaje <br>
  * <strong>name</strong> - Nombre del lenguaje <br>
@@ -90,6 +99,8 @@ export default {
       moneyPerClick: 0.1,
       bounce: "principal-pc",
       modalmsg: '',
+      loading: false,
+      saving: false,
       techs: [
         {
           "id": 1,
@@ -212,9 +223,11 @@ export default {
     async getData() {
       const user = localStorage.getItem("user")
       try {
+        this.loading = true
         const response = await fetch(`https://idle-dev-apirest.onrender.com/api/V1/gameData/${user}`)
 
         this.userData = await response.json()
+        this.loading = false
         //Seteamos las variables que necesitamos con la información de la api
 
         this.principalMoney = this.userData.principalMoney
@@ -262,13 +275,14 @@ export default {
           "PHPUnlocked": this.techs[5].unlocked,
         }
         try {
+          this.loading = true
           const response = await fetch(`https://idle-dev-apirest.onrender.com/api/V1/gameData`, {
             method: "POST",
             body: JSON.stringify(userData),
             headers: { 'Content-type': 'application/json; charset=UTF-8' },            
           });
           const createdUser = await response.json()
-
+          this.loading = false;
           const createdKeys = Object.keys(createdUser);
           const inputKeys = Object.keys(userData);
 
@@ -384,6 +398,7 @@ export default {
       }
 
       try {
+        this.saving = true
         const response = await fetch(`https://idle-dev-apirest.onrender.com/api/V1/gameData/${userData.playerName}`, {
           method: "PUT",
           body: JSON.stringify(userData),
@@ -391,7 +406,7 @@ export default {
         })
 
         const updatedUser = await response.json();
-
+        this.saving = false
         //Como no podemos comparar directamente dos objetos usaremos sus keys para hacer las comprobaciones
         const updatedKeys = Object.keys(updatedUser);
         const inputKeys = Object.keys(userData);

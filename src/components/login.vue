@@ -9,7 +9,8 @@
           <p v-if="loginError" class="error-message username-error">El usuario introducido o la contraseña no es correcta</p>        
           <p class="toRegisterQuestion">¿Aun no tienes una cuenta?</p>
           <RouterLink to="/register" class="toRegister">Registrate</RouterLink>   
-          <button type="submit" class="login-submit">Entrar</button>           
+          <button v-if="!loading" type="submit" class="login-submit">Entrar</button>
+          <button v-if="loading" type="submit" class="login-submit">Cargando...</button>             
         </form>
       </section>
       <Modal v-if="submitted" :msg='modalMsg' buttonMsg="Entrar" redirect="/game" :isGame=false />
@@ -29,6 +30,7 @@
    * @vue-data {Object}[user = {}] - Guardará los datos del usuario actual
    * @vue-data {Boolean}[loginError = false] - Maneja la aparición de los mensajes de error
    * @vue-data {Boolean}[submitted = false] - Maneja el submit del formulario
+   * @vue-data {Boolean}[loading = false] - Maneja el texto del botón de submit cuando está cargando
    * @vue-data {String}[username = ''] - Toma el valor del input de nombre de usuario
    * @vue-data {String}[password = ''] - Toma el valor del input de contraseña
    * @vue-computed {String} ModalMsg - Mensaje que mostrará el modal al loguearte
@@ -44,6 +46,7 @@
         user: {},        
         loginError: false,
         submitted: false,
+        loading: false,
         username: '',
         password: '',
       }
@@ -61,8 +64,10 @@
        */
       async checkUser(username,password){
         try{
+          this.loading = true;
           const response = await fetch(`https://idle-dev-apirest.onrender.com/api/V1/users/${username}`)
           this.user = await response.json();
+          this.loading = false;
           //Comprobamos si el usuario que hemos buscado existe en la base de datos y si los datos introducidos son correctos
           if(this.user.username == username && this.user.password == sha1(password)){
             localStorage.setItem("user",username)
