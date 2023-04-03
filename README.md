@@ -21,7 +21,9 @@ Primera versión del juego idle IdleDev en el que irás desbloqueando tecnologí
 
 ## Documentación
 
-Este proyecto se encuentra documentado con JSDoc. 
+Este proyecto se encuentra documentado con JSDoc.
+
+También dispone de una wiki con un diario de desarrollo que puedes encontrar [aquí](https://github.com/JaimeBenitez/idle-dev/wiki)
 
 ## Despliegue
 
