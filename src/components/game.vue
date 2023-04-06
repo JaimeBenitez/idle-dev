@@ -44,12 +44,12 @@
 import Header from './header.vue'
 import MultiplierButton from './multiplier-button.vue'
 import TechButton from './tech-button.vue'
-// import HTML from '@/assets/html.svg'
-// import CSS from '@/assets/css.svg'
-// import JS from '@/assets/js.svg'
-// import Node from '@/assets/nodejs.svg'
-// import Java from '@/assets/java.svg'
-// import PHP from '@/assets/php.svg'
+import HTML from '@/assets/html.svg'
+import CSS from '@/assets/css.svg'
+import JS from '@/assets/js.svg'
+import Node from '@/assets/nodejs.svg'
+import Java from '@/assets/java.svg'
+import PHP from '@/assets/php.svg'
 import formatNumber from '@/utils/formatters'
 import Modal from './modal.vue'
 /**
@@ -94,6 +94,7 @@ export default {
       userData: {},
       allUsersData: [],
       userLanguages: [],
+      logos: [HTML,CSS,JS,Node,Java,PHP],
       quantityToBuy: 1,
       principalMoney: 0,
       moneyPerSecond: 0,
@@ -176,7 +177,7 @@ export default {
           this.techs.push({
             "id" : techs[i].id,
             "name" : techs[i].nombre,
-            "logo" : techs[i].logo,
+            "logo" : this.logos[i],
             "initialCost" : techs[i].dinero_desbloqueo,
             "profitPerUnit" : techs[i].beneficio_base,
             "growthRatio": techs[i].ratio_incremento,
