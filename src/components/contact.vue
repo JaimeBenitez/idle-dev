@@ -2,14 +2,17 @@
   <Header icon="arrow-back.svg" :isGame=false />
   <div class="contact">
     <section class="contact-container">
-      <form class="contact-form" v-on:submit.prevent="submit">
+      <form class="contact-form" ref="form" v-on:submit.prevent="submit">
         <h1 class="contact-title">Contacto</h1>
-        <textarea cols="30" rows="5" class="textarea contact-input" v-model="textArea" v-on:blur="validTextArea"
+        <textarea cols="30" rows="5" name="message" class="textarea contact-input" v-model="textArea" v-on:blur="validTextArea"
           placeholder="Escríbenos para ayudarnos a mejorar"></textarea>
         <p v-if="textAreaError" class="error-message">Escribe al menos 3 palabras</p>
-        <input type="email" class="contact-email contact-input" v-model="email" v-on:blur="validEmail"
+        <input type="text" name="user_name" class="contact-name contact-input" v-model="name" v-on:blur="validName"
+          placeholder="Nombre de usuario">
+        <p v-if="nameError" class="error-message">El nombre debe tener entre 3 y 20 caracteres.</p>
+        <input type="email" name="user_email" class="contact-email contact-input" v-model="email" v-on:blur="validEmail"
           placeholder="Correo electrónico">
-        <p v-if="emailError" class="error-message">El email no es valido.</p>
+        <p v-if="emailError" class="error-message">Introduce un email valido.</p>
         <button type="submit" class="contact-submit">Enviar</button>
       </form>
     </section>
@@ -29,6 +32,7 @@
 import Header from './header.vue'
 import Modal from './modal.vue'
 import validator from '@/utils/validator'
+import emailjs from '@emailjs/browser'
 /**
  * @vue-data {Boolean} [textAreaError = false]  - Establece si el error en el campo del textArea se muestra o no
  * @vue-data {Boolean} [emailError = false] - Establece si el error en el campo email se muestra o no
@@ -48,11 +52,15 @@ export default {
     return {
       textAreaError: false,
       emailError: false,
+      nameError: false,
       textArea: "",
       email: "",
+      name: "",
       submitted: false,
       suggestionRegexp: new RegExp(/^[\w',]+\s[\w',]+\s[\w',]+/gm),
-      emailRegexp: new RegExp(/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/)
+      emailRegexp: new RegExp(/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/),
+      nameRegexp: new RegExp(/^[\S]{3,20}$/)
+
     }
   },
   methods: {
@@ -71,11 +79,24 @@ export default {
         Luego tendrá una @, luego otro set igual que en la primera parte, un punto y finalmente otro set del mismo tipo*/
       this.emailError = validator(this.emailRegexp, this.email)
     },
+    /**
+     * Función que valida el nombre de usuario
+     */
+     validName() {
+      //El usuario admitirá cualquier caracter pero tendrá entre 3 y 20 caracteres     
+      this.nameError = validator(this.nameRegexp, this.name)
+    },
     /**    
-     * Funcion que controla que cuando todo sea válido, se haga el submit
+     * Funcion que controla que cuando todo sea válido, se haga el submit y se envie un mensaje a mi correo
      */
     submit() {
-      if (!this.textAreaError && !this.emailError) {
+      if (!this.textAreaError && !this.emailError && !this.nameError) {
+        emailjs.sendForm('service_eifxgyp', 'template_3ugrigt', this.$refs.form, 'LUxtrFSYPmdgvJjpP')
+        .then((result) => {
+            console.log('SUCCESS!', result.text);
+        }, (error) => {
+            console.log('FAILED...', error.text);
+        });
         this.submitted = true;
       }
     }
@@ -87,6 +108,8 @@ export default {
     },
     email: function () {
     },
+    name: function () {
+    }
   }
 }
 </script>

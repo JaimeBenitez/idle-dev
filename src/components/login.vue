@@ -65,12 +65,12 @@
       async checkUser(username,password){
         try{
           this.loading = true;
-          const response = await fetch(`https://idle-dev-apirest.onrender.com/api/V1/users/${username}`)
+          const response = await fetch(`http://localhost:8080/usuario/${username}`)
           this.user = await response.json();
           this.loading = false;
           //Comprobamos si el usuario que hemos buscado existe en la base de datos y si los datos introducidos son correctos
-          if(this.user.username == username && this.user.password == sha1(password)){
-            localStorage.setItem("user",username)
+          if(this.user.nombre == username && this.user.contrasenia == sha1(password)){
+            localStorage.setItem("user",this.user.partidaId)
             this.submitted = true;
           }else{
             this.loginError = true

@@ -44,12 +44,12 @@
 import Header from './header.vue'
 import MultiplierButton from './multiplier-button.vue'
 import TechButton from './tech-button.vue'
-import HTML from '@/assets/html.svg'
-import CSS from '@/assets/css.svg'
-import JS from '@/assets/js.svg'
-import Node from '@/assets/nodejs.svg'
-import Java from '@/assets/java.svg'
-import PHP from '@/assets/php.svg'
+// import HTML from '@/assets/html.svg'
+// import CSS from '@/assets/css.svg'
+// import JS from '@/assets/js.svg'
+// import Node from '@/assets/nodejs.svg'
+// import Java from '@/assets/java.svg'
+// import PHP from '@/assets/php.svg'
 import formatNumber from '@/utils/formatters'
 import Modal from './modal.vue'
 /**
@@ -93,6 +93,7 @@ export default {
     return {
       userData: {},
       allUsersData: [],
+      userLanguages: [],
       quantityToBuy: 1,
       principalMoney: 0,
       moneyPerSecond: 0,
@@ -101,93 +102,7 @@ export default {
       modalmsg: '',
       loading: false,
       saving: false,
-      techs: [
-        {
-          "id": 1,
-          "name": "Html",
-          "logo": HTML,
-          "initialCost": 3.7,
-          "profitPerUnit": 1.67,
-          "growthRatio": 1.07,
-          "minMoneyToUnlock": 3.7,
-          "unlocked": false,
-          "quantityOwned": 0,
-          "currentCost": 3.7,
-          "totalProfit": 0,
-          "msg": "HTML es el lenguaje esqueleto de cualquier web, con el podrás comenzar a construir la estructura de una web"
-        },
-        {
-          "id": 2,
-          "name": "Css",
-          "logo": CSS,
-          "initialCost": 60,
-          "profitPerUnit": 20,
-          "growthRatio": 1.15,
-          "minMoneyToUnlock": 60,
-          "unlocked": false,
-          "quantityOwned": 0,
-          "currentCost": 60,
-          "totalProfit": 0,
-          "msg": "CSS te permitirá dotar de estilos a tu web. Hazla brillar e impresiona a todo el mundo con tus animaciones"
-        },
-        {
-          "id": 3,
-          "name": "JavaScript",
-          "logo": JS,
-          "initialCost": 720,
-          "profitPerUnit": 90,
-          "growthRatio": 1.14,
-          "minMoneyToUnlock": 720,
-          "unlocked": false,
-          "quantityOwned": 0,
-          "currentCost": 720,
-          "totalProfit": 0,
-          "msg": "JS es el nucleo duro de toda página web. Con el podras dotar a tu web de interactividad."
-        },
-        {
-          "id": 4,
-          "name": "NodeJS",
-          "logo": Node,
-          "initialCost": 8640,
-          "profitPerUnit": 360,
-          "growthRatio": 1.13,
-          "minMoneyToUnlock": 8640,
-          "unlocked": false,
-          "quantityOwned": 0,
-          "currentCost": 8640,
-          "totalProfit": 0,
-          "msg": "¿Por que no montar nuestro servidor usando también JS? Node lo hará posible"
-        },
-        {
-          "id": 5,
-          "name": "Java",
-          "logo": Java,
-          "initialCost": 103680,
-          "profitPerUnit": 2160,
-          "growthRatio": 1.12,
-          "minMoneyToUnlock": 103680,
-          "unlocked": false,
-          "quantityOwned": 0,
-          "currentCost": 103680,
-          "totalProfit": 0,
-          "msg": "Java fue durante mucho tiempo uno de los lenguajes mas usados del mundo y aún hoy se usa mucho. Piensa, hasta minecraft está hecho en Java"
-        },
-        {
-          "id": 6,
-          "name": "PHP",
-          "logo": PHP,
-          "initialCost": 1244160,
-          "profitPerUnit": 6480,
-          "growthRatio": 1.11,
-          "minMoneyToUnlock": 1244160,
-          "unlocked": false,
-          "quantityOwned": 0,
-          "currentCost": 1244160,
-          "totalProfit": 0,
-          "msg": "PHP es un lenguaje ampliamente usado en web desde la parte del servidor ¿Te gusta concatenar con un punto? Con PHP tienes la oportunidad"
-        },
-
-      ]
+      techs: []
     }
   },
   computed: {
@@ -211,41 +126,90 @@ export default {
      */
     async getAllUsersData() {
       try {
-        const response = await fetch(`https://idle-dev-apirest.onrender.com/api/V1/gameData`)
+        const response = await fetch(`http://localhost:8080/clasificacion`)
         this.allUsersData = await response.json();
       } catch (error) {
         this.modalmsg = "Ha ocurrido un error y los datos no se han cargado"
       }
     },
     /**
-     * Función que coge de la API los datos de juego del usuario registrado. En caso de no existir los crea con los parametros base
+     * Funcíon que coge de la API los datos de los lenguajes de la partida actual
+     */
+     async getLanguages(user) {
+      try {
+        const response = await fetch(`http://localhost:8080/lenguajes`)
+        const techs = await response.json();
+        try {
+          //Cogemos los datos sobre los lenguajes que tiene la partida del jugador
+          const userDataResponse = await fetch(`http://localhost:8080/partida/${user}/lenguajes`)
+          if (userDataResponse.status == 200) {
+            //Si nos da un OK seteamos los datos de los lenguajes del jugador
+            this.userLanguages =  await userDataResponse.json();   
+                  
+          }else{
+            //Si no hay relaciones creadas las crea en ese momento, hay que hacerlo con el Status ya que el catch no considera
+            //el error 404 como un error
+            let userLanguage = {}
+            for (let i = 0; i < techs.length; i++){
+              try{
+                userLanguage = {
+                  "lenguajeId": techs[i].id,
+                  "partidaId": localStorage.getItem("user")
+                }
+                let response = await fetch(`http://localhost:8080/lenguaje-partida`, {
+                method: "POST",
+                body: JSON.stringify(userLanguage),
+                headers: { 'Content-type': 'application/json; charset=UTF-8' },            
+                }) 
+                let newUserLanguage = await response.json();
+                this.userLanguages.push(newUserLanguage);
+              } catch(error) {
+                this.modalmsg = "Ha ocurrido un error y los datos de lenguajes del usuario no se han cargado"
+              }
+            }
+          }
+        } catch (error) {
+          this.modalmsg = "Ha ocurrido un error y los datos de lenguajes no se guardaron correctamente"
+        }
+        //Si todo va bien vamos creando la lista definitiva de tecnologias con los datos de ambas tablas
+        for (let i = 0; i < techs.length; i++){
+          this.techs.push({
+            "id" : techs[i].id,
+            "name" : techs[i].nombre,
+            "logo" : techs[i].logo,
+            "initialCost" : techs[i].dinero_desbloqueo,
+            "profitPerUnit" : techs[i].beneficio_base,
+            "growthRatio": techs[i].ratio_incremento,
+            "minMoneyToUnlock" : techs[i].dinero_desbloqueo,
+            "unlocked" : this.userLanguages[i].desbloqueado,
+            "quantityOwned" : this.userLanguages[i].cantidad,
+            "currentCost": 0,
+            "totalProfit": 0,
+            "msg": techs[i].mensaje
+          })
+        }
+      } catch (error) {
+        this.modalmsg = "Ha ocurrido un error y los datos de los lenguajes no se han cargado"
+      }
+    },
+    /**
+     * Función que coge de la API los datos de juego del usuario registrado. 
      */
     async getData() {
       const user = localStorage.getItem("user")
       try {
         this.loading = true
-        const response = await fetch(`https://idle-dev-apirest.onrender.com/api/V1/gameData/${user}`)
-
-        this.userData = await response.json()
-        this.loading = false
-        //Seteamos las variables que necesitamos con la información de la api
-
-        this.principalMoney = this.userData.principalMoney
-        this.techs[0].quantityOwned = this.userData.HTMLAmount
-        this.techs[0].unlocked = this.userData.HTMLUnlocked
-        this.techs[1].quantityOwned = this.userData.CSSAmount
-        this.techs[1].unlocked = this.userData.CSSUnlocked
-        this.techs[2].quantityOwned = this.userData.JSAmount
-        this.techs[2].unlocked = this.userData.JSUnlocked
-        this.techs[3].quantityOwned = this.userData.NodeAmount
-        this.techs[3].unlocked = this.userData.NodeUnlocked
-        this.techs[4].quantityOwned = this.userData.JavaAmount
-        this.techs[4].unlocked = this.userData.JavaUnlocked
-        this.techs[4].quantityOwned = this.userData.PHPAmount
-        this.techs[4].unlocked = this.userData.PHPUnlocked
+        const gameResponse = await fetch(`http://localhost:8080/partida/${user}`)        
+        this.userData = await gameResponse.json()
+        
+        //Seteamos el dinero con la información de la api
+        this.principalMoney = this.userData.dinero
         this.modalmsg = ''
+        //Como necesitamos la lista que genera la función, usamos await para esperar a que esta termine antes del for
+        await this.getLanguages(user)
         //Volvemos a hacer los calculos necesarios usando la info de la api        
-        for (let i = 0; i < this.techs.length; i++) {
+        for(let i = 0; i < this.techs.length; i++){
+          
           let tech = this.techs[i]
           tech.currentCost = tech.initialCost * ((tech.growthRatio ** tech.quantityOwned * ((tech.growthRatio ** this.quantityToBuy) - 1)) / (tech.growthRatio - 1))
           tech.totalProfit = tech.profitPerUnit * tech.quantityOwned
@@ -254,52 +218,13 @@ export default {
         if (this.moneyPerSecond) {
           this.moneyPerClick = this.moneyPerSecond * 0.1
         }
-
+        this.loading = false
+        if (this.principalMoney == 0){
+          this.modalmsg = "Bienvenido al fantástico mundo de la programación. Te espera un gran viaje a traves de la historia de la informática. Haz click en el ordenador para ganar beneficios y empezar a comprar las tecnologías que irás aprendiendo"
+        }
+        
       } catch (error) {
-        //Si no encuentra datos de partida simplemente se considera que inicia una nueva partida y se crean los datos de partida,
-        //haremos las mismas comprobaciones que con el PUT
-        const userData = {
-          "playerName": localStorage.getItem("user"),
-          "principalMoney": this.principalMoney,
-          "HTMLAmount": this.techs[0].quantityOwned,
-          "HTMLUnlocked": this.techs[0].unlocked,
-          "CSSAmount": this.techs[1].quantityOwned,
-          "CSSUnlocked": this.techs[1].unlocked,
-          "JSAmount": this.techs[2].quantityOwned,
-          "JSUnlocked": this.techs[2].unlocked,
-          "NodeAmount": this.techs[3].quantityOwned,
-          "NodeUnlocked": this.techs[3].unlocked,
-          "JavaAmount": this.techs[4].quantityOwned,
-          "JavaUnlocked": this.techs[4].unlocked,
-          "PHPAmount": this.techs[5].quantityOwned,
-          "PHPUnlocked": this.techs[5].unlocked,
-        }
-        try {
-          this.loading = true
-          const response = await fetch(`https://idle-dev-apirest.onrender.com/api/V1/gameData`, {
-            method: "POST",
-            body: JSON.stringify(userData),
-            headers: { 'Content-type': 'application/json; charset=UTF-8' },            
-          });
-          const createdUser = await response.json()
-          this.loading = false;
-          const createdKeys = Object.keys(createdUser);
-          const inputKeys = Object.keys(userData);
-
-          if (createdKeys.length !== inputKeys.length) {
-            this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"
-            return false
-          }
-          for (let key of createdKeys) {
-            if (createdUser[key] !== userData[key]) {
-              this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"
-              return false
-            }
-          }
-        } catch (error) {
-          this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"
-        }
-        this.modalmsg = "Bienvenido al fantástico mundo de la programación. Te espera un gran viaje a traves de la historia de la informática. Haz click en el ordenador para ganar beneficios y empezar a comprar las tecnologías que irás aprendiendo"
+        this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"        
       }
     },
     /**
@@ -379,48 +304,55 @@ export default {
      * Función que guarda la partida en la base de datos
      */
     async saveData() {
+      const user = localStorage.getItem("user")
       //Cogemos los datos que queremos guardar
-      const userData = {
-        "playerName": localStorage.getItem("user"),
-        "principalMoney": this.principalMoney,
-        "HTMLAmount": this.techs[0].quantityOwned,
-        "HTMLUnlocked": this.techs[0].unlocked,
-        "CSSAmount": this.techs[1].quantityOwned,
-        "CSSUnlocked": this.techs[1].unlocked,
-        "JSAmount": this.techs[2].quantityOwned,
-        "JSUnlocked": this.techs[2].unlocked,
-        "NodeAmount": this.techs[3].quantityOwned,
-        "NodeUnlocked": this.techs[3].unlocked,
-        "JavaAmount": this.techs[4].quantityOwned,
-        "JavaUnlocked": this.techs[4].unlocked,
-        "PHPAmount": this.techs[5].quantityOwned,
-        "PHPUnlocked": this.techs[5].unlocked,
+      const userMoney= {
+        "dinero": this.principalMoney
       }
-
+      
+      //Guardamos el dinero principal
       try {
         this.saving = true
-        const response = await fetch(`https://idle-dev-apirest.onrender.com/api/V1/gameData/${userData.playerName}`, {
+        await fetch(`http://localhost:8080/partida/${user}`, {
           method: "PUT",
-          body: JSON.stringify(userData),
+          body: JSON.stringify(userMoney),
           headers: { 'Content-type': 'application/json; charset=UTF-8' },
         })
-
-        const updatedUser = await response.json();
-        this.saving = false
-        //Como no podemos comparar directamente dos objetos usaremos sus keys para hacer las comprobaciones
-        const updatedKeys = Object.keys(updatedUser);
-        const inputKeys = Object.keys(userData);
-
-        if (updatedKeys.length !== inputKeys.length) {
-          this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"
-          return false
-        }
-        for (let key of updatedKeys) {
-          if (updatedUser[key] !== userData[key]) {
-            this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"
-            return false
+        //Vamos seteando los cambios en los lenguajes de la partida
+        for(let i=0; i< this.userLanguages.length; i++) {
+          // Cogemos la id de la relación concreta para poder hacer la llamada
+          let dataId = this.userLanguages[i].id
+          let newData = {
+            "desbloqueado" : this.techs[i].unlocked,
+            "cantidad": this.techs[i].quantityOwned
+          }
+          try{
+            await fetch(`http://localhost:8080/lenguaje-partida/${dataId}`, {
+            method: "PUT",
+            body: JSON.stringify(newData),
+            headers: { 'Content-type': 'application/json; charset=UTF-8' },
+          })
+          }
+          catch{
+            this.modalmsg = "Ha ocurrido un error y los datos de lenguajes no se guardaron correctamente"
           }
         }
+        // const updatedUser = await response.json();
+        this.saving = false
+        // //Como no podemos comparar directamente dos objetos usaremos sus keys para hacer las comprobaciones
+        // const updatedKeys = Object.keys(updatedUser);
+        // const inputKeys = Object.keys(userMoney);
+
+        // if (updatedKeys.length !== inputKeys.length) {
+        //   this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"
+        //   return false
+        // }
+        // for (let key of updatedKeys) {
+        //   if (updatedUser[key] !== userMoney[key]) {
+        //     this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"
+        //     return false
+        //   }
+        // }
         this.modalmsg = "Partida guardada correctamente"
       } catch (error) {
         this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"
@@ -439,7 +371,9 @@ export default {
     this.redirect();
     this.setMoneyPerSecondInterval();
     this.getAllUsersData()
+    
     this.getData()
+    
   }
 }
 </script>

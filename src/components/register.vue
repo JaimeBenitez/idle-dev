@@ -64,6 +64,7 @@ export default {
   data() {
     return {
       users: [],
+      games: [],
       username: "",
       email: "",
       password: "",
@@ -85,10 +86,21 @@ export default {
      */
     async getAllUsers() {
       try {
-        const response = await fetch('https://idle-dev-apirest.onrender.com/api/V1/users');
-        this.users = await response.json();        
+        const response = await fetch('http://localhost:8080/usuarios');
+        this.users = await response.json();       
       } catch (error) {
         console.error("Error");
+      }
+    },
+    /**
+     * Función que saca de la api todas las partidas para poder registrar nuevas
+     */
+    async getAllGames() {
+      try {
+        const response = await fetch('http://localhost:8080/clasificacion');
+        this.games = await response.json();        
+      } catch (error) {
+        console.error(error);
       }
     },
     /**
@@ -98,7 +110,7 @@ export default {
     async postUser(user) {
       try {
         this.loading = true;
-        const response = await fetch("https://idle-dev-apirest.onrender.com/api/V1/users", {
+        const response = await fetch("http://localhost:8080/usuario", {
           method: "POST",
           body: JSON.stringify(user),
           headers: { 'Content-Type': 'application/json; charset=utf-8' }         
@@ -107,7 +119,24 @@ export default {
         this.loading = false;
         this.users = [...this.users, createdUser]
       } catch (error) {
-        console.log("Error")
+        console.log(error)
+      }
+    },
+    /**
+     * Función que registra una nueva partida en la base de datos
+     */
+    async postGame() {
+      try {
+        this.loading = true;
+        const response = await fetch("http://localhost:8080/partida", {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json; charset=utf-8' }         
+        });
+        const createdGame = await response.json();
+        this.loading = false;
+        this.games = [...this.games, createdGame]
+      } catch (error) {
+        console.log(error)
       }
     },
     /**
@@ -148,12 +177,16 @@ export default {
      */
     submit() {
       if (!this.usernameError && !this.emailError && !this.passwordError && !this.passwordConfirmError) {
+        this.postGame()
+        //Sacamos la id del ultimo juego creado para asignarselo al usuario
+        let game = this.games[this.games.length - 1].id
         const user = {
-          "username": this.username,
+          "partidaId" : game,
+          "nombre": this.username,
           "email": this.email,
-          "password": sha1(this.password)
+          "contrasenia": sha1(this.password),
+          "avatar": null
         }
-
         this.postUser(user)
         this.submitted = true;
       }
@@ -178,8 +211,9 @@ export default {
     },
   },
   mounted() {
-    this.redirect()
+    this.redirect();
     this.getAllUsers();
+    this.getAllGames();
   }
 }
 </script>

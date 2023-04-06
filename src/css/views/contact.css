@@ -45,12 +45,16 @@
 }
 
 .textarea {
-    height: 12rem;
+    height: 6rem;
     padding: 15px;
     resize: none;
 }
 
 .contact-email {
+    height: 3rem;
+    padding-left: 15px;
+}
+.contact-name {
     height: 3rem;
     padding-left: 15px;
 }
