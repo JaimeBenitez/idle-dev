@@ -1,6 +1,6 @@
 <template>
   <header>
-    <span class="version">V 0.1</span>
+    <span class="version">V 0.2</span>
     <RouterLink to="/"><img src="../assets/idledev-logo.png" alt="logo" class="logo-header"></RouterLink>
     <nav class="header-nav">
       <RouterLink to="/contact" class="header-button" v-if="isGame"><img :src="require('@/assets/contact.svg')"

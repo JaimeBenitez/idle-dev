@@ -4,13 +4,13 @@
     justify-content: space-between;
 }
 
-.tech-container {
+.principal-container {
     margin-left: 8rem;
     background-color: var(--secondary-color);
     min-height: 575px;
     width: 550px;
-    height: 86vh;
-    border-radius: 20px;
+    height: 70vh;
+    border-radius: 0px 0px 20px 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -31,7 +31,7 @@
     width: 25%;
     height: 30px
 }
-.principal{
+.principal-resources{
     display: flex;
     flex-direction: column;
     align-items: flex-end;   

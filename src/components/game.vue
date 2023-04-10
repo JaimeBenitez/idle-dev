@@ -1,17 +1,20 @@
 <template>
   <Header icon="logout.svg" :isGame=true />
   <div class="game">
-    <section class="tech-container">
-      <nav class="multipliers-nav">
-        <MultiplierButton text="x1" v-on:click="setQuantityToBuy(1)" />
-        <MultiplierButton text="x10" v-on:click="setQuantityToBuy(10)" />
-        <MultiplierButton text="x100" v-on:click="setQuantityToBuy(100)" />
-      </nav>
-      <TechButton v-for="tech in activeTechs" :key="tech.id" :id="tech.id" :logo="tech.logo" :techName="tech.name"
-        :totalProfit="tech.totalProfit" :quantity="tech.quantityOwned" :quantityToBuy="quantityToBuy"
-        :currentCost="tech.currentCost" @buy="handleBuy" :canBuy="tech.currentCost <= principalMoney" />
-    </section>
-    <section class="principal">
+    <div class="principal-menu">
+      <TabNav />
+      <div class="principal-container">      
+        <nav class="multipliers-nav">
+          <MultiplierButton text="x1" v-on:click="setQuantityToBuy(1)" />
+          <MultiplierButton text="x10" v-on:click="setQuantityToBuy(10)" />
+          <MultiplierButton text="x100" v-on:click="setQuantityToBuy(100)" />
+        </nav>
+        <TechButton v-for="tech in activeTechs" :key="tech.id" :id="tech.id" :logo="tech.logo" :techName="tech.name"
+          :totalProfit="tech.totalProfit" :quantity="tech.quantityOwned" :quantityToBuy="quantityToBuy"
+          :currentCost="tech.currentCost" @buy="handleBuy" :canBuy="tech.currentCost <= principalMoney" />
+      </div>
+    </div>
+    <section class="principal-resources">
       <section class="principal-score">
         <span class="money">{{ formattedPrincipalMoney }}</span>
         <span class="generation">{{ formattedMoneyPerSecond }}</span>
@@ -52,6 +55,7 @@ import Java from '@/assets/java.svg'
 import PHP from '@/assets/php.svg'
 import formatNumber from '@/utils/formatters'
 import Modal from './modal.vue'
+import TabNav from './tabs-nav.vue'
 /**
  * @vue-data {Object} [userData = {}] -  Almacenara los datos de partida del usuario actual
  * @vue-data {Array<Object>} [allUsersData = []] -  Almacenara los datos de partida de todos los jugadores registrados, para poder guardar partida
@@ -88,6 +92,7 @@ export default {
     MultiplierButton,
     TechButton,
     Modal,
+    TabNav
   },
   data() {
     return {
@@ -338,22 +343,7 @@ export default {
             this.modalmsg = "Ha ocurrido un error y los datos de lenguajes no se guardaron correctamente"
           }
         }
-        // const updatedUser = await response.json();
         this.saving = false
-        // //Como no podemos comparar directamente dos objetos usaremos sus keys para hacer las comprobaciones
-        // const updatedKeys = Object.keys(updatedUser);
-        // const inputKeys = Object.keys(userMoney);
-
-        // if (updatedKeys.length !== inputKeys.length) {
-        //   this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"
-        //   return false
-        // }
-        // for (let key of updatedKeys) {
-        //   if (updatedUser[key] !== userMoney[key]) {
-        //     this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"
-        //     return false
-        //   }
-        // }
         this.modalmsg = "Partida guardada correctamente"
       } catch (error) {
         this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"
@@ -371,8 +361,7 @@ export default {
   mounted() {
     this.redirect();
     this.setMoneyPerSecondInterval();
-    this.getAllUsersData()
-    
+    this.getAllUsersData()  
     this.getData()
     
   }
