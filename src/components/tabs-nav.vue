@@ -37,15 +37,19 @@ import companies from "../assets/company.svg"
                 switch(activeTab){
                     case 1:
                         this.techActive = true
+                        this.$emit("tab1")
                         break
                     case 2:
                         this.employeesActive = true
+                        this.$emit("tab2")
                         break
                     case 3:
                         this.learningActive = true
+                        this.$emit("tab3")
                         break
                     case 4:
                         this.companiesActive = true
+                        this.$emit("tab4")
                         break
                 }
 

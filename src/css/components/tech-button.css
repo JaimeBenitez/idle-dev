@@ -5,6 +5,7 @@
     margin-top: 1.5rem;
     border-radius: 20px;
     padding: 5px;
+    margin: 10px;
     display: flex;
     justify-content: space-between;
 }

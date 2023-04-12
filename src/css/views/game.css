@@ -7,20 +7,20 @@
 .principal-container {
     margin-left: 8rem;
     background-color: var(--secondary-color);
-    min-height: 575px;
+    height: 550px;
     width: 550px;
-    height: 70vh;
     border-radius: 0px 0px 20px 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
-}
+} 
 
 .multipliers-nav {
     display: flex;
     justify-content: space-evenly;
     width: 100%;
-    margin-top: 1.5rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
 }
 
 .multiplier-button {
@@ -31,6 +31,22 @@
     width: 25%;
     height: 30px
 }
+
+.technologies_list{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    overflow: scroll;
+    scrollbar-width: none;
+    
+} 
+
+.technologies_list::-webkit-scrollbar{
+    display: none;
+}
+
 .principal-resources{
     display: flex;
     flex-direction: column;
@@ -39,11 +55,13 @@
     margin-right: 5rem
     
 }
+
 .principal-score{
     display: flex;
     align-items: flex-end;
     flex-direction: column;
 }
+
 .money {
     
     color: var(--text-color);
@@ -57,13 +75,13 @@
     font-family: var(--title-font);
     font-size: 1rem;
     float: right;
-    
-
 }
+
 .computer-button{
     background-color: transparent;
     cursor: pointer;
 }
+
 .principal-pc{
     display: block;
     width: 25rem;
@@ -74,6 +92,7 @@
 .animated{
     animation: bounce .5s alternate  ease-in;
 }
+
 .click{
     filter: var(--icon-color);
 }

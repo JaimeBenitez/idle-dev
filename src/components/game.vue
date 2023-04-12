@@ -2,17 +2,19 @@
   <Header icon="logout.svg" :isGame=true />
   <div class="game">
     <div class="principal-menu">
-      <TabNav />
+      <TabNav @tab1="handleTabs(1)" @tab2="handleTabs(2)" @tab3="handleTabs(3)" @tab4="handleTabs(4)" ></TabNav>
       <div class="principal-container">      
-        <nav class="multipliers-nav">
+        <nav v-if="actualTab == 1" class="multipliers-nav">
           <MultiplierButton text="x1" v-on:click="setQuantityToBuy(1)" />
           <MultiplierButton text="x10" v-on:click="setQuantityToBuy(10)" />
           <MultiplierButton text="x100" v-on:click="setQuantityToBuy(100)" />
         </nav>
-        <TechButton v-for="tech in activeTechs" :key="tech.id" :id="tech.id" :logo="tech.logo" :techName="tech.name"
-          :totalProfit="tech.totalProfit" :quantity="tech.quantityOwned" :quantityToBuy="quantityToBuy"
-          :currentCost="tech.currentCost" @buy="handleBuy" :canBuy="tech.currentCost <= principalMoney" />
-      </div>
+        <div v-if="actualTab == 1" class="technologies_list">
+          <TechButton v-for="tech in activeTechs" :key="tech.id" :id="tech.id" :logo="tech.logo" :techName="tech.name"
+            :totalProfit="tech.totalProfit" :quantity="tech.quantityOwned" :quantityToBuy="quantityToBuy"
+            :currentCost="tech.currentCost" @buy="handleBuy" :canBuy="tech.currentCost <= principalMoney" />
+        </div>
+      </div>      
     </div>
     <section class="principal-resources">
       <section class="principal-score">
@@ -99,6 +101,7 @@ export default {
       userData: {},
       allUsersData: [],
       userLanguages: [],
+      actualTab: 1,
       logos: [HTML,CSS,JS,Node,Java,PHP],
       quantityToBuy: 1,
       principalMoney: 0,
@@ -232,6 +235,12 @@ export default {
       } catch (error) {
         this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"        
       }
+    },
+    /**
+     * Función que gestiona el cambio de tabs
+     */
+     handleTabs(tab) {
+      this.actualTab = tab;
     },
     /**
      * Función que le dice a los modales cuando cerrarse
