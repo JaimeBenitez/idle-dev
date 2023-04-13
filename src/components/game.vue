@@ -14,6 +14,7 @@
             :totalProfit="tech.totalProfit" :quantity="tech.quantityOwned" :quantityToBuy="quantityToBuy"
             :currentCost="tech.currentCost" @buy="handleBuy" :canBuy="tech.currentCost <= principalMoney" />
         </div>
+
       </div>      
     </div>
     <section class="principal-resources">
@@ -58,6 +59,12 @@ import PHP from '@/assets/php.svg'
 import formatNumber from '@/utils/formatters'
 import Modal from './modal.vue'
 import TabNav from './tabs-nav.vue'
+import QuestionMark from '@/assets/question-mark.svg'
+import CompanyLvl1 from '@/assets/company-level1.svg'
+import CompanyLvl2 from '@/assets/company-level2.svg'
+import CompanyLvl3 from '@/assets/company-level3.svg'
+import CompanyLvl4 from '@/assets/company.svg'
+import CompanyLvl5 from '@/assets/company-level5.svg'
 /**
  * @vue-data {Object} [userData = {}] -  Almacenara los datos de partida del usuario actual
  * @vue-data {Array<Object>} [allUsersData = []] -  Almacenara los datos de partida de todos los jugadores registrados, para poder guardar partida
@@ -101,6 +108,9 @@ export default {
       userData: {},
       allUsersData: [],
       userLanguages: [],
+      userCompanies: [],
+      userWorkers: [],
+      workerSlots: 1,
       actualTab: 1,
       logos: [HTML,CSS,JS,Node,Java,PHP],
       quantityToBuy: 1,
@@ -111,7 +121,8 @@ export default {
       modalmsg: '',
       loading: false,
       saving: false,
-      techs: []
+      techs: [],
+      companies: []
     }
   },
   computed: {
@@ -202,6 +213,82 @@ export default {
       }
     },
     /**
+     * Funcíon que coge de la API los datos de los lenguajes de la partida actual
+     */
+     async getCompanies(user) {
+      try {
+        const response = await fetch(`http://localhost:8080/empresas`)
+        const companies = await response.json();
+        try {
+          //Cogemos los datos sobre las empresas que tiene la partida del jugador
+          const userDataResponse = await fetch(`http://localhost:8080/partida/${user}/empresas`)
+          if (userDataResponse.status == 200) {
+            //Si nos da un OK seteamos los datos de las empresas del jugador
+            this.userCompanies =  await userDataResponse.json();   
+                  
+          }else{
+            //Si no hay relaciones creadas las crea en ese momento, hay que hacerlo con el Status ya que el catch no considera
+            //el error 404 como un error
+            let userCompany = {}
+            for (let i = 0; i < companies.length; i++){
+              try{
+                userCompany = {
+                  "empresaId": companies[i].id,
+                  "partidaId": localStorage.getItem("user")
+                }
+                let response = await fetch(`http://localhost:8080/empresa-partida`, {
+                method: "POST",
+                body: JSON.stringify(userCompany),
+                headers: { 'Content-type': 'application/json; charset=UTF-8' },            
+                }) 
+                let newUserCompany = await response.json();
+                this.userCompanies.push(newUserCompany);
+              } catch(error) {
+                this.modalmsg = "Ha ocurrido un error y los datos de empresas del usuario no se han cargado"
+              }
+            }
+          }
+        } catch (error) {
+          this.modalmsg = "Ha ocurrido un error y los datos de lenguajes no se guardaron correctamente"
+        }
+        //Si todo va bien vamos creando la lista definitiva de empresas con los datos de ambas tablas
+        for (let i = 0; i < companies.length; i++){ 
+          //Sacamos los stats que dependen del nivel
+          const companyLogo = this.chooseCompanyLogo(this.userCompanies[i].nivel_actual)
+          this.companies.push({
+            "id" : companies[i].id,
+            "name" : companies[i].nombre,
+            "logo" : companyLogo,
+            "unlocked": this.userCompanies[i].desbloqueada,
+            "level": this.userCompanies[i].nivel_actual,
+            "multiplier": companies[i].multiplica_ganancia * this.userCompanies[i].nivel_actual,
+            "slots": companies[i].ranuras_base * this.userCompanies[i].nivel_actual,
+            "nextLevelRequirement": companies[i].requerimiento
+          })
+        }
+        console.log(this.companies)
+      } catch (error) {
+        this.modalmsg = "Ha ocurrido un error y los datos de los lenguajes no se han cargado"
+      }
+    },
+    chooseCompanyLogo(level){
+      switch(level) {
+        case 0:
+          return QuestionMark   
+        case 1: 
+          return CompanyLvl1
+        case 2:
+          return CompanyLvl2
+        case 3: 
+          return CompanyLvl3
+        case 4: 
+          return CompanyLvl4
+        case 5:
+          return CompanyLvl5
+          
+      }
+    },
+    /**
      * Función que coge de la API los datos de juego del usuario registrado. 
      */
     async getData() {
@@ -216,6 +303,7 @@ export default {
         this.modalmsg = ''
         //Como necesitamos la lista que genera la función, usamos await para esperar a que esta termine antes del for
         await this.getLanguages(user)
+        await this.getCompanies(user)
         //Volvemos a hacer los calculos necesarios usando la info de la api        
         for(let i = 0; i < this.techs.length; i++){
           
