@@ -47,6 +47,16 @@
     display: none;
 }
 
+.companies_list{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-row: 100% 100%;
+    /* grid-column-gap: 20px; */
+    grid-row-gap: 20px ;
+    justify-items: center;
+}
+
 .principal-resources{
     display: flex;
     flex-direction: column;

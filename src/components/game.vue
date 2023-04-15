@@ -14,6 +14,13 @@
             :totalProfit="tech.totalProfit" :quantity="tech.quantityOwned" :quantityToBuy="quantityToBuy"
             :currentCost="tech.currentCost" @buy="handleBuy" :canBuy="tech.currentCost <= principalMoney" />
         </div>
+        <div v-if="actualTab == 4" class="companies_list">
+          <CompanyButton v-for="company in companies" :key="company.id" :id="company.id" :logo="company.logo" 
+          :companyName="company.level == 0 ? '?????????' : company.name" :level="'Nivel' + company.level" @details="handleDetails" />
+        </div>
+        <CompanyDetails v-if="actualTab == 5" :companyName="companyDetailed.name" :logo="companyDetailed.logo" :level="companyDetailed.level"
+        :bonus="companyDetailed.multiplier" :techsLogos="techsLogosPerCompany" :requeriment="companyDetailed.nextLevelRequeriment" />
+
 
       </div>      
     </div>
@@ -50,6 +57,7 @@
 import Header from './header.vue'
 import MultiplierButton from './multiplier-button.vue'
 import TechButton from './tech-button.vue'
+import CompanyButton from './companyButton.vue'
 import HTML from '@/assets/html.svg'
 import CSS from '@/assets/css.svg'
 import JS from '@/assets/js.svg'
@@ -65,6 +73,8 @@ import CompanyLvl2 from '@/assets/company-level2.svg'
 import CompanyLvl3 from '@/assets/company-level3.svg'
 import CompanyLvl4 from '@/assets/company.svg'
 import CompanyLvl5 from '@/assets/company-level5.svg'
+import CompanyDetails from './companyDetails.vue'
+
 /**
  * @vue-data {Object} [userData = {}] -  Almacenara los datos de partida del usuario actual
  * @vue-data {Array<Object>} [allUsersData = []] -  Almacenara los datos de partida de todos los jugadores registrados, para poder guardar partida
@@ -99,10 +109,13 @@ export default {
   components: {
     Header,
     MultiplierButton,
+    CompanyButton,
     TechButton,
     Modal,
-    TabNav
-  },
+    TabNav,
+    CompanyDetails
+    
+},
   data() {
     return {
       userData: {},
@@ -112,6 +125,8 @@ export default {
       userWorkers: [],
       workerSlots: 1,
       actualTab: 1,
+      companyDetailed: {},
+      techsLogosPerCompany: [],
       logos: [HTML,CSS,JS,Node,Java,PHP],
       quantityToBuy: 1,
       principalMoney: 0,
@@ -154,6 +169,7 @@ export default {
     },
     /**
      * Funcíon que coge de la API los datos de los lenguajes de la partida actual
+     * @param {Number} user - La id del usuario actual
      */
      async getLanguages(user) {
       try {
@@ -213,7 +229,8 @@ export default {
       }
     },
     /**
-     * Funcíon que coge de la API los datos de los lenguajes de la partida actual
+     * Funcíon que coge de la API los datos de las compañias de la partida actual
+     * @param {Number} user - La id del usuario actual
      */
      async getCompanies(user) {
       try {
@@ -255,6 +272,8 @@ export default {
         for (let i = 0; i < companies.length; i++){ 
           //Sacamos los stats que dependen del nivel
           const companyLogo = this.chooseCompanyLogo(this.userCompanies[i].nivel_actual)
+          const requirement = this.chooseCompanyRequirement(companies[i],this.userCompanies[i].nivel_actual)        
+
           this.companies.push({
             "id" : companies[i].id,
             "name" : companies[i].nombre,
@@ -263,14 +282,18 @@ export default {
             "level": this.userCompanies[i].nivel_actual,
             "multiplier": companies[i].multiplica_ganancia * this.userCompanies[i].nivel_actual,
             "slots": companies[i].ranuras_base * this.userCompanies[i].nivel_actual,
-            "nextLevelRequirement": companies[i].requerimiento
+            "nextLevelRequirement": requirement
           })
         }
-        console.log(this.companies)
       } catch (error) {
         this.modalmsg = "Ha ocurrido un error y los datos de los lenguajes no se han cargado"
       }
     },
+    /**
+     * Función que en función del nivel que tengamos en una empresa determinada elige el logo
+     * @param {Number} level - El nivel de la compañia concreta
+     * @returns {String} - El logo
+     */
     chooseCompanyLogo(level){
       switch(level) {
         case 0:
@@ -286,6 +309,60 @@ export default {
         case 5:
           return CompanyLvl5
           
+      }
+    },
+    /**
+     * Función que en función del nivel que tengamos en una empresa determinada elige el requerimiento del siguiente nivel
+     * @param {Object} company - Los datos de la compañia concreta
+     * @param {Number} level - El nivel de la compañia concreta
+     * @returns {String} - El requerimiento del siguiente nivel
+     */
+    chooseCompanyRequirement(company, level){
+
+      switch (level) {
+        case 0:
+          return company.requerimiento_1              
+        case 1: 
+          return company.requerimiento_2
+        case 2: 
+          return company.requerimiento_3
+        case 3:
+          return company.requerimiento_4
+        case 4: 
+          return company.requerimiento_5
+        case 5:
+          return "Nivel máximo" 
+
+          }
+    },
+    handleDetails(companyId){
+      this.actualTab = 5
+      this.companyDetailed = this.companies.find((company) => company.id == companyId)
+      this.techsLogosPerCompany = this.chooseTechsLogosPerCompany(companyId)
+    },
+    chooseTechsLogosPerCompany(companyId){
+      switch(companyId){
+        case 1: 
+          return[
+            { "src": HTML, "alt": "HTML" },
+            { "src": CSS, "alt": "CSS" },
+            { "src": JS, "alt": "JS" }
+            ]
+        case 2: 
+            return[
+            { "src": Node,"alt": "Node" },
+            { "src": Java,"alt": "Java" },
+            { "src": PHP, "alt": "PHP" }
+            ]
+        case 3:
+        return[
+              { "src": HTML, "alt": "HTML" },
+              { "src": CSS, "alt": "CSS" },
+              { "src": JS, "alt": "JS" },
+              { "src": Node,"alt": "Node" },
+              { "src": Java,"alt": "Java" },
+              { "src": PHP, "alt": "PHP" }
+            ] 
       }
     },
     /**
@@ -326,6 +403,7 @@ export default {
     },
     /**
      * Función que gestiona el cambio de tabs
+     * @param {Number} tab - La tab elegida
      */
      handleTabs(tab) {
       this.actualTab = tab;
