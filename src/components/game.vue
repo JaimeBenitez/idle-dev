@@ -19,9 +19,7 @@
           :companyName="company.level == 0 ? '?????????' : company.name" :level="'Nivel' + company.level" @details="handleDetails" />
         </div>
         <CompanyDetails v-if="actualTab == 5" :companyName="companyDetailed.name" :logo="companyDetailed.logo" :level="companyDetailed.level"
-        :bonus="companyDetailed.multiplier" :techsLogos="techsLogosPerCompany" :requeriment="companyDetailed.nextLevelRequeriment" />
-
-
+        :bonus="companyDetailed.multiplier" :techsLogos="techsLogosPerCompany" :requirement="companyDetailed.nextLevelRequirement" />
       </div>      
     </div>
     <section class="principal-resources">

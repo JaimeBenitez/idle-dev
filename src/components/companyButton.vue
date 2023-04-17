@@ -1,7 +1,7 @@
 <template>
-    <button class="company" @click="details">
-        <img :src="logo" class="company-logo" :alt="level">
-        <p class="companyName">{{ companyName }}</p>
+    <button class="company-list__company" @click="details">
+        <img :src="logo" class="company-list__company-logo" :alt="level">
+        <p class="company-list__company-name">{{ companyName }}</p>
     </button>
 </template>
 

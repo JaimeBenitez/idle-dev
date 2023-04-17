@@ -1,13 +1,17 @@
-.company{
+.company-list__company{
     width: 80%;
     height: 100px;
     border-radius: 20px;
     cursor: pointer;
 }
-.company:hover{
+.company-list__company:hover{
     transform: scale(1.05);
 }
-.company-logo{
+.company-list__company-logo{
     width: 60px;
     height: 60px;
+}
+
+.company-list__company-name{
+    font-family: var(--title-font);
 }

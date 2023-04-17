@@ -1,0 +1,50 @@
+.company-detailed__container{
+    background-color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    height: 95%;
+    align-items: center;
+    justify-content: space-evenly;
+    border-radius: 40px
+
+}
+
+.company-detailed__logo{
+    width: 120px;
+    height: 120px;
+}
+.company-detailed__tech-logo--list{
+    display: flex;
+    width: 100%;
+    justify-content: space-evenly;
+}
+.company-detailed__tech-logo{
+    width: 40px;
+    height: 40px;
+}
+
+.company-detailed__name{
+    font-family: var(--title-font);
+    font-size: var(--title-size);
+}
+
+.company-detailed__level, .company-detailed__bonus-text,.company-detailed__requirement-title{
+    font-family: var(--title-font);
+    font-size: var(--subtitle-size);
+}
+
+.company-detailed__requirement-text{
+    font-family: var(--text-font);
+    font-size: var(--text-size);
+    font-weight: bold;
+}
+
+.company-detailed__button{
+    transform: scale(1.5);
+   
+}
+
+.company-detailed__button:hover{
+    transform: scale(1.7)
+}
