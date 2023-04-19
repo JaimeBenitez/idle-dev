@@ -72,6 +72,8 @@ import CompanyLvl3 from '@/assets/company-level3.svg'
 import CompanyLvl4 from '@/assets/company.svg'
 import CompanyLvl5 from '@/assets/company-level5.svg'
 import CompanyDetails from './companyDetails.vue'
+import makeWorker from '@/utils/makeWorker'
+import makeFirstWorkerLanguage from '@/utils/makeFirstWorkerLanguage'
 
 /**
  * @vue-data {Object} [userData = {}] -  Almacenara los datos de partida del usuario actual
@@ -135,7 +137,8 @@ export default {
       loading: false,
       saving: false,
       techs: [],
-      companies: []
+      companies: [],
+      workers: []
     }
   },
   computed: {
@@ -264,7 +267,7 @@ export default {
             }
           }
         } catch (error) {
-          this.modalmsg = "Ha ocurrido un error y los datos de lenguajes no se guardaron correctamente"
+          this.modalmsg = "Ha ocurrido un error y los datos de empresas no se guardaron correctamente"
         }
         //Si todo va bien vamos creando la lista definitiva de empresas con los datos de ambas tablas
         for (let i = 0; i < companies.length; i++){ 
@@ -287,6 +290,76 @@ export default {
         this.modalmsg = "Ha ocurrido un error y los datos de los lenguajes no se han cargado"
       }
     },
+    async getWorkers(user) {
+        try {
+          //Cogemos los datos sobre las empresas que tiene la partida del jugador
+          const userDataResponse = await fetch(`http://localhost:8080/trabajadores/${user}`)
+          if (userDataResponse.status == 200) {
+            //Si nos da un OK seteamos los datos de las empresas del jugador
+            this.userWorkers =  await userDataResponse.json();  
+            for(let i = 0; i < this.userWorkers.length; i++){
+              let workerId = this.userWorkers[i].id;
+              let response = await fetch(`http://localhost:8080/trabajador/${workerId}/lenguajes`)
+              let workerLanguages = await response.json();
+              console.log(this.userWorkers)
+              console.log(workerLanguages)
+            }
+                  
+          }else{
+            //Si no hay relaciones creadas las crea en ese momento, hay que hacerlo con el Status ya que el catch no considera
+            //el error 404 como un error
+            
+              try{
+                let firstWorker = makeWorker(localStorage.getItem("user"))
+                 
+                let response = await fetch(`http://localhost:8080/trabajador`, {
+                method: "POST",
+                body: JSON.stringify(firstWorker),
+                headers: { 'Content-type': 'application/json; charset=UTF-8' },            
+                }) 
+                let newWorker = await response.json();
+                this.userWorkers.push(newWorker);
+                //Escogemos aleatoriamente el lenguaje
+                let choosenLanguageIndex =  Math.floor(Math.random()*(this.techs.length - 1))
+                let choosenLanguage = this.techs[choosenLanguageIndex]
+                let newWorkerLanguage = makeFirstWorkerLanguage(this.userWorkers[0].id, choosenLanguage.id)
+                console.log(newWorkerLanguage)
+                try{
+                  await fetch(`http://localhost:8080/trabajador-lenguaje`, {
+                  method: "POST",
+                  body: JSON.stringify(newWorkerLanguage),
+                  headers: { 'Content-type': 'application/json; charset=UTF-8' },            
+                  }) 
+                } catch(error){
+                  this.modalmsg = "Ha ocurrido un error y los datos del lenguaje del primer trabajador no se han cargado"
+                }
+              } catch(error) {
+                this.modalmsg = "Ha ocurrido un error y los datos del primer trabajador no se han cargado"
+              }
+            }
+          // for (let i = 0; i < companies.length; i++){ 
+          // //Sacamos los stats que dependen del nivel
+          // const companyLogo = this.chooseCompanyLogo(this.userCompanies[i].nivel_actual)
+          // const requirement = this.chooseCompanyRequirement(companies[i],this.userCompanies[i].nivel_actual)        
+
+          // this.companies.push({
+          //   "id" : companies[i].id,
+          //   "name" : companies[i].nombre,
+          //   "logo" : companyLogo,
+          //   "unlocked": this.userCompanies[i].desbloqueada,
+          //   "level": this.userCompanies[i].nivel_actual,
+          //   "multiplier": companies[i].multiplica_ganancia * this.userCompanies[i].nivel_actual,
+          //   "slots": companies[i].ranuras_base * this.userCompanies[i].nivel_actual,
+          //   "nextLevelRequirement": requirement
+          // })
+          // }
+          
+        } catch (error) {
+          this.modalmsg = "Ha ocurrido un error y los datos de empresas no se guardaron correctamente"
+        }
+        //Si todo va bien vamos creando la lista definitiva de empresas con los datos de ambas tablas
+        
+      },
     /**
      * Función que en función del nivel que tengamos en una empresa determinada elige el logo
      * @param {Number} level - El nivel de la compañia concreta
@@ -379,6 +452,7 @@ export default {
         //Como necesitamos la lista que genera la función, usamos await para esperar a que esta termine antes del for
         await this.getLanguages(user)
         await this.getCompanies(user)
+        await this.getWorkers(user)
         //Volvemos a hacer los calculos necesarios usando la info de la api        
         for(let i = 0; i < this.techs.length; i++){
           
