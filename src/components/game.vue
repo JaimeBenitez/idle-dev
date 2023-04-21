@@ -74,6 +74,10 @@ import CompanyLvl5 from '@/assets/company-level5.svg'
 import CompanyDetails from './companyDetails.vue'
 import makeWorker from '@/utils/makeWorker'
 import makeFirstWorkerLanguage from '@/utils/makeFirstWorkerLanguage'
+import { getUsersData } from '@/services/userServices'
+import { getAllLanguages } from '@/services/languageServices'
+import { getGameLanguages } from '@/services/gameLanguageServices'
+import makeLanguagesFinalList from '@/utils/makeLanguagesFinalList'
 
 /**
  * @vue-data {Object} [userData = {}] -  Almacenara los datos de partida del usuario actual
@@ -162,8 +166,7 @@ export default {
      */
     async getAllUsersData() {
       try {
-        const response = await fetch(`http://localhost:8080/clasificacion`)
-        this.allUsersData = await response.json();
+        this.allUsersData = await getUsersData()
       } catch (error) {
         this.modalmsg = "Ha ocurrido un error y los datos no se han cargado"
       }
@@ -173,58 +176,16 @@ export default {
      * @param {Number} user - La id del usuario actual
      */
      async getLanguages(user) {
-      try {
-        const response = await fetch(`http://localhost:8080/lenguajes`)
-        const techs = await response.json();
+      try {  
+        const techs = await getAllLanguages()
         try {
           //Cogemos los datos sobre los lenguajes que tiene la partida del jugador
-          const userDataResponse = await fetch(`http://localhost:8080/partida/${user}/lenguajes`)
-          if (userDataResponse.status == 200) {
-            //Si nos da un OK seteamos los datos de los lenguajes del jugador
-            this.userLanguages =  await userDataResponse.json();   
-                  
-          }else{
-            //Si no hay relaciones creadas las crea en ese momento, hay que hacerlo con el Status ya que el catch no considera
-            //el error 404 como un error
-            let userLanguage = {}
-            for (let i = 0; i < techs.length; i++){
-              try{
-                userLanguage = {
-                  "lenguajeId": techs[i].id,
-                  "partidaId": localStorage.getItem("user")
-                }
-                let response = await fetch(`http://localhost:8080/lenguaje-partida`, {
-                method: "POST",
-                body: JSON.stringify(userLanguage),
-                headers: { 'Content-type': 'application/json; charset=UTF-8' },            
-                }) 
-                let newUserLanguage = await response.json();
-                this.userLanguages.push(newUserLanguage);
-              } catch(error) {
-                this.modalmsg = "Ha ocurrido un error y los datos de lenguajes del usuario no se han cargado"
-              }
-            }
-          }
+          this.userLanguages =  await getGameLanguages(user, techs)
         } catch (error) {
-          this.modalmsg = "Ha ocurrido un error y los datos de lenguajes no se guardaron correctamente"
+          this.modalmsg = "Ha ocurrido un error y los datos de lenguajes del usuario no se guardaron correctamente"
         }
         //Si todo va bien vamos creando la lista definitiva de tecnologias con los datos de ambas tablas
-        for (let i = 0; i < techs.length; i++){
-          this.techs.push({
-            "id" : techs[i].id,
-            "name" : techs[i].nombre,
-            "logo" : this.logos[i],
-            "initialCost" : techs[i].dinero_desbloqueo,
-            "profitPerUnit" : techs[i].beneficio_base,
-            "growthRatio": techs[i].ratio_incremento,
-            "minMoneyToUnlock" : techs[i].dinero_desbloqueo,
-            "unlocked" : this.userLanguages[i].desbloqueado,
-            "quantityOwned" : this.userLanguages[i].cantidad,
-            "currentCost": 0,
-            "totalProfit": 0,
-            "msg": techs[i].mensaje
-          })
-        }
+          this.techs = makeLanguagesFinalList(techs, this.userLanguages, this.logos)       
       } catch (error) {
         this.modalmsg = "Ha ocurrido un error y los datos de los lenguajes no se han cargado"
       }
@@ -609,8 +570,7 @@ export default {
     this.redirect();
     this.setMoneyPerSecondInterval();
     this.getAllUsersData()  
-    this.getData()
-    
+    this.getData()    
   }
 }
 </script>
