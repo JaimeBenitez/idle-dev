@@ -65,20 +65,19 @@ import PHP from '@/assets/php.svg'
 import formatNumber from '@/utils/formatters'
 import Modal from './modal.vue'
 import TabNav from './tabs-nav.vue'
-import QuestionMark from '@/assets/question-mark.svg'
-import CompanyLvl1 from '@/assets/company-level1.svg'
-import CompanyLvl2 from '@/assets/company-level2.svg'
-import CompanyLvl3 from '@/assets/company-level3.svg'
-import CompanyLvl4 from '@/assets/company.svg'
-import CompanyLvl5 from '@/assets/company-level5.svg'
 import CompanyDetails from './companyDetails.vue'
-import makeWorker from '@/utils/makeWorker'
-import makeFirstWorkerLanguage from '@/utils/makeFirstWorkerLanguage'
+import { getGameWorkers, postFirstGameWorker } from '@/services/workerServices'
 import { getUsersData } from '@/services/userServices'
 import { getAllLanguages } from '@/services/languageServices'
 import { getGameLanguages } from '@/services/gameLanguageServices'
 import makeLanguagesFinalList from '@/utils/makeLanguagesFinalList'
-
+import { getAllCompanies } from '@/services/companyServices'
+import { getGameCompanies } from '@/services/gameCompanyServices'
+import makeCompaniesFinalList from '@/utils/makeCompaniesFinalList'
+import chooseTechsLogosPerCompany from '@/utils/chooseTechsLogosPerCompany'
+import { getGame } from '@/services/gameServices'
+import gameCalculator from '@/utils/gameCalculator'
+import buyTech from '@/utils/buyTech'
 /**
  * @vue-data {Object} [userData = {}] -  Almacenara los datos de partida del usuario actual
  * @vue-data {Array<Object>} [allUsersData = []] -  Almacenara los datos de partida de todos los jugadores registrados, para poder guardar partida
@@ -196,206 +195,42 @@ export default {
      */
      async getCompanies(user) {
       try {
-        const response = await fetch(`http://localhost:8080/empresas`)
-        const companies = await response.json();
+        const companies = await getAllCompanies()
         try {
           //Cogemos los datos sobre las empresas que tiene la partida del jugador
-          const userDataResponse = await fetch(`http://localhost:8080/partida/${user}/empresas`)
-          if (userDataResponse.status == 200) {
-            //Si nos da un OK seteamos los datos de las empresas del jugador
-            this.userCompanies =  await userDataResponse.json();   
-                  
-          }else{
-            //Si no hay relaciones creadas las crea en ese momento, hay que hacerlo con el Status ya que el catch no considera
-            //el error 404 como un error
-            let userCompany = {}
-            for (let i = 0; i < companies.length; i++){
-              try{
-                userCompany = {
-                  "empresaId": companies[i].id,
-                  "partidaId": localStorage.getItem("user")
-                }
-                let response = await fetch(`http://localhost:8080/empresa-partida`, {
-                method: "POST",
-                body: JSON.stringify(userCompany),
-                headers: { 'Content-type': 'application/json; charset=UTF-8' },            
-                }) 
-                let newUserCompany = await response.json();
-                this.userCompanies.push(newUserCompany);
-              } catch(error) {
-                this.modalmsg = "Ha ocurrido un error y los datos de empresas del usuario no se han cargado"
-              }
-            }
-          }
-        } catch (error) {
-          this.modalmsg = "Ha ocurrido un error y los datos de empresas no se guardaron correctamente"
+          this.userCompanies =  await getGameCompanies(user,companies)  
+        } catch(error) {
+          this.modalmsg = "Ha ocurrido un error y los datos de empresas del usuario no se han cargado"
         }
-        //Si todo va bien vamos creando la lista definitiva de empresas con los datos de ambas tablas
-        for (let i = 0; i < companies.length; i++){ 
-          //Sacamos los stats que dependen del nivel
-          const companyLogo = this.chooseCompanyLogo(this.userCompanies[i].nivel_actual)
-          const requirement = this.chooseCompanyRequirement(companies[i],this.userCompanies[i].nivel_actual)        
-
-          this.companies.push({
-            "id" : companies[i].id,
-            "name" : companies[i].nombre,
-            "logo" : companyLogo,
-            "unlocked": this.userCompanies[i].desbloqueada,
-            "level": this.userCompanies[i].nivel_actual,
-            "multiplier": companies[i].multiplica_ganancia * this.userCompanies[i].nivel_actual,
-            "slots": companies[i].ranuras_base * this.userCompanies[i].nivel_actual,
-            "nextLevelRequirement": requirement
-          })
-        }
+        this.companies = makeCompaniesFinalList(companies, this.userCompanies)          
       } catch (error) {
-        this.modalmsg = "Ha ocurrido un error y los datos de los lenguajes no se han cargado"
+        this.modalmsg = "Ha ocurrido un error y los datos de las empresas no se han cargado"
       }
     },
     async getWorkers(user) {
-        try {
-          //Cogemos los datos sobre las empresas que tiene la partida del jugador
-          const userDataResponse = await fetch(`http://localhost:8080/trabajadores/${user}`)
-          if (userDataResponse.status == 200) {
-            //Si nos da un OK seteamos los datos de las empresas del jugador
-            this.userWorkers =  await userDataResponse.json();  
-            for(let i = 0; i < this.userWorkers.length; i++){
-              let workerId = this.userWorkers[i].id;
-              let response = await fetch(`http://localhost:8080/trabajador/${workerId}/lenguajes`)
-              let workerLanguages = await response.json();
-              console.log(this.userWorkers)
-              console.log(workerLanguages)
-            }
-                  
-          }else{
-            //Si no hay relaciones creadas las crea en ese momento, hay que hacerlo con el Status ya que el catch no considera
-            //el error 404 como un error
-            
-              try{
-                let firstWorker = makeWorker(localStorage.getItem("user"))
-                 
-                let response = await fetch(`http://localhost:8080/trabajador`, {
-                method: "POST",
-                body: JSON.stringify(firstWorker),
-                headers: { 'Content-type': 'application/json; charset=UTF-8' },            
-                }) 
-                let newWorker = await response.json();
-                this.userWorkers.push(newWorker);
-                //Escogemos aleatoriamente el lenguaje
-                let choosenLanguageIndex =  Math.floor(Math.random()*(this.techs.length - 1))
-                let choosenLanguage = this.techs[choosenLanguageIndex]
-                let newWorkerLanguage = makeFirstWorkerLanguage(this.userWorkers[0].id, choosenLanguage.id)
-                console.log(newWorkerLanguage)
-                try{
-                  await fetch(`http://localhost:8080/trabajador-lenguaje`, {
-                  method: "POST",
-                  body: JSON.stringify(newWorkerLanguage),
-                  headers: { 'Content-type': 'application/json; charset=UTF-8' },            
-                  }) 
-                } catch(error){
-                  this.modalmsg = "Ha ocurrido un error y los datos del lenguaje del primer trabajador no se han cargado"
-                }
-              } catch(error) {
-                this.modalmsg = "Ha ocurrido un error y los datos del primer trabajador no se han cargado"
-              }
-            }
-          // for (let i = 0; i < companies.length; i++){ 
-          // //Sacamos los stats que dependen del nivel
-          // const companyLogo = this.chooseCompanyLogo(this.userCompanies[i].nivel_actual)
-          // const requirement = this.chooseCompanyRequirement(companies[i],this.userCompanies[i].nivel_actual)        
+        try { 
+          let workersData =  await getGameWorkers(user)
+          if(!workersData){
+            await postFirstGameWorker(user, this.techs)
+            workersData = await getGameWorkers(user)        
+          }
+          this.userWorkers = workersData[0]
+          let workerLanguages = workersData[1]
+          console.log(this.userWorkers)
+          console.log(workerLanguages)  
 
-          // this.companies.push({
-          //   "id" : companies[i].id,
-          //   "name" : companies[i].nombre,
-          //   "logo" : companyLogo,
-          //   "unlocked": this.userCompanies[i].desbloqueada,
-          //   "level": this.userCompanies[i].nivel_actual,
-          //   "multiplier": companies[i].multiplica_ganancia * this.userCompanies[i].nivel_actual,
-          //   "slots": companies[i].ranuras_base * this.userCompanies[i].nivel_actual,
-          //   "nextLevelRequirement": requirement
-          // })
-          // }
-          
+          // this.workers = makeWorkersFinalList()
         } catch (error) {
-          this.modalmsg = "Ha ocurrido un error y los datos de empresas no se guardaron correctamente"
+          console.log(error)
+          this.modalmsg = "Ha ocurrido un error y los datos de trabajadores no se guardaron correctamente"
         }
         //Si todo va bien vamos creando la lista definitiva de empresas con los datos de ambas tablas
         
       },
-    /**
-     * Función que en función del nivel que tengamos en una empresa determinada elige el logo
-     * @param {Number} level - El nivel de la compañia concreta
-     * @returns {String} - El logo
-     */
-    chooseCompanyLogo(level){
-      switch(level) {
-        case 0:
-          return QuestionMark   
-        case 1: 
-          return CompanyLvl1
-        case 2:
-          return CompanyLvl2
-        case 3: 
-          return CompanyLvl3
-        case 4: 
-          return CompanyLvl4
-        case 5:
-          return CompanyLvl5
-          
-      }
-    },
-    /**
-     * Función que en función del nivel que tengamos en una empresa determinada elige el requerimiento del siguiente nivel
-     * @param {Object} company - Los datos de la compañia concreta
-     * @param {Number} level - El nivel de la compañia concreta
-     * @returns {String} - El requerimiento del siguiente nivel
-     */
-    chooseCompanyRequirement(company, level){
-
-      switch (level) {
-        case 0:
-          return company.requerimiento_1              
-        case 1: 
-          return company.requerimiento_2
-        case 2: 
-          return company.requerimiento_3
-        case 3:
-          return company.requerimiento_4
-        case 4: 
-          return company.requerimiento_5
-        case 5:
-          return "Nivel máximo" 
-
-          }
-    },
     handleDetails(companyId){
       this.actualTab = 5
       this.companyDetailed = this.companies.find((company) => company.id == companyId)
-      this.techsLogosPerCompany = this.chooseTechsLogosPerCompany(companyId)
-    },
-    chooseTechsLogosPerCompany(companyId){
-      switch(companyId){
-        case 1: 
-          return[
-            { "src": HTML, "alt": "HTML" },
-            { "src": CSS, "alt": "CSS" },
-            { "src": JS, "alt": "JS" }
-            ]
-        case 2: 
-            return[
-            { "src": Node,"alt": "Node" },
-            { "src": Java,"alt": "Java" },
-            { "src": PHP, "alt": "PHP" }
-            ]
-        case 3:
-        return[
-              { "src": HTML, "alt": "HTML" },
-              { "src": CSS, "alt": "CSS" },
-              { "src": JS, "alt": "JS" },
-              { "src": Node,"alt": "Node" },
-              { "src": Java,"alt": "Java" },
-              { "src": PHP, "alt": "PHP" }
-            ] 
-      }
+      this.techsLogosPerCompany = chooseTechsLogosPerCompany(companyId)
     },
     /**
      * Función que coge de la API los datos de juego del usuario registrado. 
@@ -403,10 +238,8 @@ export default {
     async getData() {
       const user = localStorage.getItem("user")
       try {
-        this.loading = true
-        const gameResponse = await fetch(`http://localhost:8080/partida/${user}`)        
-        this.userData = await gameResponse.json()
-        
+        this.loading = true      
+        this.userData = await getGame(user)
         //Seteamos el dinero con la información de la api
         this.principalMoney = this.userData.dinero
         this.modalmsg = ''
@@ -414,24 +247,17 @@ export default {
         await this.getLanguages(user)
         await this.getCompanies(user)
         await this.getWorkers(user)
-        //Volvemos a hacer los calculos necesarios usando la info de la api        
-        for(let i = 0; i < this.techs.length; i++){
-          
-          let tech = this.techs[i]
-          tech.currentCost = tech.initialCost * ((tech.growthRatio ** tech.quantityOwned * ((tech.growthRatio ** this.quantityToBuy) - 1)) / (tech.growthRatio - 1))
-          tech.totalProfit = tech.profitPerUnit * tech.quantityOwned
-          this.moneyPerSecond += tech.totalProfit
-        }
-        if (this.moneyPerSecond) {
-          this.moneyPerClick = this.moneyPerSecond * 0.1
-        }
+        //Volvemos a hacer los calculos necesarios usando la info de la api y los vamos seteando a sus respectivas variables      
+        let gameData = gameCalculator(this.techs, this.moneyPerSecond, this.quantityToBuy)
+        this.techs = gameData[0]
+        this.moneyPerClick = gameData[1]
+        this.moneyPerSecond = gameData[2]
         this.loading = false
         if (this.principalMoney == 0){
           this.modalmsg = "Bienvenido al fantástico mundo de la programación. Te espera un gran viaje a traves de la historia de la informática. Haz click en el ordenador para ganar beneficios y empezar a comprar las tecnologías que irás aprendiendo"
-        }
-        
+        }  
       } catch (error) {
-        this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"        
+        this.modalmsg = "Ha ocurrido un error y los datos no se cargaron correctamente"        
       }
     },
     /**
@@ -487,22 +313,13 @@ export default {
      * @param {Number} techId - id de la tecnología a comprar
      */
     handleBuy(techId) {
-      const tech = this.techs.find((tech) => tech.id == techId)
+      let tech = this.techs.find((tech) => tech.id == techId)
       //Solo reacciona si encontramos anteriormente una tecnologia con la ID que buscamos
       if (tech) {
-        //Añadimos la cantidad de la tecnologia concreta
-        tech.quantityOwned += this.quantityToBuy
-        //Establecemos la diferencia de ganancia entre antes y despues de la compra
-        let profitDiff = (tech.quantityOwned * tech.profitPerUnit) - tech.totalProfit
-        //Cantidad total de ganancia
-        tech.totalProfit = tech.profitPerUnit * tech.quantityOwned
-        //Quitamos del dinero principal el coste actual 
-        this.principalMoney -= tech.currentCost
-        //Establecemos el nuevo coste
-        tech.currentCost = tech.initialCost * ((tech.growthRatio ** tech.quantityOwned * ((tech.growthRatio ** this.quantityToBuy) - 1)) / (tech.growthRatio - 1))
-        //Añadimos la nueva ganancia a la ganancia/segundo actual
-        this.moneyPerSecond += profitDiff
-        this.moneyPerClick = this.moneyPerSecond * 0.1
+        let buy =  buyTech(tech,this.quantityToBuy,this.principalMoney,this.moneyPerSecond)
+        this.principalMoney = buy[0]
+        this.moneyPerSecond = buy[1]
+        this.moneyPerClick = buy[2]
       }
     },
     /**

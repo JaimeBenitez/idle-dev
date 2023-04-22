@@ -1,7 +1,13 @@
-export default function generate(){
+export default function generator(){
     //Elegiremos el sexo del trabajador sacando un numero aleatorio entre 1 y 10
-    var sex = Math.floor(Math.random()*10)
-    if (sex < 5){
+    var chooseSex = Math.floor(Math.random()*10)
+    let sex = ''
+    if(chooseSex <= 5){
+        sex = 'M'
+    }else {
+        sex = 'F'
+    }
+    if (sex == 'M'){
 	var firstname = ["Adrián", "Charles", "Alberto", "Alexander","Paco", "Alexis", "Alonso", "Pope", "Ángel", "Anthony", "Antonio", "James", "Christian", "Tomen", "Carlos", "Robert", "Sergio", "Edward", "César", "Cristopher", "Daniel", "David", "Diego", "J.J", "Eduardo", "Emil", "Manuel", "Erik", "Ernesto", "Ethan", "Fabián", "Facundo", "Felipe", "Félix", "Hershel", "Fernando", "Francisco", "Taavi", "Gabriel", "Gaspar", "Paul", "Hugo", "Ian", "Iker", "Isaac", "Jacob", "Javier", "Jayden", "Jeremy", "Jerónimo", "Jesús", "Oleg", "Ned", "Joaquín", "Jorge", "Jorge  Alberto", "Ted", "José", "Cordell", "Jaime", "Patricio", "Fred", "George", "Harry", "Ronald", "Josh", "Niklaus", "Stefan", "Damián", "Damon", "Tyrese", "Tyler", "Tom", "Daryl", "Rick", "Álvaro", "Guillermo", "Julio", "Bryce", "Justin", "Kevin", "Lautaro", "Liam", "Lian", "Lorenzo", "Lucas", "Luis", "Albert", "Rudolph", "Gustavo", "Gustadolph", "Jamie", "Adán", "Mario", "Martín", "Mateo", "Matías", "Maximiliano", "Maykel", "Miguel", "Luigi", "Nelson", "Noah", "Oscar", "Pablo", "Pedro", "Rafael", "Ramón", "Raúl", "Ricardo", "Rigoberto", "Roberto", "Rolando", "Samuel", "Dean", "Santiago", "Santino", "Santos", "Sebastián", "Thiago", "Walter", "Tomás", "Valentino", "Vicente", "Víctor", "Sayid"];
 	var lastname= ["Garcia", "Gonzalez", "Rodriguez", "Fernandez", "Lopez", "Martinez", "Sanchez", "Perez", "Gomez", "Martin", "Jimenez", "Ruiz", "Hernandez", "Diaz", "Moreno", "Alvarez", "Muñoz", "Romero", "Alonso", "Gutierrez", "Navarro", "Torres", "Dominguez",
 	"Vazquez", "Ramos", "Gil", "Ramirez", "Serrano", "Blanco", "Suarez", "Molina", "Morales", "Ortega", "Delgado", "Castro", "Ortiz", "Rubio", "Marin", "Sanz", "Nuñez", "Iglesias", "Medina", "Garrido", "Santos", "Castillo", "Cortes", "Lozano", "Guerrero", "Cano", "Prieto", "Mendez", "Calvo", "Cruz", "Gallego", "Vidal", "Leon", "Herrera", "Marquez", "Peña", "Cabrera", "Flores", "Campos", "Vega", "Diez", "Fuentes", "Carrasco", "Caballero", "Nieto", "Reyes", "Aguilar", "Pascual", "Herrero", "Santana", "Lorenzo", "Hidalgo", "Montero", "Ibañez", "Gimenez", "Ferrer", "Duran", "Vicente", "Benitez", "Mora", "Santiago", "Arias", "Vargas", "Carmona", "Crespo", "Roman", "Pastor", "Soto", "Saez", "Velasco", "Soler", "Moya", "Esteban", "Parra", "Bravo", "Gallardo", "Rojas", "Pardo", "Merino", "Franco", "Espinosa", "Izquierdo", "Lara", "Rivas", "Silva", "Rivera", "Casado", "Arroyo", "Redondo", "Camacho", "Rey", "Vera", "Otero", "Luque", "Galan", "Montes", "Rios", "Sierra", "Segura", "Carrillo", "Marcos", "Marti", "Soriano", "Mendoza"];
@@ -13,5 +19,5 @@ export default function generate(){
 	var rand_first = Math.floor(Math.random()*firstname.length); 
 	var rand_last = Math.floor(Math.random()*lastname.length);
 
-    return firstname[rand_first] + ' ' + lastname[rand_last]
+    return [firstname[rand_first] + ' ' + lastname[rand_last], sex]
 }   

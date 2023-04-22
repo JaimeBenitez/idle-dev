@@ -3,11 +3,10 @@ const POST_URL = `http://localhost:8080/lenguaje-partida`
 
 
 export async function getGameLanguages(user,techs){
-    let allGameLanguages = {}
     const response = await fetch(BASE_URL + `${user}/lenguajes`)
     if (response.status == 200){
      //Si nos da un OK seteamos y devolvemos los datos de los lenguajes del jugador
-     allGameLanguages = await response.json()
+     let allGameLanguages = await response.json()
      return allGameLanguages
     } else {
         //Si no hay relaciones creadas las crea en ese momento, hay que hacerlo con el Status ya que el catch no considera
