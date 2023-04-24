@@ -1,4 +1,4 @@
-import { getWorkersLanguages, chooseFirstWorkerLanguage } from "./workerLanguagesServices";
+import { chooseFirstWorkerLanguage } from "./workerLanguagesServices";
 import makeWorker from "@/utils/makeWorker";
 
 
@@ -8,17 +8,12 @@ const POST_URL = `http://localhost:8080/trabajador`
 
 export async function getGameWorkers(user){
     try{
-    const response = await fetch(BASE_URL + `${user}`)
-    console.log(response.status)
+    const response = await fetch(BASE_URL + `${user}`)    
     
-    let workerLanguages = []
     if (response.status == 200){ 
         let userWorkers = await response.json()   
-        for(let i = 0; i < userWorkers.length; i++){
-            let workerId = userWorkers[i].id;            
-            workerLanguages.push(await getWorkersLanguages(workerId));          
-          }
-        return [userWorkers, workerLanguages]
+        
+        return userWorkers
     }
     }catch(error){
         console.error(error)

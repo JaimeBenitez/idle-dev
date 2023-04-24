@@ -34,3 +34,20 @@ async function postGameLanguages(techs) {
     }
     return userLanguages
 }
+
+export async function saveGameLanguages(userTechs, techs){
+  //Vamos seteando los cambios en los lenguajes de la partida
+  for(let i=0; i< userTechs.length; i++) {
+  // Cogemos la id de la relación concreta para poder hacer la llamada
+  let dataId = userTechs[i].id
+  let newData = {
+    "desbloqueado" : techs[i].unlocked,
+    "cantidad": techs[i].quantityOwned
+  }
+  await fetch(`http://localhost:8080/lenguaje-partida/${dataId}`, {
+    method: "PUT",
+    body: JSON.stringify(newData),
+    headers: { 'Content-type': 'application/json; charset=UTF-8' },
+    })
+  }
+}

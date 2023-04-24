@@ -14,6 +14,9 @@
             :totalProfit="tech.totalProfit" :quantity="tech.quantityOwned" :quantityToBuy="quantityToBuy"
             :currentCost="tech.currentCost" @buy="handleBuy" :canBuy="tech.currentCost <= principalMoney" />
         </div>
+        <div v-if="actualTab == 2">
+          <img :src="workers[0].logo" />
+        </div>
         <div v-if="actualTab == 4" class="companies_list">
           <CompanyButton v-for="company in companies" :key="company.id" :id="company.id" :logo="company.logo" 
           :companyName="company.level == 0 ? '?????????' : company.name" :level="'Nivel' + company.level" @details="handleDetails" />
@@ -69,15 +72,16 @@ import CompanyDetails from './companyDetails.vue'
 import { getGameWorkers, postFirstGameWorker } from '@/services/workerServices'
 import { getUsersData } from '@/services/userServices'
 import { getAllLanguages } from '@/services/languageServices'
-import { getGameLanguages } from '@/services/gameLanguageServices'
+import { getGameLanguages, saveGameLanguages } from '@/services/gameLanguageServices'
 import makeLanguagesFinalList from '@/utils/makeLanguagesFinalList'
 import { getAllCompanies } from '@/services/companyServices'
 import { getGameCompanies } from '@/services/gameCompanyServices'
 import makeCompaniesFinalList from '@/utils/makeCompaniesFinalList'
 import chooseTechsLogosPerCompany from '@/utils/chooseTechsLogosPerCompany'
-import { getGame } from '@/services/gameServices'
+import { getGame, saveGameMoney } from '@/services/gameServices'
 import gameCalculator from '@/utils/gameCalculator'
 import buyTech from '@/utils/buyTech'
+import makeWorkersFinalList from '@/utils/makeWorkersFinalList'
 /**
  * @vue-data {Object} [userData = {}] -  Almacenara los datos de partida del usuario actual
  * @vue-data {Array<Object>} [allUsersData = []] -  Almacenara los datos de partida de todos los jugadores registrados, para poder guardar partida
@@ -214,12 +218,13 @@ export default {
             await postFirstGameWorker(user, this.techs)
             workersData = await getGameWorkers(user)        
           }
-          this.userWorkers = workersData[0]
-          let workerLanguages = workersData[1]
+          this.userWorkers = workersData
+          
           console.log(this.userWorkers)
-          console.log(workerLanguages)  
+          
 
-          // this.workers = makeWorkersFinalList()
+          this.workers = makeWorkersFinalList(this.userWorkers)
+          console.log(this.workers)
         } catch (error) {
           console.log(error)
           this.modalmsg = "Ha ocurrido un error y los datos de trabajadores no se guardaron correctamente"
@@ -336,41 +341,21 @@ export default {
      */
     async saveData() {
       const user = localStorage.getItem("user")
-      //Cogemos los datos que queremos guardar
-      const userMoney= {
-        "dinero": this.principalMoney
-      }
-      
       //Guardamos el dinero principal
       try {
         this.saving = true
-        await fetch(`http://localhost:8080/partida/${user}`, {
-          method: "PUT",
-          body: JSON.stringify(userMoney),
-          headers: { 'Content-type': 'application/json; charset=UTF-8' },
-        })
-        //Vamos seteando los cambios en los lenguajes de la partida
-        for(let i=0; i< this.userLanguages.length; i++) {
-          // Cogemos la id de la relación concreta para poder hacer la llamada
-          let dataId = this.userLanguages[i].id
-          let newData = {
-            "desbloqueado" : this.techs[i].unlocked,
-            "cantidad": this.techs[i].quantityOwned
-          }
-          try{
-            await fetch(`http://localhost:8080/lenguaje-partida/${dataId}`, {
-            method: "PUT",
-            body: JSON.stringify(newData),
-            headers: { 'Content-type': 'application/json; charset=UTF-8' },
-          })
-          }
-          catch{
-            this.modalmsg = "Ha ocurrido un error y los datos de lenguajes no se guardaron correctamente"
-          }
+        await saveGameMoney(this.principalMoney, user)
+        //Guardamos los cambios en los lenguajes de la partida
+        try{
+          await saveGameLanguages(this.userLanguages, this.techs)
+        }
+        catch{
+          this.modalmsg = "Ha ocurrido un error y los datos de lenguajes no se guardaron correctamente"
         }
         this.saving = false
         this.modalmsg = "Partida guardada correctamente"
       } catch (error) {
+        console.log(error)
         this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"
       }
     },
