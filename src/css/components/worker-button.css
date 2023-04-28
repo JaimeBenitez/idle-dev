@@ -1,0 +1,17 @@
+.worker-list__worker{
+    width: 80%;
+    height: 100px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+.worker-list__worker:hover{
+    transform: scale(1.05);
+}
+.worker-list__worker-logo{
+    width: 60px;
+    height: 60px;
+}
+
+.worker-list__worker-name{
+    font-family: var(--title-font);
+}

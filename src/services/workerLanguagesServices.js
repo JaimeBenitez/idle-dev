@@ -1,4 +1,4 @@
-import makeFirstWorkerLanguage from "@/utils/makeFirstWorkerLanguage";
+import makeWorkerLanguage from "@/utils/makeWorkerLanguage";
 
 const BASE_URL = `http://localhost:8080/trabajador/`
 const POST_URL = `http://localhost:8080/trabajador-lenguaje`
@@ -9,10 +9,10 @@ export async function getWorkersLanguages(workerId){
     return workerLanguages
 }
 
-export async function chooseFirstWorkerLanguage(worker,techs){
+export async function chooseWorkerLanguage(worker,techs){
     let choosenLanguageIndex =  Math.floor(Math.random()*(techs.length - 1))
     let choosenLanguage = techs[choosenLanguageIndex]
-    let newWorkerLanguage = makeFirstWorkerLanguage(worker.id, choosenLanguage.id)
+    let newWorkerLanguage = makeWorkerLanguage(worker.id, choosenLanguage.id)
     console.log(newWorkerLanguage)
     await fetch(POST_URL, {
         method: "POST",

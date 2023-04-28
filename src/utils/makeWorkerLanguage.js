@@ -1,8 +1,8 @@
-export default function makeFirstWorkerLanguage(workerId, languageId){
+export default function makeWorkerLanguage(workerId, languageId){
 
     const levels = ["basico", "intermedio", "avanzado", "junior"]
 
-    //Saca un numero entero entre el 0 y el 5
+    //Saca un numero entero entre el 0 y el 3
     var index = Math.floor(Math.random()*3)
 
     let workerLanguage = {

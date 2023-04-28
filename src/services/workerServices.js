@@ -1,4 +1,4 @@
-import { chooseFirstWorkerLanguage } from "./workerLanguagesServices";
+import { chooseWorkerLanguage } from "./workerLanguagesServices";
 import makeWorker from "@/utils/makeWorker";
 
 
@@ -20,18 +20,24 @@ export async function getGameWorkers(user){
     }
 }  
 
-export async function postFirstGameWorker(user, techs){
+export async function postGameWorker(user, techs){
    
-        let firstWorker = makeWorker(user)
-         //Creamos el primer trabajador de la partida
+        let worker = makeWorker(user)
+        
+         //Creamos al trabajador
+        try{
         let response = await fetch(POST_URL, {
         method: "POST",
-        body: JSON.stringify(firstWorker),
+        body: JSON.stringify(worker),
         headers: { 'Content-type': 'application/json; charset=UTF-8' },            
         })
-        let worker = await response.json() 
+        let newWorker = await response.json() 
+        chooseWorkerLanguage(newWorker, techs)
+        }catch(error){
+            console.log(error)
+        }
         // Elegimos sus lenguajes
-        chooseFirstWorkerLanguage(worker, techs)
+        
 
  
         

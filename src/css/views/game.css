@@ -61,7 +61,16 @@
     grid-row-gap: 20px ;
     justify-items: center;
 }
-
+.workers_list{
+    padding: 1rem;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 25% 25% 25% 25%;
+    grid-row: 100% 100%;
+    /* grid-column-gap: 20px; */
+    grid-row-gap: 20px ;
+    justify-items: center;
+}
 .principal-resources{
     display: flex;
     flex-direction: column;

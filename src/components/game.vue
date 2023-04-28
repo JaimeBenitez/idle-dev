@@ -10,19 +10,49 @@
           <MultiplierButton text="x100" v-on:click="setQuantityToBuy(100)" />
         </nav>
         <div v-if="actualTab == 1" class="technologies_list">
-          <TechButton v-for="tech in activeTechs" :key="tech.id" :id="tech.id" :logo="tech.logo" :techName="tech.name"
-            :totalProfit="tech.totalProfit" :quantity="tech.quantityOwned" :quantityToBuy="quantityToBuy"
-            :currentCost="tech.currentCost" @buy="handleBuy" :canBuy="tech.currentCost <= principalMoney" />
+          <TechButton v-for="tech in activeTechs" 
+          :key="tech.id" 
+          :id="tech.id" 
+          :logo="tech.logo" 
+          :techName="tech.name"
+          :totalProfit="tech.totalProfit" 
+          :quantity="tech.quantityOwned" 
+          :quantityToBuy="quantityToBuy"
+          :currentCost="tech.currentCost" 
+          @buy="handleBuy" 
+          :canBuy="tech.currentCost <= principalMoney" />
         </div>
-        <div v-if="actualTab == 2">
-          <img :src="workers[0].logo" />
+        <div v-if="actualTab == 2" class="workers_list">
+          <WorkerButton v-for="worker in workers" 
+          :key="worker.id" 
+          :id="worker.id" 
+          :logo="worker.image" 
+          :workerName="worker.name" 
+          @details="handleWorkerDetails" />
         </div>
         <div v-if="actualTab == 4" class="companies_list">
-          <CompanyButton v-for="company in companies" :key="company.id" :id="company.id" :logo="company.logo" 
-          :companyName="company.level == 0 ? '?????????' : company.name" :level="'Nivel' + company.level" @details="handleDetails" />
+          <CompanyButton v-for="company in companies" 
+          :key="company.id" 
+          :id="company.id" 
+          :logo="company.logo" 
+          :companyName="company.level == 0 ? '?????????' : company.name" 
+          :level="'Nivel' + company.level" 
+          @details="handleDetails" />
         </div>
-        <CompanyDetails v-if="actualTab == 5" :companyName="companyDetailed.name" :logo="companyDetailed.logo" :level="companyDetailed.level"
-        :bonus="companyDetailed.multiplier" :techsLogos="techsLogosPerCompany" :requirement="companyDetailed.nextLevelRequirement" />
+        <CompanyDetails v-if="actualTab == 5" 
+        :companyName="companyDetailed.name" 
+        :logo="companyDetailed.logo" 
+        :level="companyDetailed.level"
+        :bonus="companyDetailed.multiplier" 
+        :techsLogos="techsLogosPerCompany" 
+        :requirement="companyDetailed.nextLevelRequirement" />
+        <WorkerDetails v-if="actualTab == 6"  
+        :companyName="workerDetailed.company" 
+        :workerName="workerDetailed.name" 
+        :image="workerDetailed.image" 
+        :totalLevel="workerDetailed.totalLevel"
+        :PA="workerDetailed.pa" 
+        :techs="workerDetailed.techs" />
       </div>      
     </div>
     <section class="principal-resources">
@@ -69,7 +99,7 @@ import formatNumber from '@/utils/formatters'
 import Modal from './modal.vue'
 import TabNav from './tabs-nav.vue'
 import CompanyDetails from './companyDetails.vue'
-import { getGameWorkers, postFirstGameWorker } from '@/services/workerServices'
+import { getGameWorkers, postGameWorker } from '@/services/workerServices'
 import { getUsersData } from '@/services/userServices'
 import { getAllLanguages } from '@/services/languageServices'
 import { getGameLanguages, saveGameLanguages } from '@/services/gameLanguageServices'
@@ -82,6 +112,8 @@ import { getGame, saveGameMoney } from '@/services/gameServices'
 import gameCalculator from '@/utils/gameCalculator'
 import buyTech from '@/utils/buyTech'
 import makeWorkersFinalList from '@/utils/makeWorkersFinalList'
+import WorkerButton from './workerButton.vue'
+import WorkerDetails from './workerDetails.vue'
 /**
  * @vue-data {Object} [userData = {}] -  Almacenara los datos de partida del usuario actual
  * @vue-data {Array<Object>} [allUsersData = []] -  Almacenara los datos de partida de todos los jugadores registrados, para poder guardar partida
@@ -120,7 +152,9 @@ export default {
     TechButton,
     Modal,
     TabNav,
-    CompanyDetails
+    CompanyDetails,
+    WorkerButton,
+    WorkerDetails
     
 },
   data() {
@@ -133,6 +167,7 @@ export default {
       workerSlots: 1,
       actualTab: 1,
       companyDetailed: {},
+      workerDetailed: {},
       techsLogosPerCompany: [],
       logos: [HTML,CSS,JS,Node,Java,PHP],
       quantityToBuy: 1,
@@ -215,18 +250,17 @@ export default {
         try { 
           let workersData =  await getGameWorkers(user)
           if(!workersData){
-            await postFirstGameWorker(user, this.techs)
+            //Si no encuentra datos de trabajadores en la partida actual crea el primero y vuelve a llamar a la api
+            await postGameWorker(user, this.techs)
             workersData = await getGameWorkers(user)        
           }
+          //Seteamos la info sobre los trabajadores del usuario
           this.userWorkers = workersData
-          
-          console.log(this.userWorkers)
-          
 
-          this.workers = makeWorkersFinalList(this.userWorkers)
-          console.log(this.workers)
+          this.workers = await makeWorkersFinalList(this.userWorkers)
+         console.log(this.workers)
         } catch (error) {
-          console.log(error)
+       
           this.modalmsg = "Ha ocurrido un error y los datos de trabajadores no se guardaron correctamente"
         }
         //Si todo va bien vamos creando la lista definitiva de empresas con los datos de ambas tablas
@@ -236,6 +270,11 @@ export default {
       this.actualTab = 5
       this.companyDetailed = this.companies.find((company) => company.id == companyId)
       this.techsLogosPerCompany = chooseTechsLogosPerCompany(companyId)
+    },
+    handleWorkerDetails(workerId){
+      console.log(workerId)
+      this.actualTab = 6
+      this.workerDetailed = this.workers.find((worker) => worker.id == workerId)
     },
     /**
      * Función que coge de la API los datos de juego del usuario registrado. 
