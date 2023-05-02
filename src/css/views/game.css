@@ -23,7 +23,7 @@
     margin-bottom: 1rem;
 }
 
-.multiplier-button {
+.game-button {
     background-color: var(--primary-color);
     font-family: var(--title-font);
     color: var(--text-color);

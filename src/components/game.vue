@@ -5,9 +5,9 @@
       <TabNav @tab1="handleTabs(1)" @tab2="handleTabs(2)" @tab3="handleTabs(3)" @tab4="handleTabs(4)" ></TabNav>
       <div class="principal-container">      
         <nav v-if="actualTab == 1" class="multipliers-nav">
-          <MultiplierButton text="x1" v-on:click="setQuantityToBuy(1)" />
-          <MultiplierButton text="x10" v-on:click="setQuantityToBuy(10)" />
-          <MultiplierButton text="x100" v-on:click="setQuantityToBuy(100)" />
+          <GameButton text="x1" v-on:click="setQuantityToBuy(1)" />
+          <GameButton text="x10" v-on:click="setQuantityToBuy(10)" />
+          <GameButton text="x100" v-on:click="setQuantityToBuy(100)" />
         </nav>
         <div v-if="actualTab == 1" class="technologies_list">
           <TechButton v-for="tech in activeTechs" 
@@ -86,8 +86,8 @@
  */
 //Para poder usar las imagenes correctamente como props tenemos que importarlas aqui y usarlas como variable de Data
 import Header from './header.vue'
-import MultiplierButton from './multiplier-button.vue'
-import TechButton from './tech-button.vue'
+import GameButton from './gameButton.vue'
+import TechButton from './techButton.vue'
 import CompanyButton from './companyButton.vue'
 import HTML from '@/assets/html.svg'
 import CSS from '@/assets/css.svg'
@@ -97,7 +97,7 @@ import Java from '@/assets/java.svg'
 import PHP from '@/assets/php.svg'
 import formatNumber from '@/utils/formatters'
 import Modal from './modal.vue'
-import TabNav from './tabs-nav.vue'
+import TabNav from './tabsNav.vue'
 import CompanyDetails from './companyDetails.vue'
 import { getGameWorkers, postGameWorker } from '@/services/workerServices'
 import { getUsersData } from '@/services/userServices'
@@ -147,7 +147,7 @@ export default {
   name: 'GamePage',
   components: {
     Header,
-    MultiplierButton,
+    GameButton,
     CompanyButton,
     TechButton,
     Modal,
@@ -169,6 +169,7 @@ export default {
       companyDetailed: {},
       workerDetailed: {},
       techsLogosPerCompany: [],
+      techsLogosPerWorker: [],
       logos: [HTML,CSS,JS,Node,Java,PHP],
       quantityToBuy: 1,
       principalMoney: 0,
@@ -272,9 +273,9 @@ export default {
       this.techsLogosPerCompany = chooseTechsLogosPerCompany(companyId)
     },
     handleWorkerDetails(workerId){
-      console.log(workerId)
       this.actualTab = 6
       this.workerDetailed = this.workers.find((worker) => worker.id == workerId)
+      // this.techsLogosPerCompany = 
     },
     /**
      * Función que coge de la API los datos de juego del usuario registrado. 

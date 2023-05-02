@@ -6,17 +6,16 @@
         <span v-if="level != 0" class="company-detailed__level">Nivel {{ level }}</span>
         <span v-if="level != 0" class="company-detailed__bonus-text"> x{{ bonus * level }} PA a sus miembros en: </span>
         <span v-if="level == 0" class="company-detailed__bonus-text"> Aporta un bono de PA para sus miembros en: </span>
-        <div  class="company-detailed__tech-logo--list">
-            <img class="company-detailed__tech-logo" v-for="logo in techsLogos" :key="logo.src" :src="logo.src" :alt="logo.alt" />
-        </div>
+        <TechLogoList :techsLogos ="techsLogos" :isWorker="false"/>
         <span class="company-detailed__requirement-title"> Requerimientos nivel {{ level + 1 }}</span>
         <span class="company-detailed__requirement-text">{{ requirement }}</span>
-        <MultiplierButton class="company-detailed__button"  text="Trabajadores" />
+        <GameButton class="company-detailed__button"  text="Trabajadores" />
     </div>
 </template>
 
 <script>
-import MultiplierButton from './multiplier-button.vue';
+import GameButton from './gameButton.vue';
+import TechLogoList from './techLogoList.vue';
 
     export default{
         "name": "companyDetails",
@@ -29,7 +28,8 @@ import MultiplierButton from './multiplier-button.vue';
             "requirement": String
         },
         components: {
-            MultiplierButton,
+            GameButton,
+            TechLogoList
         }
     } 
 </script>

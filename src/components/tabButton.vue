@@ -4,7 +4,7 @@
 
 <script>
     export default{
-        name: "tab-button",
+        name: "tabButton",
         props: {
             img: String,
             alt: String,

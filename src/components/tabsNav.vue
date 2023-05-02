@@ -8,14 +8,14 @@
 </template>
 
 <script>
-import TabButton from "./tab-button.vue" 
+import TabButton from "./tabButton.vue" 
 import techs from "../assets/language.svg"
 import employees from "../assets/employee.svg"
 import learning from "../assets/learning.svg"
 import companies from "../assets/company.svg"
 
     export default{
-        name: "tabs-nav",
+        name: "tabsNav",
         components: {
             TabButton
         },

@@ -1,5 +1,5 @@
 <template>    
-    <button class="multiplier-button">{{ text }}</button>
+    <button class="game-button">{{ text }}</button>
 </template>
 
 <script>
@@ -12,7 +12,7 @@
  * @vue-prop {String} text - El texto del interior del botón
  */
 export default {
-  name: 'MultiplierButton',
+  name: 'InGameButton',
   props: {    
     text: String
   }
