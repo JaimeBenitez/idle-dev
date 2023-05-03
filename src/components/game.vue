@@ -52,7 +52,8 @@
         :image="workerDetailed.image" 
         :totalLevel="workerDetailed.totalLevel"
         :PA="workerDetailed.pa" 
-        :techs="workerDetailed.techs" />
+        :techs="workerDetailed.languages"
+        :upgrades=[] />
       </div>      
     </div>
     <section class="principal-resources">
@@ -89,12 +90,6 @@ import Header from './header.vue'
 import GameButton from './gameButton.vue'
 import TechButton from './techButton.vue'
 import CompanyButton from './companyButton.vue'
-import HTML from '@/assets/html.svg'
-import CSS from '@/assets/css.svg'
-import JS from '@/assets/js.svg'
-import Node from '@/assets/nodejs.svg'
-import Java from '@/assets/java.svg'
-import PHP from '@/assets/php.svg'
 import formatNumber from '@/utils/formatters'
 import Modal from './modal.vue'
 import TabNav from './tabsNav.vue'
@@ -169,8 +164,6 @@ export default {
       companyDetailed: {},
       workerDetailed: {},
       techsLogosPerCompany: [],
-      techsLogosPerWorker: [],
-      logos: [HTML,CSS,JS,Node,Java,PHP],
       quantityToBuy: 1,
       principalMoney: 0,
       moneyPerSecond: 0,
@@ -224,7 +217,7 @@ export default {
           this.modalmsg = "Ha ocurrido un error y los datos de lenguajes del usuario no se guardaron correctamente"
         }
         //Si todo va bien vamos creando la lista definitiva de tecnologias con los datos de ambas tablas
-          this.techs = makeLanguagesFinalList(techs, this.userLanguages, this.logos)       
+          this.techs = makeLanguagesFinalList(techs, this.userLanguages)       
       } catch (error) {
         this.modalmsg = "Ha ocurrido un error y los datos de los lenguajes no se han cargado"
       }
@@ -259,7 +252,6 @@ export default {
           this.userWorkers = workersData
 
           this.workers = await makeWorkersFinalList(this.userWorkers)
-         console.log(this.workers)
         } catch (error) {
        
           this.modalmsg = "Ha ocurrido un error y los datos de trabajadores no se guardaron correctamente"
@@ -275,6 +267,7 @@ export default {
     handleWorkerDetails(workerId){
       this.actualTab = 6
       this.workerDetailed = this.workers.find((worker) => worker.id == workerId)
+      console.log(this.workerDetailed)
       // this.techsLogosPerCompany = 
     },
     /**

@@ -19,7 +19,8 @@ export default async function makeWorkersFinalList(workers){
         finalWorkerLanguagesList.push({
           "techName": workerLanguages[i].lenguajeNombre,
           "level": workerLanguages[i].nivel,
-          "exp": workerLanguages[i].experiencia_lenguaje
+          "exp": workerLanguages[i].experiencia_lenguaje,
+          "logo": workerLanguages[i].lenguajeLogo
         })
         //El nivel total del trabajador sera la suma total de los niveles de todas sus tecnologias pasadas a valor numerico
         totalLevel += techLevelToNumber(workerLanguages[i].nivel)
