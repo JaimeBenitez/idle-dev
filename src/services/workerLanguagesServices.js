@@ -3,7 +3,7 @@ import makeWorkerLanguage from "@/utils/makeWorkerLanguage";
 const BASE_URL = `http://localhost:8080/trabajador/`
 const POST_URL = `http://localhost:8080/trabajador-lenguaje`
 
-export async function getWorkersLanguages(workerId){
+export async function getWorkerLanguages(workerId){
     let response = await fetch(BASE_URL + `${workerId}/lenguajes`)
     let workerLanguages = await response.json();
     return workerLanguages

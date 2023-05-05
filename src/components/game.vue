@@ -53,7 +53,7 @@
         :totalLevel="workerDetailed.totalLevel"
         :PA="workerDetailed.pa" 
         :techs="workerDetailed.languages"
-        :upgrades=[] />
+        :upgrades="workerDetailed.upgrades" />
       </div>      
     </div>
     <section class="principal-resources">
@@ -252,6 +252,7 @@ export default {
           this.userWorkers = workersData
 
           this.workers = await makeWorkersFinalList(this.userWorkers)
+          console.log(this.workers)
         } catch (error) {
        
           this.modalmsg = "Ha ocurrido un error y los datos de trabajadores no se guardaron correctamente"

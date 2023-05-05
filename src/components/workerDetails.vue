@@ -15,13 +15,13 @@
                 <p  class="tech-level">{{ tech.level }}</p>
             </div>
         </div>
-        <span class="worker-detailed__upgrades">Mejoras</span>
-        <ul>
-            <li v-if="upgrades[0]" class="worker-detailed__upgrade"><img :src="upgrades[0].logo" alt=""/><span>{{ upgrades[0].nombre }}</span> <span>{{ upgrades[0].descripcion }}</span></li>
+        <span class="worker-detailed__upgrades-title">Mejoras</span>
+        <ul class="worker-detailed__upgrades">
+            <li v-if="upgrades[0]" class="worker-detailed__upgrade"><img class="worker-detailed__upgrade-logo" :src="upgrades[0].logo" alt=""/><span class="upgrade-name">{{ upgrades[0].name }}</span> <span class="upgrade-description">{{ upgrades[0].description }}</span></li>
             <li v-if="!upgrades[0]" class="worker-detailed__no-upgrade">Hueco libre</li>
-            <li v-if="upgrades[1]" class="worker-detailed__upgrade"><img :src="upgrades[1].logo" alt=""/><span>{{ upgrades[1].nombre }}</span> <span>{{ upgrades[1].descripcion }}</span></li>
+            <li v-if="upgrades[1]" class="worker-detailed__upgrade"><img class="worker-detailed__upgrade-logo" :src="upgrades[1].logo" alt=""/><span class="upgrade-name">{{ upgrades[1].name }}</span> <span class="upgrade-description">{{ upgrades[1].description }}</span></li>
             <li v-if="!upgrades[1]" class="worker-detailed__no-upgrade">Hueco libre</li>
-            <li v-if="upgrades[2]" class="worker-detailed__upgrade"><img :src="upgrades[2].logo" alt=""/><span>{{ upgrades[2].nombre }}</span> <span>{{ upgrades[2].descripcion }}</span></li>
+            <li v-if="upgrades[2]" class="worker-detailed__upgrade"><img class="worker-detailed__upgrade-logo" :src="upgrades[2].logo" alt=""/><span class="upgrade-name">{{ upgrades[2].name }}</span> <span class="upgrade-description">{{ upgrades[2].description }}</span></li>
             <li v-if="!upgrades[2]" class="worker-detailed__no-upgrade">Hueco libre</li>
         </ul>
     </div>

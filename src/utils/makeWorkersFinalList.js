@@ -1,17 +1,16 @@
 
-import { getWorkersLanguages } from "@/services/workerLanguagesServices"
+import { getWorkerLanguages } from "@/services/workerLanguagesServices"
 import { techLevelToNumber } from "./techLevelToNumber";
-
+import { getWorkerUpgrades } from "@/services/workerUpgradesServices"
 
 
 export default async function makeWorkersFinalList(workers){
-    console.log(workers)
     let finalWorkersList = []
     
     for (let i = 0; i < workers.length; i++){ 
       // Sacamos los lenguajes de cada trabajador
       let workerId = workers[i].id;  
-      let workerLanguages = await getWorkersLanguages(workerId)        
+      let workerLanguages = await getWorkerLanguages(workerId)        
       //No nos interesan algunos de los datos como las ids o el nombre del trabajador asi que hacemos una lista con unicamente los datos que queremos
       let finalWorkerLanguagesList = []
       let totalLevel = 0
@@ -25,6 +24,16 @@ export default async function makeWorkersFinalList(workers){
         //El nivel total del trabajador sera la suma total de los niveles de todas sus tecnologias pasadas a valor numerico
         totalLevel += techLevelToNumber(workerLanguages[i].nivel)
       }
+      let workerUpgrades = await getWorkerUpgrades(workerId)
+      let finalWorkerUpgradesList = []
+      for(let i = 0; i < workerUpgrades.length; i++){
+        finalWorkerUpgradesList.push({
+          "logo": workerUpgrades[i].mejoraLogo,
+          "name": workerUpgrades[i].mejoraNombre,
+          "description": workerUpgrades[i].mejoraDescripcion
+        })
+      }
+      console.log(finalWorkerUpgradesList)
       //La empresa, en el caso del 1º trabajador, puede ser nula, asi que hacemos la comprobación
       let companyName = workers[i].empresaNombre == null ? "Freelance" : workers[i].empresaNombre
 
@@ -35,6 +44,7 @@ export default async function makeWorkersFinalList(workers){
         "name" : workers[i].nombre,
         "image" : workers[i].imagen,
         "languages": finalWorkerLanguagesList,
+        "upgrades": finalWorkerUpgradesList,
         "pa": workers[i].generacion_pa,
         "company": companyName,
         "totalLevel": totalLevel

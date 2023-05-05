@@ -20,7 +20,7 @@
     font-size: var(--title-size);
 }
 
-.worker-detailed__companyName, .worker-detailed__levels, .worker-detailed__upgrades{
+.worker-detailed__companyName, .worker-detailed__levels, .worker-detailed__upgrades-title{
     font-family: var(--title-font);
     font-size: var(--subtitle-size);
 }
@@ -39,7 +39,7 @@
     text-align: center; 
 }
 
-.worker-detailed__PA, .tech-level , .worker-detailed__no-upgrade{
+.worker-detailed__PA, .tech-level , .worker-detailed__no-upgrade, .upgrade-description{
     font-family: var(--text-font);
     font-size: var(--text-size);
     font-weight: bold;
@@ -54,7 +54,29 @@
 .worker-detailed__tech-levels--list{
     text-align: center;
 }
-.worker-detailed__tech-logo{
+.worker-detailed__upgrades{
+    width: 100%;
+}
+.worker-detailed__upgrade{
+    list-style: none;
+    display: grid;
+    grid-template-columns: 28% 28% 28%;
+    padding-bottom: 0.4rem;
+    justify-content: center;
+    text-align: center;
+
+}
+
+.worker-detailed__tech-logo, .worker-detailed__upgrade-logo{
     width: 30px; 
     height: 30px;
+}
+
+.upgrade-name{
+    font-weight: bolder;
+    font-family: var(--title-font);
+}
+
+.worker-detailed__upgrade-logo{
+    padding-left: 50%
 }
