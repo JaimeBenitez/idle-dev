@@ -14,7 +14,6 @@ export async function getGameCompanies(user,companies){
         postGameCompanies(companies)
     }    
 }
-
 async function postGameCompanies(companies) {
    let userCompanies = []
    let userCompany = {}
@@ -33,4 +32,21 @@ async function postGameCompanies(companies) {
       userCompanies.push(newUserCompany)
     }
     return userCompanies
+}
+
+export async function saveGameCompanies(userCompanies, companies){
+  //Vamos seteando los cambios en las empresas de la partida
+  for(let i=0; i< userCompanies.length; i++) {
+  // Cogemos la id de la relación concreta para poder hacer la llamada
+  let dataId = userCompanies[i].id
+  let newData = {
+    "desbloqueada" : companies[i].unlocked,
+    "nivel": companies[i].level
+  }
+  await fetch(POST_URL + `/${dataId}`, {
+    method: "PUT",
+    body: JSON.stringify(newData),
+    headers: { 'Content-type': 'application/json; charset=UTF-8' },
+    })
+  }
 }

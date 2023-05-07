@@ -100,7 +100,7 @@ import { getAllLanguages } from '@/services/languageServices'
 import { getGameLanguages, saveGameLanguages } from '@/services/gameLanguageServices'
 import makeLanguagesFinalList from '@/utils/makeLanguagesFinalList'
 import { getAllCompanies } from '@/services/companyServices'
-import { getGameCompanies } from '@/services/gameCompanyServices'
+import { getGameCompanies, saveGameCompanies } from '@/services/gameCompanyServices'
 import makeCompaniesFinalList from '@/utils/makeCompaniesFinalList'
 import chooseTechsLogosPerCompany from '@/utils/chooseTechsLogosPerCompany'
 import { getGame, saveGameMoney } from '@/services/gameServices'
@@ -109,6 +109,7 @@ import buyTech from '@/utils/buyTech'
 import makeWorkersFinalList from '@/utils/makeWorkersFinalList'
 import WorkerButton from './workerButton.vue'
 import WorkerDetails from './workerDetails.vue'
+import unlockCompanies from '@/utils/unlockCompanies'
 /**
  * @vue-data {Object} [userData = {}] -  Almacenara los datos de partida del usuario actual
  * @vue-data {Array<Object>} [allUsersData = []] -  Almacenara los datos de partida de todos los jugadores registrados, para poder guardar partida
@@ -235,8 +236,9 @@ export default {
         } catch(error) {
           this.modalmsg = "Ha ocurrido un error y los datos de empresas del usuario no se han cargado"
         }
-        this.companies = makeCompaniesFinalList(companies, this.userCompanies)          
+        this.companies = makeCompaniesFinalList(companies, this.userCompanies, this.techs)          
       } catch (error) {
+        console.log(error)
         this.modalmsg = "Ha ocurrido un error y los datos de las empresas no se han cargado"
       }
     },
@@ -252,9 +254,7 @@ export default {
           this.userWorkers = workersData
 
           this.workers = await makeWorkersFinalList(this.userWorkers)
-          console.log(this.workers)
         } catch (error) {
-       
           this.modalmsg = "Ha ocurrido un error y los datos de trabajadores no se guardaron correctamente"
         }
         //Si todo va bien vamos creando la lista definitiva de empresas con los datos de ambas tablas
@@ -267,9 +267,7 @@ export default {
     },
     handleWorkerDetails(workerId){
       this.actualTab = 6
-      this.workerDetailed = this.workers.find((worker) => worker.id == workerId)
-      console.log(this.workerDetailed)
-      // this.techsLogosPerCompany = 
+      this.workerDetailed = this.workers.find((worker) => worker.id == workerId) 
     },
     /**
      * Función que coge de la API los datos de juego del usuario registrado. 
@@ -360,6 +358,9 @@ export default {
         this.moneyPerSecond = buy[1]
         this.moneyPerClick = buy[2]
       }
+      this.companies.forEach(company => unlockCompanies(this.techs, company))
+      
+      
     },
     /**
      * Función que causa el rebote del pc cuando se hace click y añade el dinero por click al dinero total
@@ -386,10 +387,16 @@ export default {
         catch{
           this.modalmsg = "Ha ocurrido un error y los datos de lenguajes no se guardaron correctamente"
         }
+        try{
+          console.log(this.userCompanies)
+          await saveGameCompanies(this.userCompanies, this.companies)
+        }
+        catch{
+          this.modalmsg = "Ha ocurrido un error y los datos de las empresas no se guardaron correctamente"
+        }
         this.saving = false
         this.modalmsg = "Partida guardada correctamente"
       } catch (error) {
-        console.log(error)
         this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"
       }
     },

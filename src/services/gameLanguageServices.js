@@ -44,7 +44,7 @@ export async function saveGameLanguages(userTechs, techs){
     "desbloqueado" : techs[i].unlocked,
     "cantidad": techs[i].quantityOwned
   }
-  await fetch(`http://localhost:8080/lenguaje-partida/${dataId}`, {
+  await fetch(POST_URL + `/${dataId}`, {
     method: "PUT",
     body: JSON.stringify(newData),
     headers: { 'Content-type': 'application/json; charset=UTF-8' },

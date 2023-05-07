@@ -33,7 +33,7 @@ export default async function makeWorkersFinalList(workers){
           "description": workerUpgrades[i].mejoraDescripcion
         })
       }
-      console.log(finalWorkerUpgradesList)
+
       //La empresa, en el caso del 1º trabajador, puede ser nula, asi que hacemos la comprobación
       let companyName = workers[i].empresaNombre == null ? "Freelance" : workers[i].empresaNombre
 

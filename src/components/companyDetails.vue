@@ -4,20 +4,18 @@
         <span v-if="level == 0" class="company-detailed__name">?????????????????</span>
         <img :src="logo" class="company-detailed__logo" alt="logo" />
         <span v-if="level != 0" class="company-detailed__level">Nivel {{ level }}</span>
-        <span v-if="level != 0" class="company-detailed__bonus-text"> x{{ bonus * level }} PA a sus miembros en: </span>
-        <span v-if="level == 0" class="company-detailed__bonus-text"> Aporta un bono de PA para sus miembros en: </span>
+        <span v-if="level != 0" class="company-detailed__bonus-text"> x{{ bonus }} PA en: </span>
+        <span v-if="level == 0" class="company-detailed__bonus-text"> Aporta un bono de PA en: </span>
         <div  class="tech-logo--list">
-                <img  class="tech-logo" v-for="tech in techsLogos" :key="tech.src" :src="tech.src" :alt="tech.alt" />
+            <img  class="tech-logo" v-for="tech in techsLogos" :key="tech.src" :src="tech.src" :alt="tech.alt" />
         </div>
-        <span class="company-detailed__requirement-title"> Requerimientos nivel {{ level + 1 }}</span>
+        <span v-if="level != 5" class="company-detailed__requirement-title"> Requerimientos nivel {{ level + 1 }}</span>
+        <span v-if="level == 5" class="company-detailed__requirement-title"> ENHORABUENA</span>
         <span class="company-detailed__requirement-text">{{ requirement }}</span>
-        <GameButton class="company-detailed__button"  text="Trabajadores" />
     </div>
 </template>
 
 <script>
-import GameButton from './gameButton.vue';
-
     export default{
         "name": "companyDetails",
         "props": {
@@ -27,9 +25,6 @@ import GameButton from './gameButton.vue';
             "bonus": Number,
             "level": Number,
             "requirement": String
-        },
-        components: {
-            GameButton,
         }
     } 
 </script>
