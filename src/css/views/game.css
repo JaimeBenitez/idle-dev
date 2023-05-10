@@ -60,15 +60,35 @@
     grid-row-gap: 20px ;
     justify-items: center;
 }
+.workers-tab{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: space-between;
+    width: 100%;
+    flex-grow: 1;
+    /* background-color: 'red' */
+}
 .workers_list{
     padding: 1rem;
     width: 100%;
+    height: 90%;
     display: grid;
     grid-template-columns: 25% 25% 25% 25%;
     grid-row: 100% 100%;
     /* grid-column-gap: 20px; */
     grid-row-gap: 20px ;
     justify-items: center;
+    /* background-color: aqua  */
+}
+.hire-button{
+    align-self: center;
+    margin: 1rem;
+    transform: scale(1.5)
+}
+
+.hire-button:hover{
+    transform: scale(1.7)
 }
 .principal-resources{
     display: flex;

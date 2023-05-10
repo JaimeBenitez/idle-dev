@@ -22,13 +22,16 @@
           @buy="handleBuy" 
           :canBuy="tech.currentCost <= principalMoney" />
         </div>
-        <div v-if="actualTab == 2" class="workers_list">
-          <WorkerButton v-for="worker in workers" 
-          :key="worker.id" 
-          :id="worker.id" 
-          :logo="worker.image" 
-          :workerName="worker.name" 
-          @details="handleWorkerDetails" />
+        <div v-if="actualTab == 2" class="workers-tab">
+          <div class="workers_list">
+            <WorkerButton v-for="worker in workers" 
+            :key="worker.id" 
+            :id="worker.id" 
+            :logo="worker.image" 
+            :workerName="worker.name" 
+            @details="handleWorkerDetails" />
+          </div>
+          <GameButton text="Contratar" class="hire-button" @click ="handleHireModal()" />
         </div>
         <div v-if="actualTab == 4" class="companies_list">
           <CompanyButton v-for="company in companies" 
@@ -70,6 +73,8 @@
     </section>
     <Modal v-if="modalmsg != ''" :msg="modalmsg" buttonMsg="Continuar" textClass="modal-game-message" :isGame=true
       @close="handleClose" />
+    <HireModal v-if="actualTab == 7" msg="funciona" textClass="modal-game-message"
+      @close="handleHireClose" />
       <!-- Modal que se mostrará mientras cargan los datos de partida -->
     <section v-if="loading" class="modal">
         <div class="modal-container">
@@ -110,6 +115,7 @@ import makeWorkersFinalList from '@/utils/makeWorkersFinalList'
 import WorkerButton from './workerButton.vue'
 import WorkerDetails from './workerDetails.vue'
 import unlockCompanies from '@/utils/unlockCompanies'
+import HireModal from './hireModal.vue'
 /**
  * @vue-data {Object} [userData = {}] -  Almacenara los datos de partida del usuario actual
  * @vue-data {Array<Object>} [allUsersData = []] -  Almacenara los datos de partida de todos los jugadores registrados, para poder guardar partida
@@ -150,7 +156,8 @@ export default {
     TabNav,
     CompanyDetails,
     WorkerButton,
-    WorkerDetails
+    WorkerDetails,
+    HireModal
     
 },
   data() {
@@ -260,6 +267,13 @@ export default {
         //Si todo va bien vamos creando la lista definitiva de empresas con los datos de ambas tablas
         
       },
+    getWorkerSlots(){
+      for(let i = 0; i < this.companies.length ; i++){
+      
+        this.workerSlots += this.companies[i].slots
+      }
+      console.log(this.workerSlots)
+    },
     handleDetails(companyId){
       this.actualTab = 5
       this.companyDetailed = this.companies.find((company) => company.id == companyId)
@@ -268,6 +282,9 @@ export default {
     handleWorkerDetails(workerId){
       this.actualTab = 6
       this.workerDetailed = this.workers.find((worker) => worker.id == workerId) 
+    },
+    handleHireModal(){
+      this.actualTab = 7
     },
     /**
      * Función que coge de la API los datos de juego del usuario registrado. 
@@ -283,6 +300,7 @@ export default {
         //Como necesitamos la lista que genera la función, usamos await para esperar a que esta termine antes del for
         await this.getLanguages(user)
         await this.getCompanies(user)
+        this.getWorkerSlots()
         await this.getWorkers(user)
         //Volvemos a hacer los calculos necesarios usando la info de la api y los vamos seteando a sus respectivas variables      
         let gameData = gameCalculator(this.techs, this.moneyPerSecond, this.quantityToBuy)
@@ -309,6 +327,9 @@ export default {
      */
     handleClose() {
       this.modalmsg = '';
+    },
+    handleHireClose() {
+      this.actualTab = 2;
     },
     /**
      * Función que setea la cantidad que queremos comprar y su coste. Se activa con los botones de cantidad
@@ -359,8 +380,6 @@ export default {
         this.moneyPerClick = buy[2]
       }
       this.companies.forEach(company => unlockCompanies(this.techs, company))
-      
-      
     },
     /**
      * Función que causa el rebote del pc cuando se hace click y añade el dinero por click al dinero total
