@@ -21,3 +21,17 @@ export async function chooseWorkerLanguage(worker,techs){
     }) 
         
 }
+
+export async function hiredWorkerLanguage(workerId, tech){
+    let finalWorkerLanguage = {
+        "id_trabajador": workerId,
+        "id_lenguaje": tech.id,
+        "nivel": tech.nivel,
+        "experiencia_lenguaje": 0
+    } 
+    await fetch(POST_URL, {
+        method: "POST",
+        body: JSON.stringify(finalWorkerLanguage),
+        headers: { 'Content-type': 'application/json; charset=UTF-8' },            
+    }) 
+}

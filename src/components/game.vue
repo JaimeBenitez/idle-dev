@@ -73,7 +73,7 @@
     </section>
     <Modal v-if="modalmsg != ''" :msg="modalmsg" buttonMsg="Continuar" textClass="modal-game-message" :isGame=true
       @close="handleClose" />
-    <HireModal v-if="actualTab == 7" msg="funciona" textClass="modal-game-message"
+    <HireModal v-if="actualTab == 7" :gameId="user" :techs="techs"
       @close="handleHireClose" />
       <!-- Modal que se mostrará mientras cargan los datos de partida -->
     <section v-if="loading" class="modal">
@@ -162,12 +162,14 @@ export default {
 },
   data() {
     return {
+      user: localStorage.getItem("user"),
       userData: {},
       allUsersData: [],
       userLanguages: [],
       userCompanies: [],
       userWorkers: [],
       workerSlots: 1,
+      slotsOccupied: 1,
       actualTab: 1,
       companyDetailed: {},
       workerDetailed: {},
@@ -284,24 +286,27 @@ export default {
       this.workerDetailed = this.workers.find((worker) => worker.id == workerId) 
     },
     handleHireModal(){
+      if(this.workerSlots > this.slotsOccupied){
       this.actualTab = 7
+      } else {
+        this.modalmsg = "No tienes hueco para mas trabajadores"
+      }
     },
     /**
      * Función que coge de la API los datos de juego del usuario registrado. 
      */
     async getData() {
-      const user = localStorage.getItem("user")
       try {
         this.loading = true      
-        this.userData = await getGame(user)
+        this.userData = await getGame(this.user)
         //Seteamos el dinero con la información de la api
         this.principalMoney = this.userData.dinero
         this.modalmsg = ''
         //Como necesitamos la lista que genera la función, usamos await para esperar a que esta termine antes del for
-        await this.getLanguages(user)
-        await this.getCompanies(user)
+        await this.getLanguages(this.user)
+        await this.getCompanies(this.user)
         this.getWorkerSlots()
-        await this.getWorkers(user)
+        await this.getWorkers(this.user)
         //Volvemos a hacer los calculos necesarios usando la info de la api y los vamos seteando a sus respectivas variables      
         let gameData = gameCalculator(this.techs, this.moneyPerSecond, this.quantityToBuy)
         this.techs = gameData[0]

@@ -1,4 +1,4 @@
-import { chooseWorkerLanguage } from "./workerLanguagesServices";
+import { chooseWorkerLanguage, hiredWorkerLanguage } from "./workerLanguagesServices";
 import makeWorker from "@/utils/makeWorker";
 
 
@@ -32,14 +32,24 @@ export async function postGameWorker(user, techs){
         headers: { 'Content-type': 'application/json; charset=UTF-8' },            
         })
         let newWorker = await response.json() 
+           // Elegimos sus lenguajes
         chooseWorkerLanguage(newWorker, techs)
         }catch(error){
             console.log(error)
         }
-        // Elegimos sus lenguajes
-        
+}
 
- 
+export async function hireWorker(worker,tech){
+    try{
+        let response = await fetch(POST_URL, {
+            method: "POST",
+            body: JSON.stringify(worker),
+            headers: { 'Content-type': 'application/json; charset=UTF-8' },            
+        })
+        let newWorker = await response.json()
+        hiredWorkerLanguage(newWorker.id, tech)
         
-     
+    }catch(error){
+        console.log(error)
+    }
 }

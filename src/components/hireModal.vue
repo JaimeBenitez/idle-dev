@@ -1,12 +1,16 @@
 <template>
     <section class="modal">
         <div class="modal-container">
-            <p class="modal-message">{{ msg }}</p>           
+            <WorkerHireOption :gameId="gameId" :techs="techs" /> 
+            <WorkerHireOption :gameId="gameId" :techs="techs" /> 
+            <WorkerHireOption :gameId="gameId" :techs="techs" />           
             <button  @click="closeModal" class="close">Cerrar</button>
         </div>
     </section>
 </template>
 <script>
+    import WorkerHireOption from "./workerHireOption.vue"
+
 /**
  * @file button.vue - Componente modal que aparecerá en las diferentes pantallas
  * @author Jaime Benitez
@@ -24,7 +28,11 @@
 export default {
     name: "HireModal",
     props: {        
-        msg: String,       
+        gameId: Number,
+        techs: Array[Object]   
+    },
+    components: {
+        WorkerHireOption
     },
     data(){
         return{
@@ -35,6 +43,6 @@ export default {
         closeModal(){
             this.$emit("close")
         }
-    }
+    },
 }
 </script>
