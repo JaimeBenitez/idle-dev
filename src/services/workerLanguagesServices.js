@@ -22,9 +22,9 @@ export async function chooseWorkerLanguage(worker,techs){
         
 }
 
-export async function hiredWorkerLanguage(workerId, tech){
+export async function hiredWorkerLanguage(worker, tech){
     let finalWorkerLanguage = {
-        "id_trabajador": workerId,
+        "id_trabajador": worker.id,
         "id_lenguaje": tech.id,
         "nivel": tech.nivel,
         "experiencia_lenguaje": 0

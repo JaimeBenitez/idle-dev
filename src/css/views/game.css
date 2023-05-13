@@ -33,7 +33,7 @@
     cursor: pointer;
     transition: all 0.5 ease;
 }
-.multiplier-button:hover {
+.game-button:hover {
     transform: scale(1.2);
 }
 

@@ -47,7 +47,8 @@ export async function hireWorker(worker,tech){
             headers: { 'Content-type': 'application/json; charset=UTF-8' },            
         })
         let newWorker = await response.json()
-        hiredWorkerLanguage(newWorker.id, tech)
+        console.log(newWorker)
+        hiredWorkerLanguage(newWorker, tech)
         
     }catch(error){
         console.log(error)

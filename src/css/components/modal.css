@@ -50,5 +50,9 @@
     width: 40%;
     text-align: center;
     height: 3rem;
-    
+    cursor: pointer
+}
+
+.close:hover {
+    transform: scale(1.1)
 }

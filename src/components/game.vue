@@ -73,8 +73,8 @@
     </section>
     <Modal v-if="modalmsg != ''" :msg="modalmsg" buttonMsg="Continuar" textClass="modal-game-message" :isGame=true
       @close="handleClose" />
-    <HireModal v-if="actualTab == 7" :gameId="user" :techs="techs"
-      @close="handleHireClose" />
+    <HireModal v-if="actualTab == 7" :gameId="parseInt(user)" :techs="techs" :slotsOcuppied="slotsOccupied"
+      @close="handleHireClose" @hired="hiredWorker"/>
       <!-- Modal que se mostrará mientras cargan los datos de partida -->
     <section v-if="loading" class="modal">
         <div class="modal-container">
@@ -274,7 +274,14 @@ export default {
       
         this.workerSlots += this.companies[i].slots
       }
-      console.log(this.workerSlots)
+    },
+    async hiredWorker(workerPrice){
+      this.moneyPerSecond -= workerPrice
+      this.slotsOccupied += 1
+      this.actualTab = 2
+      await this.getData()
+      this.modalmsg= 'Trabajador contratado'
+    
     },
     handleDetails(companyId){
       this.actualTab = 5
@@ -312,6 +319,10 @@ export default {
         this.techs = gameData[0]
         this.moneyPerClick = gameData[1]
         this.moneyPerSecond = gameData[2]
+        this.getWorkerSlots()
+        this.slotsOccupied = this.workers.length
+        console.log(this.workerSlots)
+        console.log(this.slotsOccupied)
         this.loading = false
         if (this.principalMoney == 0){
           this.modalmsg = "Bienvenido al fantástico mundo de la programación. Te espera un gran viaje a traves de la historia de la informática. Haz click en el ordenador para ganar beneficios y empezar a comprar las tecnologías que irás aprendiendo"

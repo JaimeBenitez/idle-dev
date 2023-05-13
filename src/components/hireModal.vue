@@ -1,9 +1,11 @@
 <template>
     <section class="modal">
-        <div class="modal-container">
-            <WorkerHireOption :gameId="gameId" :techs="techs" /> 
-            <WorkerHireOption :gameId="gameId" :techs="techs" /> 
-            <WorkerHireOption :gameId="gameId" :techs="techs" />           
+        <div class="hiremodal-container">
+            <div class="hireOptions-container">
+                <WorkerHireOption :gameId="gameId" :techs="techs" :slotsOcuppied="slotsOcuppied" @hired="hired" /> 
+                <WorkerHireOption :gameId="gameId" :techs="techs" :slotsOcuppied="slotsOcuppied" @hired="hired" /> 
+                <WorkerHireOption :gameId="gameId" :techs="techs" :slotsOcuppied="slotsOcuppied" @hired="hired" /> 
+            </div>          
             <button  @click="closeModal" class="close">Cerrar</button>
         </div>
     </section>
@@ -29,7 +31,8 @@ export default {
     name: "HireModal",
     props: {        
         gameId: Number,
-        techs: Array[Object]   
+        techs: Array[Object],
+        slotsOcuppied: Number   
     },
     components: {
         WorkerHireOption
@@ -42,6 +45,9 @@ export default {
     methods:{
         closeModal(){
             this.$emit("close")
+        },
+        hired(workerPrice){
+            this.$emit("hired", workerPrice)
         }
     },
 }

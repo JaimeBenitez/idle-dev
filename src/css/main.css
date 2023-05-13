@@ -4,14 +4,15 @@
 
 @import './components/header.css';
 @import './components/button.css';
-@import './components/tech-button.css';
+@import './components/techButton.css';
 @import './components/modal.css';
-@import './components/tab-button.css';
-@import './components/tabs-nav.css';
-@import './components/company-button.css';
-@import './components/company-details.css';
-@import './components/worker-button.css';
-@import './components/worker-details.css';
+@import './components/tabButton.css';
+@import './components/tabsNav.css';
+@import './components/companyButton.css';
+@import './components/companyDetails.css';
+@import './components/workerButton.css';
+@import './components/workerDetails.css';
+@import './components/hireModal.css';
 
 
 @import './layouts/base.css';
