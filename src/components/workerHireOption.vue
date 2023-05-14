@@ -38,9 +38,9 @@ export default {
             this.workerPrice = (this.language.id + 1) * (levelToNumber * 100) * this.slotsOcuppied
            
         },
-        hire(){
+        async hire(){
             
-            hireWorker(this.worker,this.language)
+            await hireWorker(this.worker,this.language)
             this.$emit("hired", this.workerPrice)
         }
     },

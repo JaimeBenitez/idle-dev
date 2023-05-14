@@ -184,7 +184,7 @@ export default {
       saving: false,
       techs: [],
       companies: [],
-      workers: []
+      workers: [],
     }
   },
   computed: {
@@ -252,6 +252,7 @@ export default {
       }
     },
     async getWorkers(user) {
+
         try { 
           let workersData =  await getGameWorkers(user)
           if(!workersData){
@@ -261,7 +262,6 @@ export default {
           }
           //Seteamos la info sobre los trabajadores del usuario
           this.userWorkers = workersData
-
           this.workers = await makeWorkersFinalList(this.userWorkers)
         } catch (error) {
           this.modalmsg = "Ha ocurrido un error y los datos de trabajadores no se guardaron correctamente"
@@ -270,16 +270,19 @@ export default {
         
       },
     getWorkerSlots(){
+      let workerSlots = 0
       for(let i = 0; i < this.companies.length ; i++){
       
-        this.workerSlots += this.companies[i].slots
+        workerSlots += this.companies[i].slots
       }
+      this.workerSlots = workerSlots
     },
     async hiredWorker(workerPrice){
       this.moneyPerSecond -= workerPrice
+      this.moneyPerClick = this.moneyPerSecond * 0.1
       this.slotsOccupied += 1
       this.actualTab = 2
-      await this.getData()
+      await this.getWorkers(this.user)
       this.modalmsg= 'Trabajador contratado'
     
     },
@@ -319,10 +322,7 @@ export default {
         this.techs = gameData[0]
         this.moneyPerClick = gameData[1]
         this.moneyPerSecond = gameData[2]
-        this.getWorkerSlots()
         this.slotsOccupied = this.workers.length
-        console.log(this.workerSlots)
-        console.log(this.slotsOccupied)
         this.loading = false
         if (this.principalMoney == 0){
           this.modalmsg = "Bienvenido al fantástico mundo de la programación. Te espera un gran viaje a traves de la historia de la informática. Haz click en el ordenador para ganar beneficios y empezar a comprar las tecnologías que irás aprendiendo"

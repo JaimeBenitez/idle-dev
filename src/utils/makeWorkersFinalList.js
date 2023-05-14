@@ -33,12 +33,7 @@ export default async function makeWorkersFinalList(workers){
           "description": workerUpgrades[i].mejoraDescripcion
         })
       }
-
-      //La empresa, en el caso del 1º trabajador, puede ser nula, asi que hacemos la comprobación
-      let companyName = workers[i].empresaNombre == null ? "Freelance" : workers[i].empresaNombre
-
-     
-
+      
       finalWorkersList.push({
         "id" : workers[i].id,
         "name" : workers[i].nombre,
@@ -46,7 +41,6 @@ export default async function makeWorkersFinalList(workers){
         "languages": finalWorkerLanguagesList,
         "upgrades": finalWorkerUpgradesList,
         "pa": workers[i].generacion_pa,
-        "company": companyName,
         "totalLevel": totalLevel
       })
     }
