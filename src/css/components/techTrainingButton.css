@@ -1,0 +1,17 @@
+.tech-list__tech{
+    width: 80%;
+    height: 100px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+.tech-list__tech:hover{
+    transform: scale(1.05);
+}
+.tech-list__tech-logo{
+    width: 60px;
+    height: 60px;
+}
+
+.tech-list__tech-level{
+    font-family: var(--title-font);
+}

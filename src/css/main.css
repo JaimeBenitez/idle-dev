@@ -13,6 +13,8 @@
 @import './components/workerButton.css';
 @import './components/workerDetails.css';
 @import './components/hireModal.css';
+@import './components/trainingModal.css';
+@import './components/techTrainingButton.css';
 
 
 @import './layouts/base.css';

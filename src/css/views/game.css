@@ -60,14 +60,13 @@
     grid-row-gap: 20px ;
     justify-items: center;
 }
-.workers-tab{
+.workers-tab, .training-tab{
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: space-between;
     width: 100%;
     flex-grow: 1;
-    /* background-color: 'red' */
 }
 .workers_list{
     padding-top: 1rem;
@@ -89,13 +88,13 @@
 .workers_list::-webkit-scrollbar{
     display: none;
 }
-.hire-button{
+.hire-button, .training-button{
     align-self: center;
     margin: 1rem;
     transform: scale(1.5)
 }
 
-.hire-button:hover{
+.hire-button:hover, .training-button:hover{
     transform: scale(1.7)
 }
 .principal-resources{

@@ -33,6 +33,12 @@
           </div>
           <GameButton text="Contratar" class="hire-button" @click ="handleHireModal()" />
         </div>
+        <div v-if="actualTab == 3" class="training-tab">
+          <div class="training-list">
+
+          </div>
+          <GameButton text="Entrenar" class="training-button" @click ="handleTrainingWorkerModal()" />
+        </div>
         <div v-if="actualTab == 4" class="companies_list">
           <CompanyButton v-for="company in companies" 
           :key="company.id" 
@@ -75,6 +81,10 @@
       @close="handleClose" />
     <HireModal v-if="actualTab == 7" :gameId="parseInt(user)" :techs="techs" :slotsOcuppied="slotsOccupied"
       @close="handleHireClose" @hired="hiredWorker"/>
+    <TrainingWorkerModal v-if="actualTab == 8"  :workers="workers" 
+      @close="handleTrainingClose" @chosen="handleTrainingTechModal"/>
+    <TrainingTechModal v-if="actualTab == 9"  :techs="techs" :workerTechs="workerToTrain.languages"
+      @close="handleTrainingClose" @chosen="handleChosenTraining"/>
       <!-- Modal que se mostrará mientras cargan los datos de partida -->
     <section v-if="loading" class="modal">
         <div class="modal-container">
@@ -116,6 +126,8 @@ import WorkerButton from './workerButton.vue'
 import WorkerDetails from './workerDetails.vue'
 import unlockCompanies from '@/utils/unlockCompanies'
 import HireModal from './hireModal.vue'
+import TrainingWorkerModal from './trainingWorkerModal.vue'
+import TrainingTechModal from './trainingTechModal.vue'
 /**
  * @vue-data {Object} [userData = {}] -  Almacenara los datos de partida del usuario actual
  * @vue-data {Array<Object>} [allUsersData = []] -  Almacenara los datos de partida de todos los jugadores registrados, para poder guardar partida
@@ -157,7 +169,9 @@ export default {
     CompanyDetails,
     WorkerButton,
     WorkerDetails,
-    HireModal
+    HireModal,
+    TrainingWorkerModal,
+    TrainingTechModal,
     
 },
   data() {
@@ -185,6 +199,8 @@ export default {
       techs: [],
       companies: [],
       workers: [],
+      workerToTrain: {},
+      techToTrain: {}
     }
   },
   computed: {
@@ -302,6 +318,18 @@ export default {
         this.modalmsg = "No tienes hueco para mas trabajadores"
       }
     },
+    handleTrainingWorkerModal(){
+      this.actualTab = 8
+    },
+    handleTrainingTechModal(workerId){
+      this.workerToTrain = this.workers.find((worker) => worker.id == workerId)
+      this.actualTab = 9
+    },
+    handleChosenTraining(techId){
+      this.techToTrain = this.techs.find((tech) => tech.id ==techId)
+      this.actualTab = 3
+      console.log(this.workerToTrain, this.techToTrain)
+    },
     /**
      * Función que coge de la API los datos de juego del usuario registrado. 
      */
@@ -346,6 +374,9 @@ export default {
     },
     handleHireClose() {
       this.actualTab = 2;
+    },
+    handleTrainingClose(){
+      this.actualTab = 3;
     },
     /**
      * Función que setea la cantidad que queremos comprar y su coste. Se activa con los botones de cantidad
