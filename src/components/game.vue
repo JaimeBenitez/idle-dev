@@ -35,7 +35,13 @@
         </div>
         <div v-if="actualTab == 3" class="training-tab">
           <div class="training-list">
-
+            <div v-if="inTraining.length == 0" class="no-training">
+              <p class="no-training-text">No hay trabajadores formandose</p>
+            </div>
+            <div v-if="inTraining.length != 0" class="training-list">
+              <TrainingInfo v-for="training in inTraining" :key="training.workerId" :training=training />
+            </div>
+            
           </div>
           <GameButton text="Entrenar" class="training-button" @click ="handleTrainingWorkerModal()" />
         </div>
@@ -128,6 +134,8 @@ import unlockCompanies from '@/utils/unlockCompanies'
 import HireModal from './hireModal.vue'
 import TrainingWorkerModal from './trainingWorkerModal.vue'
 import TrainingTechModal from './trainingTechModal.vue'
+import { makeTraining } from '@/utils/makeTraining'
+import TrainingInfo from './trainingInfo.vue'
 /**
  * @vue-data {Object} [userData = {}] -  Almacenara los datos de partida del usuario actual
  * @vue-data {Array<Object>} [allUsersData = []] -  Almacenara los datos de partida de todos los jugadores registrados, para poder guardar partida
@@ -172,6 +180,7 @@ export default {
     HireModal,
     TrainingWorkerModal,
     TrainingTechModal,
+    TrainingInfo
     
 },
   data() {
@@ -200,7 +209,8 @@ export default {
       companies: [],
       workers: [],
       workerToTrain: {},
-      techToTrain: {}
+      techToTrain: {},
+      inTraining: [],
     }
   },
   computed: {
@@ -325,10 +335,13 @@ export default {
       this.workerToTrain = this.workers.find((worker) => worker.id == workerId)
       this.actualTab = 9
     },
-    handleChosenTraining(techId){
+    async handleChosenTraining(techId){
       this.techToTrain = this.techs.find((tech) => tech.id ==techId)
       this.actualTab = 3
-      console.log(this.workerToTrain, this.techToTrain)
+      let newTraining = await makeTraining(this.workerToTrain, this.techToTrain)
+      this.inTraining.push(newTraining)
+      console.log(this.inTraining)
+
     },
     /**
      * Función que coge de la API los datos de juego del usuario registrado. 

@@ -20,8 +20,6 @@
        },
        methods: {
             getTechLevel(){
-                console.log(this.workerTechs)
-                console.log(this.id)
                 let actualTech = this.workerTechs.find((tech) => (tech.languageId == this.id ))
                 if(actualTech){
                     this.techLevel = actualTech.level

@@ -97,6 +97,38 @@
 .hire-button:hover, .training-button:hover{
     transform: scale(1.7)
 }
+.training-list{
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+    overflow: scroll;
+    scrollbar-width: none;
+}
+
+.training-list::-webkit-scrollbar{
+    display: none;
+}
+
+.no-training{
+    width: 90%;
+    height: 55px;
+    background-color: var(--text-color);
+    margin-top: 1.5rem;
+    border-radius: 20px;
+    padding: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.no-training-text{
+    font-family: var(--text-font);
+    font-size: var(--subtitle-size);
+    font-weight: bold;
+}
+
 .principal-resources{
     display: flex;
     flex-direction: column;
