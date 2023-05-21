@@ -16,6 +16,7 @@ export default async function makeWorkersFinalList(workers){
       let totalLevel = 0
       for(let i = 0; i < workerLanguages.length; i++){
         finalWorkerLanguagesList.push({
+          "relationId": workerLanguages[i].id,
           "languageId": workerLanguages[i].lenguajeId,
           "techName": workerLanguages[i].lenguajeNombre,
           "level": workerLanguages[i].nivel,

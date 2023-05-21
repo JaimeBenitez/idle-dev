@@ -39,7 +39,8 @@
               <p class="no-training-text">No hay trabajadores formandose</p>
             </div>
             <div v-if="inTraining.length != 0" class="training-list">
-              <TrainingInfo v-for="training in inTraining" :key="training.workerId" :training=training />
+              <TrainingInfo v-for="training in inTraining" :key="training.workerId" :training=training
+              />
             </div>
             
           </div>
@@ -123,7 +124,7 @@ import makeLanguagesFinalList from '@/utils/makeLanguagesFinalList'
 import { getAllCompanies } from '@/services/companyServices'
 import { getGameCompanies, saveGameCompanies } from '@/services/gameCompanyServices'
 import makeCompaniesFinalList from '@/utils/makeCompaniesFinalList'
-import chooseTechsLogosPerCompany from '@/utils/chooseTechsLogosPerCompany'
+import chooseTechsPerCompany from '@/utils/chooseTechsPerCompany'
 import { getGame, saveGameMoney } from '@/services/gameServices'
 import gameCalculator from '@/utils/gameCalculator'
 import buyTech from '@/utils/buyTech'
@@ -136,6 +137,8 @@ import TrainingWorkerModal from './trainingWorkerModal.vue'
 import TrainingTechModal from './trainingTechModal.vue'
 import { makeTraining } from '@/utils/makeTraining'
 import TrainingInfo from './trainingInfo.vue'
+import { newWorkerLanguage, levelUpLanguage } from '@/services/workerLanguagesServices'
+import getCompaniesTotalBonus from '@/utils/getCompaniesTotalBonus'
 /**
  * @vue-data {Object} [userData = {}] -  Almacenara los datos de partida del usuario actual
  * @vue-data {Array<Object>} [allUsersData = []] -  Almacenara los datos de partida de todos los jugadores registrados, para poder guardar partida
@@ -194,9 +197,10 @@ export default {
       workerSlots: 1,
       slotsOccupied: 1,
       actualTab: 1,
+      companiesTotalBonus: 1,
       companyDetailed: {},
       workerDetailed: {},
-      techsLogosPerCompany: [],
+      techsPerCompany: [],
       quantityToBuy: 1,
       principalMoney: 0,
       moneyPerSecond: 0,
@@ -226,6 +230,9 @@ export default {
     activeTechs() {
       //Nos dice que tecnologias mostrar con nuestras ganancias actuales
       return this.techs.filter((tech) => tech.unlocked == true)
+    },
+    bonus(base, multiplier){
+      return base * multiplier
     }
   },
   methods: {
@@ -271,7 +278,8 @@ export default {
         } catch(error) {
           this.modalmsg = "Ha ocurrido un error y los datos de empresas del usuario no se han cargado"
         }
-        this.companies = makeCompaniesFinalList(companies, this.userCompanies, this.techs)          
+        this.companies = makeCompaniesFinalList(companies, this.userCompanies, this.techs)         
+        console.log(this.companies) 
       } catch (error) {
         console.log(error)
         this.modalmsg = "Ha ocurrido un error y los datos de las empresas no se han cargado"
@@ -315,7 +323,7 @@ export default {
     handleDetails(companyId){
       this.actualTab = 5
       this.companyDetailed = this.companies.find((company) => company.id == companyId)
-      this.techsLogosPerCompany = chooseTechsLogosPerCompany(companyId)
+      this.techsPerCompany = chooseTechsPerCompany(companyId)
     },
     handleWorkerDetails(workerId){
       this.actualTab = 6
@@ -333,15 +341,59 @@ export default {
     },
     handleTrainingTechModal(workerId){
       this.workerToTrain = this.workers.find((worker) => worker.id == workerId)
+      console.log(this.workerToTrain)
+      let isInTraining = this.inTraining.find((training) => training.workerId == workerId)
+      if(isInTraining){
+        this.actualTab = 3
+        this.modalmsg = "Este trabajador ya se está entrenando"
+      }else{
       this.actualTab = 9
+      }
     },
     async handleChosenTraining(techId){
-      this.techToTrain = this.techs.find((tech) => tech.id ==techId)
+      this.techToTrain = this.techs.find((tech) => tech.id == techId)
+      console.log(this.techToTrain)
       this.actualTab = 3
       let newTraining = await makeTraining(this.workerToTrain, this.techToTrain)
+      //Creamos el intervalo concreto
+      newTraining.intervalID = setInterval(this.handleTrainingTimer, 1000, newTraining.workerId)
+      console.log(newTraining)
       this.inTraining.push(newTraining)
-      console.log(this.inTraining)
-
+    },
+    handleIntervalID(intervalID, workerID){
+      let trainingIndex = this.inTraining.findIndex((training) => training.workerId == workerID)
+      this.inTraining[trainingIndex].intervalID = intervalID
+    },
+    handleClearInterval(workerID){
+      let trainingIndex = this.inTraining.findIndex((training) => training.workerId == workerID)
+      this.inTraining[trainingIndex].intervalID = null
+    },
+    handleTrainingTimer(workerID){
+      let trainingIndex = this.inTraining.findIndex((training) => training.workerId == workerID)
+      if(this.inTraining[trainingIndex].actualExp < this.inTraining[trainingIndex].expToLevelUp){
+        this.inTraining[trainingIndex].actualExp += parseInt(this.inTraining[trainingIndex].pa.toFixed(0));
+      } else{
+          clearInterval(this.inTraining[trainingIndex].intervalID)
+          this.handleLevelUp(workerID)
+          }
+      },
+    async handleLevelUp(workerId){
+     let trainingIndex = this.inTraining.findIndex((training) => training.workerId == workerId)
+     let training = this.inTraining[trainingIndex]
+     
+      try{
+        if(training.relationId){
+          await levelUpLanguage(training.workerId, training.techId, training.techNextLevel, training.relationId)
+        }else{
+          await newWorkerLanguage(training.workerId, training.techId)
+        }
+        this.inTraining.splice(trainingIndex, 1)
+        this.modalmsg=`${training.workerName} subio su nivel de ${training.techName} a ${training.techNextLevel}`
+        await this.getWorkers(this.user)
+      }catch(error){
+        console.log(error)
+        this.modalmsg="Ocurrio un error y no se pudo actualizar el lenguaje"
+      }
     },
     /**
      * Función que coge de la API los datos de juego del usuario registrado. 
@@ -360,9 +412,11 @@ export default {
         await this.getWorkers(this.user)
         //Volvemos a hacer los calculos necesarios usando la info de la api y los vamos seteando a sus respectivas variables      
         let gameData = gameCalculator(this.techs, this.moneyPerSecond, this.quantityToBuy)
+        this.companiesTotalBonus = getCompaniesTotalBonus(this.companies)
+        console.log(this.companiesTotalBonus)
         this.techs = gameData[0]
-        this.moneyPerClick = gameData[1]
-        this.moneyPerSecond = gameData[2]
+        this.moneyPerClick = gameData[1] * this.companiesTotalBonus 
+        this.moneyPerSecond = gameData[2] * this.companiesTotalBonus
         this.slotsOccupied = this.workers.length
         this.loading = false
         if (this.principalMoney == 0){
@@ -436,10 +490,12 @@ export default {
       if (tech) {
         let buy =  buyTech(tech,this.quantityToBuy,this.principalMoney,this.moneyPerSecond)
         this.principalMoney = buy[0]
-        this.moneyPerSecond = buy[1]
-        this.moneyPerClick = buy[2]
+        this.moneyPerSecond = buy[1] * this.companiesTotalBonus
+        this.moneyPerClick = buy[2] * this.companiesTotalBonus
       }
       this.companies.forEach(company => unlockCompanies(this.techs, company))
+      // Volvemos a setear el bonus de las empresas por si hemos desbloqueado alguna
+      this.companiesTotalBonus = getCompaniesTotalBonus(this.companies)
     },
     /**
      * Función que causa el rebote del pc cuando se hace click y añade el dinero por click al dinero total

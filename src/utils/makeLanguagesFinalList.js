@@ -13,7 +13,8 @@ export default function makeLanguagesFinalList(techs, userLanguages){
           "quantityOwned" : userLanguages[i].cantidad,
           "currentCost": 0,
           "totalProfit": 0,
-          "msg": techs[i].mensaje
+          "msg": techs[i].mensaje,
+          "multiplier": 1
         })
       }
     return finalTechsList

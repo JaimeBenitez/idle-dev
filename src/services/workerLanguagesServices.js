@@ -35,3 +35,31 @@ export async function hiredWorkerLanguage(worker, tech){
         headers: { 'Content-type': 'application/json; charset=UTF-8' },            
     }) 
 }
+
+export async function newWorkerLanguage(workerId, techId){
+    let newWorkerLanguage = {
+        "id_trabajador": workerId,
+        "id_lenguaje": techId,
+        "nivel": "basico",
+        "experiencia_lenguaje": 0
+    }
+    await fetch(POST_URL, {
+        method: "POST",
+        body: JSON.stringify(newWorkerLanguage),
+        headers: { 'Content-type': 'application/json; charset=UTF-8' },            
+    }) 
+}
+
+export async function levelUpLanguage(workerId, techId, newLevel, relationId){
+    let leveledUpLanguage = {
+        "id_trabajador": workerId,
+        "id_lenguaje": techId,
+        "nivel": newLevel,
+        "experiencia_lenguaje": 0
+    }
+    await fetch(POST_URL + `/${relationId}` , {
+        method: "PUT",
+        body: JSON.stringify(leveledUpLanguage),
+        headers: { 'Content-type': 'application/json; charset=UTF-8' },            
+    }) 
+}

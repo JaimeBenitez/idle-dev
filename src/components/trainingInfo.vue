@@ -17,7 +17,7 @@
         </section> 
         <section class="training__section">
             <p class="training__text">{{ training.pa }} <img :src="require('@/assets/bulb.svg')"/>/s</p>
-            <p class="training__text">{{ actualExp }}/{{ training.expToLevelUp }}</p>
+            <p class="training__text">{{ training.actualExp }}/{{ training.expToLevelUp }}</p>
             <!-- timer -->
             <p class="training__text">{{ timeToLevelUp }} segs</p>
 
@@ -29,28 +29,13 @@
     export default {
         name: "TrainingInfo",
         props: {
-            training: Object
+            training: Object,
         },
-        data(){
-            return{
-                actualExp: this.training.actualExp,
-                timeToLevelUp: 0
-            }  
-        },
-        methods: {
-            handleTimer(){
-                
-                this.actualExp += parseInt(this.training.pa.toFixed(0));
-                this.timeToLevelUp = ((this.training.expToLevelUp - this.actualExp)/this.training.pa).toFixed(0)
-            },
-            setTimerInterval(){
-                setInterval(this.handleTimer, 1000)
-            }
-        },
-        mounted(){
-            this.setTimerInterval()
+        computed: {
+            timeToLevelUp() {
+                return ((this.training.expToLevelUp - this.training.actualExp)/this.training.pa).toFixed(0)
+             }
         }
-        
-    }
+    }   
 </script>
 
