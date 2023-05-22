@@ -5,7 +5,7 @@ export default function gameCalculator(techs, moneyPerSecond, quantityToBuy){
           
         let tech = techs[i]
         tech.currentCost = tech.initialCost * ((tech.growthRatio ** tech.quantityOwned * ((tech.growthRatio ** quantityToBuy) - 1)) / (tech.growthRatio - 1))
-        tech.totalProfit = tech.profitPerUnit * tech.quantityOwned
+        tech.totalProfit = tech.profitPerUnit * tech.quantityOwned * tech.multiplier
         moneyPerSecond += tech.totalProfit
       }
     if (moneyPerSecond) {

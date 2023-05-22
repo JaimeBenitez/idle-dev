@@ -60,7 +60,7 @@
         :logo="companyDetailed.logo" 
         :level="companyDetailed.level"
         :bonus="companyDetailed.multiplier" 
-        :techsLogos="techsLogosPerCompany" 
+        :techsLogos="techsPerCompany" 
         :requirement="companyDetailed.nextLevelRequirement" />
         <WorkerDetails v-if="actualTab == 6"  
         :companyName="workerDetailed.company" 
@@ -138,7 +138,6 @@ import TrainingTechModal from './trainingTechModal.vue'
 import { makeTraining } from '@/utils/makeTraining'
 import TrainingInfo from './trainingInfo.vue'
 import { newWorkerLanguage, levelUpLanguage } from '@/services/workerLanguagesServices'
-import getCompaniesTotalBonus from '@/utils/getCompaniesTotalBonus'
 /**
  * @vue-data {Object} [userData = {}] -  Almacenara los datos de partida del usuario actual
  * @vue-data {Array<Object>} [allUsersData = []] -  Almacenara los datos de partida de todos los jugadores registrados, para poder guardar partida
@@ -197,7 +196,6 @@ export default {
       workerSlots: 1,
       slotsOccupied: 1,
       actualTab: 1,
-      companiesTotalBonus: 1,
       companyDetailed: {},
       workerDetailed: {},
       techsPerCompany: [],
@@ -230,9 +228,6 @@ export default {
     activeTechs() {
       //Nos dice que tecnologias mostrar con nuestras ganancias actuales
       return this.techs.filter((tech) => tech.unlocked == true)
-    },
-    bonus(base, multiplier){
-      return base * multiplier
     }
   },
   methods: {
@@ -341,7 +336,6 @@ export default {
     },
     handleTrainingTechModal(workerId){
       this.workerToTrain = this.workers.find((worker) => worker.id == workerId)
-      console.log(this.workerToTrain)
       let isInTraining = this.inTraining.find((training) => training.workerId == workerId)
       if(isInTraining){
         this.actualTab = 3
@@ -352,12 +346,10 @@ export default {
     },
     async handleChosenTraining(techId){
       this.techToTrain = this.techs.find((tech) => tech.id == techId)
-      console.log(this.techToTrain)
       this.actualTab = 3
       let newTraining = await makeTraining(this.workerToTrain, this.techToTrain)
       //Creamos el intervalo concreto
       newTraining.intervalID = setInterval(this.handleTrainingTimer, 1000, newTraining.workerId)
-      console.log(newTraining)
       this.inTraining.push(newTraining)
     },
     handleIntervalID(intervalID, workerID){
@@ -394,6 +386,7 @@ export default {
         console.log(error)
         this.modalmsg="Ocurrio un error y no se pudo actualizar el lenguaje"
       }
+      
     },
     /**
      * Función que coge de la API los datos de juego del usuario registrado. 
@@ -410,13 +403,13 @@ export default {
         await this.getCompanies(this.user)
         this.getWorkerSlots()
         await this.getWorkers(this.user)
+        this.companies.forEach(company => this.handleCompanyBonus(company))
+        console.log(this.techs)
         //Volvemos a hacer los calculos necesarios usando la info de la api y los vamos seteando a sus respectivas variables      
         let gameData = gameCalculator(this.techs, this.moneyPerSecond, this.quantityToBuy)
-        this.companiesTotalBonus = getCompaniesTotalBonus(this.companies)
-        console.log(this.companiesTotalBonus)
         this.techs = gameData[0]
-        this.moneyPerClick = gameData[1] * this.companiesTotalBonus 
-        this.moneyPerSecond = gameData[2] * this.companiesTotalBonus
+        this.moneyPerClick = gameData[1] 
+        this.moneyPerSecond = gameData[2] 
         this.slotsOccupied = this.workers.length
         this.loading = false
         if (this.principalMoney == 0){
@@ -495,7 +488,16 @@ export default {
       }
       this.companies.forEach(company => unlockCompanies(this.techs, company))
       // Volvemos a setear el bonus de las empresas por si hemos desbloqueado alguna
-      this.companiesTotalBonus = getCompaniesTotalBonus(this.companies)
+      this.companies.forEach(company => this.handleCompanyBonus(company))
+    },
+    handleCompanyBonus(companyToChange){
+      let companyIndex = this.companies.findIndex((company) => company.id == companyToChange.id)
+      //Recorremos la lista de lenguajes a los que la compañia afecta
+      for(let i = 0; i < this.companies[companyIndex].influencedTechs.length; i++){
+        let techIndex = this.techs.findIndex((tech) => tech.id == this.companies[companyIndex].influencedTechs[i].id)
+        this.techs[techIndex].multiplier += this.companies[companyIndex].multiplier
+        
+      }
     },
     /**
      * Función que causa el rebote del pc cuando se hace click y añade el dinero por click al dinero total

@@ -12,6 +12,7 @@ export async function makeTraining(workerToTrain, techToTrain){
     let techActualExp = 0 
     if(workerTech){
     relationId = workerTech.relationId
+    console.log(relationId)
     techActualLevel = techLevelToNumber(workerTech.level)
     techActualExp = workerTech.exp
     }
@@ -39,7 +40,7 @@ export async function makeTraining(workerToTrain, techToTrain){
         "techNextLevel": techLevelToText(techNextLevel),
         "upgradeLogo": logo,
         "upgradeDescription": description,
-        "pa": workerToTrain.pa,
+        "pa": workerToTrain.pa * techToTrain.multiplier,
         "actualExp": techActualExp,
         "expToLevelUp": toNextLevel,
         "intervalID": null

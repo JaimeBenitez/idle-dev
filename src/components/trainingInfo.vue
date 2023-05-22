@@ -16,7 +16,7 @@
             <p class="training__text"><b>{{ training.upgradeDescription }}</b></p>
         </section> 
         <section class="training__section">
-            <p class="training__text">{{ training.pa }} <img :src="require('@/assets/bulb.svg')"/>/s</p>
+            <p class="training__text">{{ training.pa.toFixed(2) }} <img :src="require('@/assets/bulb.svg')"/>/s</p>
             <p class="training__text">{{ training.actualExp }}/{{ training.expToLevelUp }}</p>
             <!-- timer -->
             <p class="training__text">{{ timeToLevelUp }} segs</p>
