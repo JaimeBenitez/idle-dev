@@ -41,8 +41,6 @@ export async function postGameWorker(user, techs){
 }
 
 export async function hireWorker(worker,tech){
-    console.log(worker)
-    console.log(tech)
     try{
         let response = await fetch(POST_URL, {
             method: "POST",
@@ -50,9 +48,13 @@ export async function hireWorker(worker,tech){
             headers: { 'Content-type': 'application/json; charset=UTF-8' },            
         })
         let newWorker = await response.json()
-        console.log(newWorker)
         await hiredWorkerLanguage(newWorker, tech)
-        await unlockUpgrade(newWorker.id, tech.id, tech.nivel)
+        //Comprobamos que de salir el nivel avanzado desbloquee la mejora anterior
+        if(tech.nivel != "avanzado"){
+            await unlockUpgrade(newWorker.id, tech.id, tech.nivel)
+        }else{
+            await unlockUpgrade(newWorker.id, tech.id, "intermedio")  
+        }
         
     }catch(error){
         console.log(error)

@@ -19,7 +19,12 @@ export async function chooseWorkerLanguage(worker,techs){
         body: JSON.stringify(newWorkerLanguage),
         headers: { 'Content-type': 'application/json; charset=UTF-8' },            
     }) 
-    await unlockUpgrade(worker.id, choosenLanguage.id, newWorkerLanguage.nivel)
+    //Comprobamos que de salir el nivel avanzado desbloquee la mejora anterior
+    if(newWorkerLanguage.nivel != "avanzado"){
+        await unlockUpgrade(worker.id, choosenLanguage.id, newWorkerLanguage.nivel)
+    }else{
+        await unlockUpgrade(worker.id, choosenLanguage.id, "intermedio")
+    }
 }
 
 export async function hiredWorkerLanguage(worker, tech){
