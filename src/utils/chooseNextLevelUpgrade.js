@@ -3,14 +3,14 @@ export default function chooseNextLevelUpgrade(level, upgrades){
     let description = ""
     switch(level){
         case 1:
-            description = "+50% Producción"
+            description = "+15% Producción"
             break
         case 2:
             logo = upgrades[0].logo
             description = upgrades[0].nombre
             break
         case 3:
-            description = "+50% Producción"
+            description = "+15% Producción"
             break
         case 4: 
             logo = upgrades[1].logo
@@ -21,7 +21,7 @@ export default function chooseNextLevelUpgrade(level, upgrades){
             description = upgrades[2].nombre
             break
         case 6:
-            description = "+100% Producción"
+            description = "+50% Producción"
             break
     }
 

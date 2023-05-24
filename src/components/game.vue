@@ -274,7 +274,6 @@ export default {
           this.modalmsg = "Ha ocurrido un error y los datos de empresas del usuario no se han cargado"
         }
         this.companies = makeCompaniesFinalList(companies, this.userCompanies, this.techs)         
-        console.log(this.companies) 
       } catch (error) {
         console.log(error)
         this.modalmsg = "Ha ocurrido un error y los datos de las empresas no se han cargado"
@@ -292,6 +291,7 @@ export default {
           //Seteamos la info sobre los trabajadores del usuario
           this.userWorkers = workersData
           this.workers = await makeWorkersFinalList(this.userWorkers)
+          console.log(this.workers)
         } catch (error) {
           this.modalmsg = "Ha ocurrido un error y los datos de trabajadores no se guardaron correctamente"
         }
@@ -376,11 +376,12 @@ export default {
       try{
         if(training.relationId){
           await levelUpLanguage(training.workerId, training.techId, training.techNextLevel, training.relationId)
+
         }else{
           await newWorkerLanguage(training.workerId, training.techId)
         }
         this.inTraining.splice(trainingIndex, 1)
-        this.modalmsg=`${training.workerName} subio su nivel de ${training.techName} a ${training.techNextLevel}`
+        this.modalmsg=`${training.workerName} subio su nivel de ${training.techName} a ${training.techNextLevel} y has desbloqueado ${training.upgradeDescription}`
         await this.getWorkers(this.user)
       }catch(error){
         console.log(error)
@@ -404,7 +405,7 @@ export default {
         this.getWorkerSlots()
         await this.getWorkers(this.user)
         this.companies.forEach(company => this.handleCompanyBonus(company))
-        console.log(this.techs)
+        // console.log(this.techs)
         //Volvemos a hacer los calculos necesarios usando la info de la api y los vamos seteando a sus respectivas variables      
         let gameData = gameCalculator(this.techs, this.moneyPerSecond, this.quantityToBuy)
         this.techs = gameData[0]
@@ -483,12 +484,12 @@ export default {
       if (tech) {
         let buy =  buyTech(tech,this.quantityToBuy,this.principalMoney,this.moneyPerSecond)
         this.principalMoney = buy[0]
-        this.moneyPerSecond = buy[1] * this.companiesTotalBonus
-        this.moneyPerClick = buy[2] * this.companiesTotalBonus
+        this.moneyPerSecond = buy[1] 
+        this.moneyPerClick = buy[2] 
       }
       this.companies.forEach(company => unlockCompanies(this.techs, company))
       // Volvemos a setear el bonus de las empresas por si hemos desbloqueado alguna
-      this.companies.forEach(company => this.handleCompanyBonus(company))
+      // this.companies.forEach(company => this.handleCompanyBonus(company))
     },
     handleCompanyBonus(companyToChange){
       let companyIndex = this.companies.findIndex((company) => company.id == companyToChange.id)
@@ -525,7 +526,6 @@ export default {
           this.modalmsg = "Ha ocurrido un error y los datos de lenguajes no se guardaron correctamente"
         }
         try{
-          console.log(this.userCompanies)
           await saveGameCompanies(this.userCompanies, this.companies)
         }
         catch{

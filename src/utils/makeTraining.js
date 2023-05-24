@@ -12,7 +12,6 @@ export async function makeTraining(workerToTrain, techToTrain){
     let techActualExp = 0 
     if(workerTech){
     relationId = workerTech.relationId
-    console.log(relationId)
     techActualLevel = techLevelToNumber(workerTech.level)
     techActualExp = workerTech.exp
     }

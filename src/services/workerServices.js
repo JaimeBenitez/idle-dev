@@ -1,5 +1,6 @@
 import { chooseWorkerLanguage, hiredWorkerLanguage } from "./workerLanguagesServices";
 import makeWorker from "@/utils/makeWorker";
+import { unlockUpgrade } from "./workerUpgradesServices";
 
 
 const BASE_URL = `http://localhost:8080/trabajadores/`
@@ -40,6 +41,8 @@ export async function postGameWorker(user, techs){
 }
 
 export async function hireWorker(worker,tech){
+    console.log(worker)
+    console.log(tech)
     try{
         let response = await fetch(POST_URL, {
             method: "POST",
@@ -48,7 +51,8 @@ export async function hireWorker(worker,tech){
         })
         let newWorker = await response.json()
         console.log(newWorker)
-        hiredWorkerLanguage(newWorker, tech)
+        await hiredWorkerLanguage(newWorker, tech)
+        await unlockUpgrade(newWorker.id, tech.id, tech.nivel)
         
     }catch(error){
         console.log(error)
