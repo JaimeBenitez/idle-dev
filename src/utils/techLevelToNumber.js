@@ -1,19 +1,19 @@
 export function techLevelToNumber(level){
-    switch(level){
-        case 'basico':
-            return 1
-        case 'intermedio':
-            return 2
-        case 'avanzado':
-            return 3
-        case 'junior':
-            return 4
-        case 'senior':
-            return 5
-        case 'maestro':
-            return 6
-        default:
-            return 0
-            
+
+    const defaultNumber = 0
+
+    const numberLevels = {
+        basico: 1,
+        intermedio: 2,
+        avanzado: 3,
+        junior: 4,
+        senior: 5,
+        maestro: 6
     }
+
+    const convertedLevel = numberLevels[level] || defaultNumber
+
+    
+    return convertedLevel
+    
 }

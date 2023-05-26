@@ -1,16 +1,16 @@
 export function getExpToNextLevel(level){
-    switch(level){
-        case 1:
-            return 100
-        case 2:
-            return 200
-        case 3:
-            return 400
-        case 4 :
-            return 800
-        case 5 :
-            return 1600
-        case 6 :
-            return 3200        
+
+
+    const exp = {
+        1: 100,
+        2: 200,
+        3: 400,
+        4: 800,
+        5: 1600,
+        6: 3200
     }
+
+    const expToNextLevel = exp[level]
+    
+    return expToNextLevel
 }

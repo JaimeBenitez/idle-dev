@@ -16,19 +16,20 @@
             </div>
         </div>
         <span class="worker-detailed__upgrades-title">Mejoras</span>
-        <ul class="worker-detailed__upgrades">
-            <li v-if="upgrades[0]" class="worker-detailed__upgrade"><img class="worker-detailed__upgrade-logo" :src="upgrades[0].logo" alt=""/><span class="upgrade-name">{{ upgrades[0].name }}</span> <span class="upgrade-description">{{ upgrades[0].description }}</span></li> 
-            <li v-if="upgrades[1]" class="worker-detailed__upgrade"><img class="worker-detailed__upgrade-logo" :src="upgrades[1].logo" alt=""/><span class="upgrade-name">{{ upgrades[1].name }}</span> <span class="upgrade-description">{{ upgrades[1].description }}</span></li>           
-            <li v-if="upgrades[2]" class="worker-detailed__upgrade"><img class="worker-detailed__upgrade-logo" :src="upgrades[2].logo" alt=""/><span class="upgrade-name">{{ upgrades[2].name }}</span> <span class="upgrade-description">{{ upgrades[2].description }}</span></li>
-            <li v-if="!upgrades[0]" class="worker-detailed__no-upgrade">Hueco libre</li>
-            <li v-if="!upgrades[1]" class="worker-detailed__no-upgrade">Hueco libre</li>
-            <li v-if="!upgrades[2]" class="worker-detailed__no-upgrade">Hueco libre</li>
+        <ul v-if="upgrades.length > 0" class="worker-detailed__upgrades">
+            <WorkerUpgrade v-for="upgrade in upgrades" 
+            :key="upgrade.name" 
+            :logo="upgrade.logo" 
+            :name="upgrade.name" 
+            :description="upgrade.description" />
         </ul>
+        <p v-if="upgrades.length == 0" class="worker-detailed__no-upgrade">Hueco libre</p>
     </div>
 </template>
 
 <script>
-  
+    
+    import WorkerUpgrade from "./workerUpgrade.vue"
 
     export default{
         "name": "workerDetails",
@@ -41,9 +42,8 @@
             "techs": Array[Object],
             "upgrades": Array[Object]
         },
-       
-        
-        
-        // Las tecnologias iran en la data del trabajador sacandolas de la BD
+        components: {
+            WorkerUpgrade
+        }
     } 
 </script>

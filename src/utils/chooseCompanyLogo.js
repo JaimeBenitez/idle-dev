@@ -7,19 +7,15 @@ import CompanyLvl5 from '@/assets/company-level5.svg'
 
 
 export default function chooseCompanyLogo(level){
-    switch(level) {
-      case 0:
-        return QuestionMark   
-      case 1: 
-        return CompanyLvl1
-      case 2:
-        return CompanyLvl2
-      case 3: 
-        return CompanyLvl3
-      case 4: 
-        return CompanyLvl4
-      case 5:
-        return CompanyLvl5
-        
-    }
+
+
+  const companiesLogos = {
+    0: QuestionMark,
+    1: CompanyLvl1,
+    2: CompanyLvl2,
+    3: CompanyLvl3,
+    4: CompanyLvl4,
+    5: CompanyLvl5
+  }
+    return companiesLogos[level]
   }

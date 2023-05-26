@@ -340,7 +340,12 @@ export default {
       if(isInTraining){
         this.actualTab = 3
         this.modalmsg = "Este trabajador ya se está entrenando"
-      }else{
+      }
+      else if(this.workerToTrain.totalLevel == 30){
+        this.actualTab = 3
+        this.modalmsg = "Este trabajador ha llegado a su limite de aprendizaje"
+      }
+      else{
       this.actualTab = 9
       }
     },

@@ -4,8 +4,8 @@
         <span v-if="level == 0" class="company-detailed__name">?????????????????</span>
         <img :src="logo" class="company-detailed__logo" alt="logo" />
         <span v-if="level != 0" class="company-detailed__level">Nivel {{ level }}</span>
-        <span v-if="level != 0" class="company-detailed__bonus-text"> x{{ bonus }} en dinero general y PA en: </span>
-        <span v-if="level == 0" class="company-detailed__bonus-text"> Aporta un bono de dinero general y de PA en: </span>
+        <span v-if="level != 0" class="company-detailed__bonus-text"> x{{ bonus }} en dinero y PA en: </span>
+        <span v-if="level == 0" class="company-detailed__bonus-text"> Bono de dinero y PA en: </span>
         <div  class="tech-logo--list">
             <img  class="tech-logo" v-for="tech in techsLogos" :key="tech.src" :src="tech.src" :alt="tech.alt" />
         </div>

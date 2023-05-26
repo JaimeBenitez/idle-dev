@@ -23,7 +23,7 @@
 .modal-message {
     font-family: var(--storyteller-font);
     font-size: var(--subtitle-size);
-    margin-bottom: 1.5rem;
+    margin: 1rem;
     text-align: center;
 }
 
