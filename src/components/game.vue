@@ -496,6 +496,7 @@ export default {
         let previousCompanyLevel = this.companies[i].level
         this.companies[i] = unlockCompanies(this.techs, this.companies[i])
         if(this.companies[i].level != previousCompanyLevel){
+          this.modalmsg = `${this.companies[i].name} subió al nivel ${this.companies[i].level}`
           this.handleCompanyBonus(this.companies[i])
         }
       }
