@@ -14,7 +14,10 @@ export default function makeLanguagesFinalList(techs, userLanguages){
           "currentCost": 0,
           "totalProfit": 0,
           "msg": techs[i].mensaje,
-          "multiplier": 1
+          "companyMultiplier": 1,
+          "upgradeMoneyMultiplier": 1,
+          "upgradePAMultiplier": 1,
+          "upgradeMoneyDiscount": 0,
         })
       }
     return finalTechsList

@@ -11,7 +11,7 @@ export async function getGameLanguages(user,techs){
     } else {
         //Si no hay relaciones creadas las crea en ese momento, hay que hacerlo con el Status ya que el catch no considera
         //el error 404 como un error
-        postGameLanguages(techs)
+        return postGameLanguages(techs)
     }    
 }
 

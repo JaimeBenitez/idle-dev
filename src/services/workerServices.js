@@ -34,7 +34,7 @@ export async function postGameWorker(user, techs){
         })
         let newWorker = await response.json() 
            // Elegimos sus lenguajes
-        chooseWorkerLanguage(newWorker, techs)
+        await chooseWorkerLanguage(newWorker, techs)
         }catch(error){
             console.log(error)
         }

@@ -30,9 +30,13 @@ export default async function makeWorkersFinalList(workers){
       let finalWorkerUpgradesList = []
       for(let i = 0; i < workerUpgrades.length; i++){
         finalWorkerUpgradesList.push({
+          "techName": workerUpgrades[i].mejoraLenguajeNombre,
           "logo": workerUpgrades[i].mejoraLogo,
           "name": workerUpgrades[i].mejoraNombre,
-          "description": workerUpgrades[i].mejoraDescripcion
+          "description": workerUpgrades[i].mejoraDescripcion,
+          "moneyBonus": workerUpgrades[i].mejoraMejora_generacion,
+          "paBonus": workerUpgrades[i].mejoraExtra_pa,
+          "discount": workerUpgrades[i].mejoraDescuento_compra
         })
       }
       

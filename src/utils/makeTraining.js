@@ -39,7 +39,7 @@ export async function makeTraining(workerToTrain, techToTrain){
         "techNextLevel": techLevelToText(techNextLevel),
         "upgradeLogo": logo,
         "upgradeDescription": description,
-        "pa": workerToTrain.pa * techToTrain.multiplier,
+        "pa": workerToTrain.pa * techToTrain.companyMultiplier * techToTrain.upgradePAMultiplier,
         "actualExp": techActualExp,
         "expToLevelUp": toNextLevel,
         "intervalID": null

@@ -12,10 +12,8 @@ export async function getWorkerUpgrades(workerId){
 
 export async function unlockUpgrade(workerId, techId, newLevel){
 
-    console.log(techId)
 
     let upgradeId = unlockedUpgrade(techId, newLevel)
-    console.log("Upgrade ID:" + upgradeId)
     if(upgradeId){
         const newUpgrade = {
             "id_trabajador" : workerId,

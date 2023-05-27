@@ -98,7 +98,8 @@ export default {
     async getAllGames() {
       try {
         const response = await fetch('http://localhost:8080/clasificacion');
-        this.games = await response.json();        
+        this.games = await response.json();  
+        console.log(this.games)      
       } catch (error) {
         console.error(error);
       }
@@ -117,7 +118,7 @@ export default {
         });
         const createdUser = await response.json();
         this.loading = false;
-        this.users = [...this.users, createdUser]
+        this.users.push(createdUser);
       } catch (error) {
         console.log(error)
       }
@@ -134,7 +135,8 @@ export default {
         });
         const createdGame = await response.json();
         this.loading = false;
-        this.games = [...this.games, createdGame]
+        this.games.push(createdGame);
+        
       } catch (error) {
         console.log(error)
       }
@@ -175,9 +177,10 @@ export default {
     /**
      * Función que, si todos los datos son correctos, encripta la contraseña e invoca a la función que introduce los datos en la BD
      */
-    submit() {
+    async submit() {
       if (!this.usernameError && !this.emailError && !this.passwordError && !this.passwordConfirmError) {
-        this.postGame()
+        await this.postGame()
+        console.log(this.games)
         //Sacamos la id del ultimo juego creado para asignarselo al usuario
         let game = this.games[this.games.length - 1].id
         const user = {
@@ -187,7 +190,7 @@ export default {
           "contrasenia": sha1(this.password),
           "avatar": null
         }
-        this.postUser(user)
+        await this.postUser(user)
         this.submitted = true;
       }
     },

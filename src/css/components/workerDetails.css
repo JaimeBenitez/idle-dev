@@ -78,7 +78,7 @@
 .worker-detailed__upgrades::-webkit-scrollbar{
     display: none;
 }
-.worker-detailed__upgrade, .worker-detailed__no-upgrade{
+.worker-detailed__upgrade{
     list-style: none;
     display: grid;
     grid-template-columns: 28% 28% 28%;
@@ -87,9 +87,7 @@
     text-align: center;
 }
 
-.worker-detailed__no-upgrade{
-    padding-left: 11em;
-}
+
 
 
 

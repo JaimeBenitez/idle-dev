@@ -23,7 +23,7 @@
             :name="upgrade.name" 
             :description="upgrade.description" />
         </ul>
-        <p v-if="upgrades.length == 0" class="worker-detailed__no-upgrade">Hueco libre</p>
+        <p v-if="upgrades.length == 0" class="worker-detailed__no-upgrade">No hay mejoras</p>
     </div>
 </template>
 
