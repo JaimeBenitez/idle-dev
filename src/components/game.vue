@@ -138,6 +138,7 @@ import TrainingTechModal from './trainingTechModal.vue'
 import { makeTraining } from '@/utils/makeTraining'
 import TrainingInfo from './trainingInfo.vue'
 import { newWorkerLanguage, levelUpLanguage } from '@/services/workerLanguagesServices'
+import calcUpgradeBonus from '@/utils/calcUpgradeBonus'
 /**
  * @vue-data {Object} [userData = {}] -  Almacenara los datos de partida del usuario actual
  * @vue-data {Array<Object>} [allUsersData = []] -  Almacenara los datos de partida de todos los jugadores registrados, para poder guardar partida
@@ -269,7 +270,7 @@ export default {
         const companies = await getAllCompanies()
         try {
           //Cogemos los datos sobre las empresas que tiene la partida del jugador
-          this.userCompanies =  await getGameCompanies(user,companies)  
+          this.userCompanies =  await getGameCompanies(user,companies) || []
         } catch(error) {
           this.modalmsg = "Ha ocurrido un error y los datos de empresas del usuario no se han cargado"
         }
@@ -291,7 +292,6 @@ export default {
           //Seteamos la info sobre los trabajadores del usuario
           this.userWorkers = workersData
           this.workers = await makeWorkersFinalList(this.userWorkers)
-          console.log(this.workers)
         } catch (error) {
           this.modalmsg = "Ha ocurrido un error y los datos de trabajadores no se guardaron correctamente"
         }
@@ -387,7 +387,7 @@ export default {
         }
         this.inTraining.splice(trainingIndex, 1)
         this.modalmsg=`${training.workerName} subio su nivel de ${training.techName} a ${training.techNextLevel} y has desbloqueado ${training.upgradeDescription}`
-        await this.getWorkers(this.user)
+        await this.getData()
       }catch(error){
         console.log(error)
         this.modalmsg="Ocurrio un error y no se pudo actualizar el lenguaje"
@@ -410,7 +410,7 @@ export default {
         this.getWorkerSlots()
         await this.getWorkers(this.user)
         this.companies.forEach(company => this.handleCompanyBonus(company))
-        // console.log(this.techs)
+        this.techs.forEach(tech => this.handleUpgradeBonus(tech.id))
         //Volvemos a hacer los calculos necesarios usando la info de la api y los vamos seteando a sus respectivas variables      
         let gameData = gameCalculator(this.techs, this.moneyPerSecond, this.quantityToBuy)
         this.techs = gameData[0]
@@ -492,18 +492,44 @@ export default {
         this.moneyPerSecond = buy[1] 
         this.moneyPerClick = buy[2] 
       }
-      this.companies.forEach(company => unlockCompanies(this.techs, company))
-      // Volvemos a setear el bonus de las empresas por si hemos desbloqueado alguna
-      // this.companies.forEach(company => this.handleCompanyBonus(company))
+      for (let i = 0; i < this.companies.length; i++) {
+        let previousCompanyLevel = this.companies[i].level
+        this.companies[i] = unlockCompanies(this.techs, this.companies[i])
+        if(this.companies[i].level != previousCompanyLevel){
+          this.handleCompanyBonus(this.companies[i])
+        }
+      }
+      let gameData = gameCalculator(this.techs, this.moneyPerSecond, this.quantityToBuy)
+      this.techs = gameData[0]
+      this.moneyPerClick = gameData[1] 
+      this.moneyPerSecond = gameData[2] 
+      
     },
     handleCompanyBonus(companyToChange){
       let companyIndex = this.companies.findIndex((company) => company.id == companyToChange.id)
       //Recorremos la lista de lenguajes a los que la compañia afecta
       for(let i = 0; i < this.companies[companyIndex].influencedTechs.length; i++){
         let techIndex = this.techs.findIndex((tech) => tech.id == this.companies[companyIndex].influencedTechs[i].id)
-        this.techs[techIndex].multiplier += this.companies[companyIndex].multiplier
+
+        this.techs[techIndex].companyMultiplier += this.companies[companyIndex].baseMultiplier
         
       }
+    },
+    handleUpgradeBonus(techId){
+      let techIndex = this.techs.findIndex((tech) => tech.id == techId)
+      //Filtramos los trabajadores que tengan conocimiento de ese lenguaje
+      let filteredWorkers = []
+      for(let i = 0 ; i < this.workers.length; i++){
+        if(this.workers[i].languages.findIndex((language) => language.languageId == techId) != -1){
+          filteredWorkers.push(this.workers[i])
+        }
+      }
+      const {totalMoneyBonus, totalPaBonus, totalDiscountBonus } = calcUpgradeBonus(filteredWorkers, this.techs[techIndex].name)
+      
+      this.techs[techIndex].upgradeMoneyMultiplier += totalMoneyBonus
+      this.techs[techIndex].upgradePAMultiplier += totalPaBonus
+      this.techs[techIndex].upgradeMoneyDiscount = totalDiscountBonus
+      
     },
     /**
      * Función que causa el rebote del pc cuando se hace click y añade el dinero por click al dinero total
