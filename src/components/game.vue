@@ -81,8 +81,7 @@
       </section>
       <button class="computer-button" @click="handleClicks"><img :class="bounce" src="@/assets/ordenador.png"
           alt="click me" /></button>
-      <button v-if="!saving" class="button save-button" @click="saveData">Guardar</button>
-      <button v-if="saving" class="button save-button" @click="saveData">Guardando...</button>
+      <p v-if="saving" class="save">Guardando...</p>
     </section>
     <Modal v-if="modalmsg != ''" :msg="modalmsg" buttonMsg="Continuar" textClass="modal-game-message" :isGame=true
       @close="handleClose" />
@@ -480,6 +479,12 @@ export default {
       setInterval(this.handleMoney, 1000);
     },
     /**
+     * Función que guarda la partida cada 5 min
+     */
+    setSaveDataInterval() {
+      setInterval(this.saveData, 120000);
+    },
+    /**
      * Función que gestiona toda la compra de tecnologias y setea todos los valores de ganancias acorde a la tecnologia comprada
      * @param {Number} techId - id de la tecnología a comprar
      */
@@ -498,6 +503,7 @@ export default {
         if(this.companies[i].level != previousCompanyLevel){
           this.modalmsg = `${this.companies[i].name} subió al nivel ${this.companies[i].level}`
           this.handleCompanyBonus(this.companies[i])
+          this.saveData()
         }
       }
       let gameData = gameCalculator(this.techs, this.moneyPerSecond, this.quantityToBuy)
@@ -545,6 +551,7 @@ export default {
      * Función que guarda la partida en la base de datos
      */
     async saveData() {
+      console.log("Saving data...")
       const user = localStorage.getItem("user")
       //Guardamos el dinero principal
       try {
@@ -564,7 +571,6 @@ export default {
           this.modalmsg = "Ha ocurrido un error y los datos de las empresas no se guardaron correctamente"
         }
         this.saving = false
-        this.modalmsg = "Partida guardada correctamente"
       } catch (error) {
         this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"
       }
@@ -581,6 +587,7 @@ export default {
   mounted() {
     this.redirect();
     this.setMoneyPerSecondInterval();
+    this.setSaveDataInterval()
     this.getAllUsersData()  
     this.getData()    
   }

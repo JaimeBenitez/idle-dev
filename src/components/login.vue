@@ -26,6 +26,7 @@
   import Header from './header.vue'
   import Modal from './modal.vue'
   import sha1 from '@/utils/hash1.js'
+  import { getOneUser } from '@/services/userServices'
   /**
    * @vue-data {Object}[user = {}] - Guardará los datos del usuario actual
    * @vue-data {Boolean}[loginError = false] - Maneja la aparición de los mensajes de error
@@ -65,8 +66,7 @@
       async checkUser(username,password){
         try{
           this.loading = true;
-          const response = await fetch(`http://localhost:8080/usuario/${username}`)
-          this.user = await response.json();
+          this.user = await getOneUser(username)
           this.loading = false;
           //Comprobamos si el usuario que hemos buscado existe en la base de datos y si los datos introducidos son correctos
           if(this.user.nombre == username && this.user.contrasenia == sha1(password)){

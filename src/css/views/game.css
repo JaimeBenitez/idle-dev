@@ -179,8 +179,19 @@
     filter: var(--icon-color);
 }
 
-.save-button{
+.save{
     padding-top: 0;
+    font-family: var(--title-font);
+    font-size: var(--subtitle-size);
+    border-radius: 30px;
+    height: 40px;
+    padding-top: 10px;
+    width: 15%;  
+    min-width: 208px;  
+    text-align: center;    
+    color: var(--text-color);
+    animation: blinker 1s linear infinite;
+
 }
 
 @keyframes bounce{
@@ -194,3 +205,9 @@
         transform: scale(1)
     }
 }
+
+@keyframes blinker {
+    50% {
+      opacity: 0;
+    }
+  }

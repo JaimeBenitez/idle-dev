@@ -2,34 +2,33 @@
   <Header icon="arrow-back.svg" :isGame=false />
   <div class="register">
     <section class="register-container">
-      <form class="register-form" v-on:submit.prevent="submit">
-        <h1 class="register-title">Registro</h1>
+      <form class="register-form" v-on:submit.prevent="submit" enctype="multipart/form-data">
+        <h1 class="register-title">Editar usuario</h1>
         <input type="text" class="register-username register-input" v-model="username" v-on:blur="validUsername"
           placeholder="Nombre de usuario">
         <p v-if="usernameError" class="error-message username-error">El nombre debe tener entre 3 y 20 caracteres</p>
         <input type="email" class="register-email register-input" v-model="email" v-on:blur="validEmail"
           placeholder="Correo electrónico">
         <p v-if="emailError" class="error-message">Introduce un email valido</p>
-        <input type="password" class="register-password register-input" v-model="password" v-on:blur="validPassword"
-          placeholder="Contraseña">
-        <p v-if="passwordError" class="error-message password-error">La contraseña debe tener al menos una mayuscula,
+        <input type="password" class="register-password register-input" v-model="oldPassword" v-on:blur="validOldPassword"
+          placeholder="Antigua contraseña">
+        <p v-if="oldPasswordError" class="error-message password-error">La contraseña debe coincidir con la actual para poder hacer cambios</p>
+        <input type="password" class="register-password-confirm register-input" v-model="newPassword"
+          v-on:blur="validNewPassword" placeholder="Nueva contraseña">
+        <p v-if="newPasswordError" class="error-message">La contraseña debe tener al menos una mayuscula,
           una minuscula, un digito y entre 8 y 16 caracteres</p>
-        <input type="password" class="register-password-confirm register-input" v-model="confirmPassword"
-          v-on:blur="passwordConfirmed" placeholder="Repite la contraseña">
-        <p v-if="passwordConfirmError" class="error-message">Las contraseñas no coinciden</p>
         <div class="register-avatar-container">
           <img v-if="avatar" :src="avatar" alt="hola" class="register-avatar" />
           <div class="register-input-file-container">  
             <input type="file" name="imagen" aria-label="imagen" @change="onFileChange" />
           </div>
         </div>
-        <p class="toLoginQuestion">¿Ya tienes una cuenta?</p>
-        <RouterLink to="/login" class="toLogin">Ve al login</RouterLink>
         <button v-if="!loading" type="submit" class="register-submit">Enviar</button>
         <button v-if="loading" type="submit" class="register-submit">Enviar</button>
+        
       </form>
     </section>
-    <Modal v-if="submitted" msg="Registro exitoso, haz login de comenzar tu viaje" buttonMsg="Entrar" redirect="/login"
+    <Modal v-if="submitted" msg="Cambio realizado con exito" buttonMsg="Volver" redirect="/game"
       :isGame=false />
   </div>
 </template>
@@ -44,6 +43,7 @@ import Header from './header.vue'
 import Modal from './modal.vue'
 import validator from '@/utils/validator'
 import sha1 from '@/utils/hash1.js'
+import { getUsersData, getOneUser } from '@/services/userServices'
 
 /**
  * @vue-data {Array<Object>} [users = []] - Lista de usuarios registrados
@@ -62,7 +62,7 @@ import sha1 from '@/utils/hash1.js'
  * @vue-data {String} [passwordRegexp = new RegExp(/^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{8,16}$/)]  - Regex para validar la contraseña
  */
 export default {
-  name: 'RegisterPage',
+  name: 'EditPage',
   components: {
     Header,
     Modal
@@ -70,16 +70,16 @@ export default {
   data() {
     return {
       users: [],
-      games: [],
+      user: {},
       username: "",
       email: "",
-      password: "",
-      confirmPassword: "",
+      oldPassword: "",
+      newPassword: "",
       avatar: null,
       usernameError: false,
       emailError: false,
-      passwordError: false,
-      passwordConfirmError: false,
+      oldPasswordError: false,
+      newPasswordError: false,
       submitted: false,
       loading: false,
       usernameRegexp: new RegExp(/^[\S]{3,20}$/),
@@ -89,61 +89,42 @@ export default {
   },
   methods: {
     /**
-     * Función que saca de la api todos los usuarios para poder registrar nuevos
+     * Función que saca de la api todos los usuarios para poder encontrar el actual 
      */
     async getAllUsers() {
       try {
-        const response = await fetch('http://localhost:8080/usuarios');
-        this.users = await response.json();       
+        this.users = await getUsersData();      
       } catch (error) {
         console.error("Error");
       }
     },
-    /**
-     * Función que saca de la api todas las partidas para poder registrar nuevas
-     */
-    async getAllGames() {
+    async getUser(){
+      const actualUser = this.users.find((user) => user.id == localStorage.getItem('user'))
       try {
-        const response = await fetch('http://localhost:8080/clasificacion');
-        this.games = await response.json();  
-        console.log(this.games)      
+        this.user = await getOneUser(actualUser.usuarioNombre);     
+        this.username =  this.user.nombre
+        this.email = this.user.email 
+        this.avatar = this.user.avatar
+         
       } catch (error) {
-        console.error(error);
+        console.error("Error");
       }
     },
     /**
      * Función que registra un nuevo usuario en la base de datos
      * @param {Object} user - usuario a registrar
      */
-    async postUser(user) {
+    async putUser(user, userId) {
       try {
         this.loading = true;
-        const response = await fetch("http://localhost:8080/usuario", {
-          method: "POST",
+        const response = await fetch(`http://localhost:8080/usuario/${userId}`, {
+          method: "PUT",
           body: JSON.stringify(user),
           headers: { 'Content-Type': 'application/json; charset=utf-8' }         
         });
-        const createdUser = await response.json();
+        const modifiedUser = await response.json();
         this.loading = false;
-        this.users.push(createdUser);
-      } catch (error) {
-        console.log(error)
-      }
-    },
-    /**
-     * Función que registra una nueva partida en la base de datos
-     */
-    async postGame() {
-      try {
-        this.loading = true;
-        const response = await fetch("http://localhost:8080/partida", {
-          method: "POST",
-          headers: { 'Content-Type': 'application/json; charset=utf-8' }         
-        });
-        const createdGame = await response.json();
-        this.loading = false;
-        this.games.push(createdGame);
-        
+        this.users.push(modifiedUser);
       } catch (error) {
         console.log(error)
       }
@@ -166,19 +147,20 @@ export default {
     /**
      * Función que valida la contraseña
      */
-    validPassword() {
-      /*La contraseña debera tener al menos una mayuscula, minuscula y digito, permite caracteres especiales y 
-      contara de entre 8 y 16 caracteres*/
-      this.passwordError = validator(this.passwordRegexp, this.password)      
+    validOldPassword() {
+      if(sha1(this.oldPassword) != this.user.contrasenia){
+        this.oldPasswordError = true
+      }else{
+        this.oldPasswordError = false
+      }  
     },
     /**
      * Función que valida la confirmación de contraseña
      */
-    passwordConfirmed() {
-      if (this.confirmPassword != this.password) {
-        this.passwordConfirmError = true
-      } else {
-        this.passwordConfirmError = false
+    validNewPassword() {
+      this.newPasswordError = validator(this.passwordRegexp, this.newPassword) 
+      if(this.newPassword == ''){
+        this.newPasswordError = false
       }
     },
     onFileChange(e){
@@ -189,48 +171,43 @@ export default {
      * Función que, si todos los datos son correctos, encripta la contraseña e invoca a la función que introduce los datos en la BD
      */
     async submit() {
+      //Volvemos aqui a hacer las validaciones para comprobar si los campos están vacios
       this.validUsername()
       this.validEmail()
       this.validOldPassword()
       this.validNewPassword()
-      if (!this.usernameError && !this.emailError && !this.passwordError && !this.passwordConfirmError) {
-        await this.postGame()
-        //Sacamos la id del ultimo juego creado para asignarselo al usuario
-        let game = this.games[this.games.length - 1].id
-        const user = {
-          "partidaId" : game,
+      if (!this.usernameError && !this.emailError && !this.oldPasswordError && !this.newPasswordError) {
+        if(this.newPassword == ''){
+          //En el caso de que la contraseña esté vacia la que se pasa al put es la que ya tenia
+        this.newPassword = this.user.contrasenia
+        }else{
+          this.newPassword = sha1(this.newPassword)
+        }
+        const putUser = {
           "nombre": this.username,
           "email": this.email,
-          "contrasenia": sha1(this.password),
+          "contrasenia": this.newPassword,
           "avatar": this.avatar
         }
-        await this.postUser(user)
+        console.log(putUser)
+        await this.putUser(putUser, this.user.id)
         this.submitted = true;
       }
     },
-    /**
-     * Función que, de estar logueado, redirige al juego
-     */
-    redirect() {
-      if (localStorage.getItem("user")) {
-        this.$router.push('/game')
-      }
-    }
   },
   watch: {
     username: function () {
     },
     email: function () {
     },
-    password: function () {
+    oldPassword: function () {
     },
-    confirmPassword: function () {
+    newPassword: function () {
     },
   },
-  mounted() {
-    this.redirect();
-    this.getAllUsers();
-    this.getAllGames();
+  async mounted() {
+    await this.getAllUsers();
+    await this.getUser()
   }
 }
 </script>

@@ -32,3 +32,18 @@ header {
     margin-left: 10px;
     padding-bottom: 1rem;  
 }
+.user-container{
+    border: 1px solid white;
+    margin-left: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 100px;
+    margin-bottom: 0.5rem;
+}
+.user-button{
+    /* margin-left: 20px;
+    padding-bottom: 1rem;   */
+    width: 40px;
+    height: 40px
+}
