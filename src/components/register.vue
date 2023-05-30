@@ -20,7 +20,7 @@
         <div class="register-avatar-container">
           <img v-if="avatar" :src="avatar" alt="hola" class="register-avatar" />
           <div class="register-input-file-container">  
-            <input type="file" name="imagen" aria-label="imagen" @change="onFileChange" />
+            <input type="file" name="imagen" aria-label="imagen" accept="image/*" @change="onFileChange" />
           </div>
         </div>
         <p class="toLoginQuestion">¿Ya tienes una cuenta?</p>
