@@ -76,6 +76,7 @@ export default {
       password: "",
       confirmPassword: "",
       avatar: null,
+      avatarFile: null,
       usernameError: false,
       emailError: false,
       passwordError: false,
@@ -116,12 +117,21 @@ export default {
      * @param {Object} user - usuario a registrar
      */
     async postUser(user) {
+
+      let formData = new FormData()
+
+       const json = JSON.stringify(user)
+        const blob = new Blob([json], {
+            type: 'application/json'
+        })
+        formData.append('nuevo', blob )
+        formData.append('file', this.avatarFile)
+
       try {
         this.loading = true;
         const response = await fetch("http://localhost:8080/usuario", {
           method: "POST",
-          body: JSON.stringify(user),
-          headers: { 'Content-Type': 'application/json; charset=utf-8' }         
+          body: formData,                
         });
         const createdUser = await response.json();
         this.loading = false;
@@ -184,6 +194,7 @@ export default {
     onFileChange(e){
       const file = e.target.files[0]
       this.avatar = URL.createObjectURL(file)
+      this.avatarFile = file
     },
     /**
      * Función que, si todos los datos son correctos, encripta la contraseña e invoca a la función que introduce los datos en la BD

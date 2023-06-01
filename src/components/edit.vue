@@ -2,7 +2,7 @@
   <Header icon="arrow-back.svg" :isGame=false />
   <div class="register">
     <section class="register-container">
-      <form class="register-form" v-on:submit.prevent="submit" enctype="multipart/form-data">
+      <form class="register-form" v-on:submit.prevent="submit" method="PUT" enctype="multipart/form-data">
         <h1 class="register-title">Editar usuario</h1>
         <input type="text" class="register-username register-input" v-model="username" v-on:blur="validUsername"
           placeholder="Nombre de usuario">
@@ -20,7 +20,7 @@
         <div class="register-avatar-container">
           <img v-if="avatar" :src="avatar" alt="hola" class="register-avatar" />
           <div class="register-input-file-container">  
-            <input type="file" name="imagen" aria-label="imagen" accept="image/*" @change="onFileChange" />
+            <input type="file" name="imagen" aria-label="imagen" accept="image/*" @change="onFileChange( $event )" />
           </div>
         </div>
         <button v-if="!loading" type="submit" class="register-submit">Enviar</button>
@@ -76,6 +76,7 @@ export default {
       oldPassword: "",
       newPassword: "",
       avatar: null,
+      avatarFile: null,
       usernameError: false,
       emailError: false,
       oldPasswordError: false,
@@ -111,16 +112,25 @@ export default {
       }
     },
     /**
-     * Función que registra un nuevo usuario en la base de datos
+     * Función queactualiza usuario en la base de datos
      * @param {Object} user - usuario a registrar
      */
-    async putUser(user, userId) {
+    async putUser(userData, userId) {
+       //IMPORTANTE: hay que pasar el objeto a tipo archivo usando el BLob, de lo contrario no lo aceptara
+       let formData = new FormData()
+
+       const json = JSON.stringify(userData)
+        const blob = new Blob([json], {
+            type: 'application/json'
+        })
+        formData.append('nuevo', blob )
+        formData.append('file', this.avatarFile)
+      //Importante en los multipart NO pasar headers
       try {
         this.loading = true;
         const response = await fetch(`http://localhost:8080/usuario/${userId}`, {
           method: "PUT",
-          body: JSON.stringify(user),
-          headers: { 'Content-Type': 'application/json; charset=utf-8' }         
+          body: formData,         
         });
         const modifiedUser = await response.json();
         this.loading = false;
@@ -152,7 +162,7 @@ export default {
         this.oldPasswordError = true
       }else{
         this.oldPasswordError = false
-      }  
+      }
     },
     /**
      * Función que valida la confirmación de contraseña
@@ -166,6 +176,7 @@ export default {
     onFileChange(e){
       const file = e.target.files[0]
       this.avatar = URL.createObjectURL(file)
+      this.avatarFile = file
     },
     /**
      * Función que, si todos los datos son correctos, encripta la contraseña e invoca a la función que introduce los datos en la BD
@@ -183,13 +194,13 @@ export default {
         }else{
           this.newPassword = sha1(this.newPassword)
         }
+       
         const putUser = {
           "nombre": this.username,
           "email": this.email,
           "contrasenia": this.newPassword,
-          "avatar": this.avatar
         }
-        console.log(putUser)
+        
         await this.putUser(putUser, this.user.id)
         this.submitted = true;
       }
