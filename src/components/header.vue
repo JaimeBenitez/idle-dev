@@ -1,9 +1,10 @@
 <template>
   <header>
     <RouterLink v-if="user" to="/edit" class="user-container">
-      <img class="icon user-button" :src="require('@/assets/user-outline.svg')" />
+      <img v-if="avatar == null" class="icon user-button" :src="require('@/assets/user-outline.svg')" />
+      <img v-else class="user-button" :src="avatar" />
     </RouterLink>
-    <span v-if="!user" class="version">V 0.3</span>
+    <span v-if="!user" class="version">V 0.5</span>
     <RouterLink to="/"><img src="../assets/idledev-logo.png" alt="logo" class="logo-header"></RouterLink>
     <nav class="header-nav">
       <RouterLink to="/contact" class="header-button" v-if="isGame"><img :src="require('@/assets/contact.svg')"
@@ -29,6 +30,7 @@ export default {
   props: {
     icon: String,
     isGame: Boolean,
+    avatar: String
   },
   data(){
     return {

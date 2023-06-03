@@ -71,6 +71,7 @@
           //Comprobamos si el usuario que hemos buscado existe en la base de datos y si los datos introducidos son correctos
           if(this.user.nombre == username && this.user.contrasenia == sha1(password)){
             localStorage.setItem("user",this.user.partidaId)
+            localStorage.setItem("username", username)
             this.submitted = true;
           }else{
             this.loginError = true

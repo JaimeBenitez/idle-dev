@@ -202,8 +202,8 @@ export default {
     async submit() {
       this.validUsername()
       this.validEmail()
-      this.validOldPassword()
-      this.validNewPassword()
+      this.validPassword()
+      this.passwordConfirmed()
       if (!this.usernameError && !this.emailError && !this.passwordError && !this.passwordConfirmError) {
         await this.postGame()
         //Sacamos la id del ultimo juego creado para asignarselo al usuario
@@ -213,7 +213,6 @@ export default {
           "nombre": this.username,
           "email": this.email,
           "contrasenia": sha1(this.password),
-          "avatar": this.avatar
         }
         await this.postUser(user)
         this.submitted = true;

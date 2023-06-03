@@ -1,5 +1,5 @@
 <template>
-  <Header icon="logout.svg" :isGame=true />
+  <Header icon="logout.svg" :avatar="avatar" :isGame=true   />
   <div class="game">
     <div class="principal-menu">
       <TabNav @tab1="handleTabs(1)" @tab2="handleTabs(2)" @tab3="handleTabs(3)" @tab4="handleTabs(4)" ></TabNav>
@@ -116,7 +116,7 @@ import Modal from './modal.vue'
 import TabNav from './tabsNav.vue'
 import CompanyDetails from './companyDetails.vue'
 import { getGameWorkers, postGameWorker } from '@/services/workerServices'
-import { getUsersData } from '@/services/userServices'
+import { getUsersData, getOneUser } from '@/services/userServices'
 import { getAllLanguages } from '@/services/languageServices'
 import { getGameLanguages, saveGameLanguages } from '@/services/gameLanguageServices'
 import makeLanguagesFinalList from '@/utils/makeLanguagesFinalList'
@@ -187,6 +187,8 @@ export default {
 },
   data() {
     return {
+      moneyInterval: null,
+      saveInterval: null,
       user: localStorage.getItem("user"),
       userData: {},
       allUsersData: [],
@@ -213,6 +215,7 @@ export default {
       workerToTrain: {},
       techToTrain: {},
       inTraining: [],
+      userAvatar: null
     }
   },
   computed: {
@@ -398,11 +401,12 @@ export default {
      */
     async getData() {
       try {
-        this.loading = true      
+        this.loading = true 
+        let user = await getOneUser(localStorage.getItem("username"))
+        this.avatar = user.avatar    
         this.userData = await getGame(this.user)
         //Seteamos el dinero con la información de la api
         this.principalMoney = this.userData.dinero
-        this.modalmsg = ''
         //Como necesitamos la lista que genera la función, usamos await para esperar a que esta termine antes del for
         await this.getLanguages(this.user)
         await this.getCompanies(this.user)
@@ -421,6 +425,7 @@ export default {
           this.modalmsg = "Bienvenido al fantástico mundo de la programación. Te espera un gran viaje a traves de la historia de la informática. Haz click en el ordenador para ganar beneficios y empezar a comprar las tecnologías que irás aprendiendo"
         }  
       } catch (error) {
+        console.log(error)
         this.modalmsg = "Ha ocurrido un error y los datos no se cargaron correctamente"        
       }
     },
@@ -476,13 +481,13 @@ export default {
      * Función que activa la función handleMoney a cada segundo
      */
     setMoneyPerSecondInterval() {
-      setInterval(this.handleMoney, 1000);
+      this.moneyInterval = setInterval(this.handleMoney, 1000);
     },
     /**
      * Función que guarda la partida cada 5 min
      */
     setSaveDataInterval() {
-      setInterval(this.saveData, 120000);
+      this.saveInterval = setInterval(this.saveData, 120000);
     },
     /**
      * Función que gestiona toda la compra de tecnologias y setea todos los valores de ganancias acorde a la tecnologia comprada
@@ -590,6 +595,13 @@ export default {
     this.setSaveDataInterval()
     this.getAllUsersData()  
     this.getData()    
-  }
+  },
+  beforeUnmount() {
+    console.log("desmontado")
+    clearInterval(this.moneyInterval)
+    clearInterval(this.saveInterval)
+    this.moneyInterval = null
+    this.saveInterval = null
+  },
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <Header icon="arrow-back.svg" :isGame=false />
+  <Header icon="arrow-back.svg" :avatar="avatar" :isGame=false  />
   <div class="register">
     <section class="register-container">
       <form class="register-form" v-on:submit.prevent="submit" method="PUT" enctype="multipart/form-data">
