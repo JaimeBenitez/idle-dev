@@ -1,9 +1,13 @@
-const BASE_URL = `http://localhost:8080/partida/`
-const POST_URL = `http://localhost:8080/empresa-partida`
+import { executeRequest } from "@/utils/executeRequest"
+import { BASE_URL } from "./links"
+
+
+const GET_URL = `${BASE_URL}/partida/`
+const POST_URL = `${BASE_URL}/empresa-partida`
 
 
 export async function getGameCompanies(user,companies){
-    const response = await fetch(BASE_URL + `${user}/empresas`)
+    const response = await executeRequest('GET', GET_URL + `${user}/empresas`)
     if (response.status == 200){
      //Si nos da un OK seteamos y devolvemos los datos de las empresas del jugador
      let allGameCompanies = await response.json()
@@ -23,11 +27,7 @@ async function postGameCompanies(companies) {
         "empresaId": companies[i].id,
         "partidaId": localStorage.getItem("user")
       }
-      let response = await fetch(POST_URL, {
-      method: "POST",
-      body: JSON.stringify(userCompany),
-      headers: { 'Content-type': 'application/json; charset=UTF-8' },            
-      })
+      let response = await executeRequest('POST', POST_URL, JSON.stringify(userCompany))
       let newUserCompany = await response.json();
       userCompanies.push(newUserCompany)
     }
@@ -43,10 +43,6 @@ export async function saveGameCompanies(userCompanies, companies){
     "desbloqueada" : companies[i].unlocked,
     "nivel": companies[i].level
   }
-  await fetch(POST_URL + `/${dataId}`, {
-    method: "PUT",
-    body: JSON.stringify(newData),
-    headers: { 'Content-type': 'application/json; charset=UTF-8' },
-    })
+  await executeRequest('PUT', POST_URL + `/${dataId}`, JSON.stringify(newData)) 
   }
 }

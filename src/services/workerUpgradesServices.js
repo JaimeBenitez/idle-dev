@@ -1,11 +1,13 @@
 import unlockedUpgrade from "@/utils/unlockedUpgrade";
+import { executeRequest } from "@/utils/executeRequest"
+import { BASE_URL } from "./links"
 
-const BASE_URL = `http://localhost:8080/trabajador/`
-const POST_URL = "http://localhost:8080/trabajador-mejora"
+const GET_URL = `${BASE_URL}/trabajador/`
+const POST_URL = `${BASE_URL}/trabajador-mejora`
 
 
 export async function getWorkerUpgrades(workerId){
-    let response = await fetch(BASE_URL + `${workerId}/mejoras`)
+    let response = await executeRequest('GET', GET_URL + `${workerId}/mejoras`)
     let workerLanguages = await response.json();
     return workerLanguages
 }
@@ -19,10 +21,6 @@ export async function unlockUpgrade(workerId, techId, newLevel){
             "id_trabajador" : workerId,
             "id_mejora": upgradeId
         }
-        await fetch(POST_URL, {
-            method: "POST",
-            body: JSON.stringify(newUpgrade),
-            headers: { 'Content-type': 'application/json; charset=UTF-8' },            
-        }) 
+        await executeRequest('POST', POST_URL, JSON.stringify(newUpgrade))
     }
 }

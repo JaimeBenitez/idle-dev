@@ -1,18 +1,15 @@
 <template>
-  <Header icon="arrow-back.svg" :avatar="avatar" :isGame=false  />
+  <Header icon="arrow-back.svg" :avatar="avatar" :isGame=true  />
   <div class="register">
-    <section class="register-container">
+    <section class="edit-container">
       <form class="register-form" v-on:submit.prevent="submit" method="PUT" enctype="multipart/form-data">
         <h1 class="register-title">Editar usuario</h1>
         <input type="text" class="register-username register-input" v-model="username" v-on:blur="validUsername"
-          placeholder="Nombre de usuario">
+          placeholder="Nombre de usuario" disabled>
         <p v-if="usernameError" class="error-message username-error">El nombre debe tener entre 3 y 20 caracteres</p>
         <input type="email" class="register-email register-input" v-model="email" v-on:blur="validEmail"
           placeholder="Correo electrónico">
         <p v-if="emailError" class="error-message">Introduce un email valido</p>
-        <input type="password" class="register-password register-input" v-model="oldPassword" v-on:blur="validOldPassword"
-          placeholder="Antigua contraseña">
-        <p v-if="oldPasswordError" class="error-message password-error">La contraseña debe coincidir con la actual para poder hacer cambios</p>
         <input type="password" class="register-password-confirm register-input" v-model="newPassword"
           v-on:blur="validNewPassword" placeholder="Nueva contraseña">
         <p v-if="newPasswordError" class="error-message">La contraseña debe tener al menos una mayuscula,
@@ -42,8 +39,8 @@
 import Header from './header.vue'
 import Modal from './modal.vue'
 import validator from '@/utils/validator'
-import sha1 from '@/utils/hash1.js'
-import { getUsersData, getOneUser } from '@/services/userServices'
+import { getUsersData, getOneUser, editUser } from '@/services/userServices'
+import { checkValidToken } from "@/utils/checkValidToken"
 
 /**
  * @vue-data {Array<Object>} [users = []] - Lista de usuarios registrados
@@ -73,13 +70,11 @@ export default {
       user: {},
       username: "",
       email: "",
-      oldPassword: "",
       newPassword: "",
       avatar: null,
       avatarFile: null,
       usernameError: false,
       emailError: false,
-      oldPasswordError: false,
       newPasswordError: false,
       submitted: false,
       loading: false,
@@ -128,11 +123,7 @@ export default {
       //Importante en los multipart NO pasar headers
       try {
         this.loading = true;
-        const response = await fetch(`http://localhost:8080/usuario/${userId}`, {
-          method: "PUT",
-          body: formData,         
-        });
-        const modifiedUser = await response.json();
+        const modifiedUser = await editUser(userId,formData)
         this.loading = false;
         this.users.push(modifiedUser);
       } catch (error) {
@@ -155,16 +146,6 @@ export default {
       this.emailError = validator(this.emailRegexp, this.email)
     },
     /**
-     * Función que valida la contraseña
-     */
-    validOldPassword() {
-      if(sha1(this.oldPassword) != this.user.contrasenia){
-        this.oldPasswordError = true
-      }else{
-        this.oldPasswordError = false
-      }
-    },
-    /**
      * Función que valida la confirmación de contraseña
      */
     validNewPassword() {
@@ -185,40 +166,37 @@ export default {
       //Volvemos aqui a hacer las validaciones para comprobar si los campos están vacios
       this.validUsername()
       this.validEmail()
-      this.validOldPassword()
       this.validNewPassword()
-      if (!this.usernameError && !this.emailError && !this.oldPasswordError && !this.newPasswordError) {
-        if(this.newPassword == ''){
-          //En el caso de que la contraseña esté vacia la que se pasa al put es la que ya tenia
-        this.newPassword = this.user.contrasenia
-        }else{
-          this.newPassword = sha1(this.newPassword)
-        }
-       
+      if (!this.usernameError && !this.emailError && !this.newPasswordError) {
         const putUser = {
           "nombre": this.username,
           "email": this.email,
           "contrasenia": this.newPassword,
         }
-        
+        localStorage.setItem("username", this.username)
         await this.putUser(putUser, this.user.id)
         this.submitted = true;
       }
     },
+    async redirect() {
+        const check = await checkValidToken()
+        if (!check) {
+          this.$router.push('/')
+        }
+    }  
   },
   watch: {
     username: function () {
     },
     email: function () {
     },
-    oldPassword: function () {
-    },
     newPassword: function () {
     },
   },
   async mounted() {
     await this.getAllUsers();
-    await this.getUser()
+    await this.getUser();
+    await this.redirect()
   }
 }
 </script>

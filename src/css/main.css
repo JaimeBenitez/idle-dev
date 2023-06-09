@@ -23,5 +23,6 @@
 @import './views/index.css';
 @import 'views/contact.css';
 @import 'views/register.css';
+@import 'views/edit.css';
 @import 'views/login.css';
 @import 'views/game.css';

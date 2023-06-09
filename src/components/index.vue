@@ -16,6 +16,7 @@
  * @see <a href="https://jaimebenitez.com" target="_blank">Jaime Benitez </a>
  */
 import Button from './button.vue'
+import { checkValidToken } from "@/utils/checkValidToken"
 
 export default {
   name: 'IndexPage',
@@ -24,16 +25,18 @@ export default {
   },
   methods: {
     /**
-     * Función que, si entramos en la pag estando aun logueados, nos redirige al juego
+     * Función que, si entramos en la pag estando aun logueados, nos redirige al juego.
+     * Realizamos una consulta privada de prueba para ver si el token es valido
      */
-    redirect() {
-      if (localStorage.getItem("user")) {
-        this.$router.push('/game')
-      }
-    }
+     async redirect() {
+        const check = await checkValidToken()
+        if (check) {
+          this.$router.push('/game')
+        }
+    }  
   },
-  mounted() {
-    this.redirect()
+  async mounted() {
+    await this.redirect()
   }
 }
 </script>

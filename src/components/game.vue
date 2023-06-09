@@ -138,6 +138,7 @@ import { makeTraining } from '@/utils/makeTraining'
 import TrainingInfo from './trainingInfo.vue'
 import { newWorkerLanguage, levelUpLanguage } from '@/services/workerLanguagesServices'
 import calcUpgradeBonus from '@/utils/calcUpgradeBonus'
+import { checkValidToken } from "@/utils/checkValidToken"
 /**
  * @vue-data {Object} [userData = {}] -  Almacenara los datos de partida del usuario actual
  * @vue-data {Array<Object>} [allUsersData = []] -  Almacenara los datos de partida de todos los jugadores registrados, para poder guardar partida
@@ -583,14 +584,17 @@ export default {
     /**
      * Función que redirecciona al index si no estamos logueados
      */
-    redirect() {
-      if (!localStorage.getItem("user")) {
-        this.$router.push('/')
-      }
-    }
+ 
+     async redirect() {
+        const check = await checkValidToken()
+        if (!check) {
+          this.$router.push('/')
+        }
+    }  
+    
   },
-  mounted() {
-    this.redirect();
+  async mounted() {
+   await  this.redirect();
     this.setMoneyPerSecondInterval();
     this.setSaveDataInterval()
     this.getAllUsersData()  

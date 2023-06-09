@@ -45,6 +45,8 @@ export default {
       //Solo lo haremos en el caso de que pulsemos el boton desde la pantalla de juego, esto evitara que desde el contacto, al pulsar atras nos desloguee
       if (this.isGame)
         localStorage.removeItem('user')
+        localStorage.removeItem('token')
+        localStorage.removeItem('username')
     }
   }
 }

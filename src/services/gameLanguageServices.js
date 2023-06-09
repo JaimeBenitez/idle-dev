@@ -1,9 +1,12 @@
-const BASE_URL = `http://localhost:8080/partida/`
-const POST_URL = `http://localhost:8080/lenguaje-partida`
+import { executeRequest } from "@/utils/executeRequest"
+import { BASE_URL } from "./links"
+
+const GET_URL = `${BASE_URL}/partida/`
+const POST_URL = `${BASE_URL}/lenguaje-partida`
 
 
 export async function getGameLanguages(user,techs){
-    const response = await fetch(BASE_URL + `${user}/lenguajes`)
+    const response = await executeRequest('GET', GET_URL + `${user}/lenguajes`)
     if (response.status == 200){
      //Si nos da un OK seteamos y devolvemos los datos de los lenguajes del jugador
      let allGameLanguages = await response.json()
@@ -24,11 +27,7 @@ async function postGameLanguages(techs) {
         "lenguajeId": techs[i].id,
         "partidaId": localStorage.getItem("user")
       }
-      let response = await fetch(POST_URL, {
-      method: "POST",
-      body: JSON.stringify(userLanguage),
-      headers: { 'Content-type': 'application/json; charset=UTF-8' },            
-      })
+      let response = await executeRequest('POST', POST_URL, JSON.stringify(userLanguage))
       let newUserLanguage = await response.json();
       userLanguages.push(newUserLanguage)
     }
@@ -44,10 +43,6 @@ export async function saveGameLanguages(userTechs, techs){
     "desbloqueado" : techs[i].unlocked,
     "cantidad": techs[i].quantityOwned
   }
-  await fetch(POST_URL + `/${dataId}`, {
-    method: "PUT",
-    body: JSON.stringify(newData),
-    headers: { 'Content-type': 'application/json; charset=UTF-8' },
-    })
+  await executeRequest('PUT', POST_URL + `/${dataId}`, JSON.stringify(newData)) 
   }
 }

@@ -1,15 +1,18 @@
 import { chooseWorkerLanguage, hiredWorkerLanguage } from "./workerLanguagesServices";
 import makeWorker from "@/utils/makeWorker";
 import { unlockUpgrade } from "./workerUpgradesServices";
+import { executeRequest } from "@/utils/executeRequest"
+import { BASE_URL } from "./links"
 
 
-const BASE_URL = `http://localhost:8080/trabajadores/`
-const POST_URL = `http://localhost:8080/trabajador`
+const GET_URL = `${BASE_URL}/trabajadores/`
+const POST_URL = `${BASE_URL}/trabajador`
+
 
 
 export async function getGameWorkers(user){
     try{
-    const response = await fetch(BASE_URL + `${user}`)    
+    const response = await executeRequest('GET', GET_URL + `${user}`)    
     
     if (response.status == 200){ 
         let userWorkers = await response.json()   
@@ -27,11 +30,7 @@ export async function postGameWorker(user, techs){
         
          //Creamos al trabajador
         try{
-        let response = await fetch(POST_URL, {
-        method: "POST",
-        body: JSON.stringify(worker),
-        headers: { 'Content-type': 'application/json; charset=UTF-8' },            
-        })
+        let response = await executeRequest('POST', POST_URL, JSON.stringify(worker)) 
         let newWorker = await response.json() 
            // Elegimos sus lenguajes
         await chooseWorkerLanguage(newWorker, techs)
@@ -42,11 +41,7 @@ export async function postGameWorker(user, techs){
 
 export async function hireWorker(worker,tech){
     try{
-        let response = await fetch(POST_URL, {
-            method: "POST",
-            body: JSON.stringify(worker),
-            headers: { 'Content-type': 'application/json; charset=UTF-8' },            
-        })
+        let response = await executeRequest('POST', POST_URL, JSON.stringify(worker))
         let newWorker = await response.json()
         await hiredWorkerLanguage(newWorker, tech)
         //Comprobamos que de salir el nivel avanzado desbloquee la mejora anterior

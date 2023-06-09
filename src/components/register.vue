@@ -17,12 +17,6 @@
         <input type="password" class="register-password-confirm register-input" v-model="confirmPassword"
           v-on:blur="passwordConfirmed" placeholder="Repite la contraseña">
         <p v-if="passwordConfirmError" class="error-message">Las contraseñas no coinciden</p>
-        <div class="register-avatar-container">
-          <img v-if="avatar" :src="avatar" alt="hola" class="register-avatar" />
-          <div class="register-input-file-container">  
-            <input type="file" name="imagen" aria-label="imagen" accept="image/*" @change="onFileChange" />
-          </div>
-        </div>
         <p class="toLoginQuestion">¿Ya tienes una cuenta?</p>
         <RouterLink to="/login" class="toLogin">Ve al login</RouterLink>
         <button v-if="!loading" type="submit" class="register-submit">Enviar</button>
@@ -43,7 +37,7 @@
 import Header from './header.vue'
 import Modal from './modal.vue'
 import validator from '@/utils/validator'
-import sha1 from '@/utils/hash1.js'
+import { checkValidToken } from "@/utils/checkValidToken"
 
 /**
  * @vue-data {Array<Object>} [users = []] - Lista de usuarios registrados
@@ -69,14 +63,10 @@ export default {
   },
   data() {
     return {
-      users: [],
-      games: [],
       username: "",
       email: "",
       password: "",
       confirmPassword: "",
-      avatar: null,
-      avatarFile: null,
       usernameError: false,
       emailError: false,
       passwordError: false,
@@ -89,71 +79,22 @@ export default {
     }
   },
   methods: {
-    /**
-     * Función que saca de la api todos los usuarios para poder registrar nuevos
-     */
-    async getAllUsers() {
-      try {
-        const response = await fetch('http://localhost:8080/usuarios');
-        this.users = await response.json();       
-      } catch (error) {
-        console.error("Error");
-      }
-    },
-    /**
-     * Función que saca de la api todas las partidas para poder registrar nuevas
-     */
-    async getAllGames() {
-      try {
-        const response = await fetch('http://localhost:8080/clasificacion');
-        this.games = await response.json();  
-        console.log(this.games)      
-      } catch (error) {
-        console.error(error);
-      }
-    },
+   
     /**
      * Función que registra un nuevo usuario en la base de datos
      * @param {Object} user - usuario a registrar
      */
     async postUser(user) {
 
-      let formData = new FormData()
-
-       const json = JSON.stringify(user)
-        const blob = new Blob([json], {
-            type: 'application/json'
-        })
-        formData.append('nuevo', blob )
-        formData.append('file', this.avatarFile)
-
       try {
         this.loading = true;
-        const response = await fetch("http://localhost:8080/usuario", {
+        await fetch("http://localhost:8080/registro", {
           method: "POST",
-          body: formData,                
+          body: JSON.stringify(user),
+          headers: { 'Content-type': 'application/json; charset=UTF-8' },              
         });
-        const createdUser = await response.json();
         this.loading = false;
-        this.users.push(createdUser);
-      } catch (error) {
-        console.log(error)
-      }
-    },
-    /**
-     * Función que registra una nueva partida en la base de datos
-     */
-    async postGame() {
-      try {
-        this.loading = true;
-        const response = await fetch("http://localhost:8080/partida", {
-          method: "POST",
-          headers: { 'Content-Type': 'application/json; charset=utf-8' }         
-        });
-        const createdGame = await response.json();
-        this.loading = false;
-        this.games.push(createdGame);
-        
+  
       } catch (error) {
         console.log(error)
       }
@@ -191,11 +132,6 @@ export default {
         this.passwordConfirmError = false
       }
     },
-    onFileChange(e){
-      const file = e.target.files[0]
-      this.avatar = URL.createObjectURL(file)
-      this.avatarFile = file
-    },
     /**
      * Función que, si todos los datos son correctos, encripta la contraseña e invoca a la función que introduce los datos en la BD
      */
@@ -205,14 +141,10 @@ export default {
       this.validPassword()
       this.passwordConfirmed()
       if (!this.usernameError && !this.emailError && !this.passwordError && !this.passwordConfirmError) {
-        await this.postGame()
-        //Sacamos la id del ultimo juego creado para asignarselo al usuario
-        let game = this.games[this.games.length - 1].id
         const user = {
-          "partidaId" : game,
           "nombre": this.username,
           "email": this.email,
-          "contrasenia": sha1(this.password),
+          "contrasenia": this.password,
         }
         await this.postUser(user)
         this.submitted = true;
@@ -221,11 +153,12 @@ export default {
     /**
      * Función que, de estar logueado, redirige al juego
      */
-    redirect() {
-      if (localStorage.getItem("user")) {
-        this.$router.push('/game')
-      }
-    }
+     async redirect() {
+        const check = await checkValidToken()
+        if (check) {
+          this.$router.push('/game')
+        }
+    }  
   },
   watch: {
     username: function () {
@@ -237,10 +170,8 @@ export default {
     confirmPassword: function () {
     },
   },
-  mounted() {
-    this.redirect();
-    this.getAllUsers();
-    this.getAllGames();
+  async mounted() {
+   await this.redirect();
   }
 }
 </script>

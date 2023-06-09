@@ -25,8 +25,9 @@
  */
   import Header from './header.vue'
   import Modal from './modal.vue'
-  import sha1 from '@/utils/hash1.js'
   import { getOneUser } from '@/services/userServices'
+  import { login } from '@/services/publicServices'
+  import { checkValidToken } from "@/utils/checkValidToken"
   /**
    * @vue-data {Object}[user = {}] - Guardará los datos del usuario actual
    * @vue-data {Boolean}[loginError = false] - Maneja la aparición de los mensajes de error
@@ -64,31 +65,31 @@
        * @param {String} password - Contraseña
        */
       async checkUser(username,password){
+
         try{
           this.loading = true;
-          this.user = await getOneUser(username)
+          const token = await login(username,password)
           this.loading = false;
-          //Comprobamos si el usuario que hemos buscado existe en la base de datos y si los datos introducidos son correctos
-          if(this.user.nombre == username && this.user.contrasenia == sha1(password)){
-            localStorage.setItem("user",this.user.partidaId)
-            localStorage.setItem("username", username)
-            this.submitted = true;
-          }else{
-            this.loginError = true
-          }
-          
+          localStorage.setItem("token", token);
+          this.user = await getOneUser(username)
+          localStorage.setItem("user",this.user.partidaId)
+          localStorage.setItem("username", username)
+          this.submitted = true;
+        
         }catch(error){
+          console.log(error)
           this.loginError = true;
         }
       },
       /**
        * Funcion que de estar ya logueado al entrar en la página redirige al juego
        */
-      redirect(){
-      if(localStorage.getItem("user")){
-        this.$router.push('/game')
-      }
-      }
+       async redirect() {
+        const check = await checkValidToken()
+        if (check) {
+          this.$router.push('/game')
+        }
+    }  
     },
     watch:{
       username: function(){
@@ -96,8 +97,8 @@
       password: function(){
       }
     },
-    mounted(){
-      this.redirect();
+    async mounted(){
+      await this.redirect();
     }
    
   }
