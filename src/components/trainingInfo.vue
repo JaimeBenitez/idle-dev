@@ -16,7 +16,7 @@
             <p class="training__text"><b>{{ training.upgradeDescription }}</b></p>
         </section> 
         <section class="training__section">
-            <p class="training__text">{{ training.pa.toFixed(2) }} <img :src="require('@/assets/bulb.svg')"/>/s</p>
+            <p class="training__text">{{ training.pa.toFixed(2) }} <img :src="require('@/assets/bulb.svg')"/><span class="segs">/s</span></p>
             <!-- Hacemos estas comprobaciones para evitar que visualmente se vea que se pasa de los esperado el temporizador -->
             <p class="training__text">{{ training.actualExp <= training.expToLevelUp ? training.actualExp : training.expToLevelUp }}/{{ training.expToLevelUp }}</p>     
             <p class="training__text">{{ timeToLevelUp >= 0 ? timeToLevelUp : 0 }} segs</p>

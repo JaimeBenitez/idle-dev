@@ -1,0 +1,38 @@
+@media only screen and (max-width: 500px){
+    .trainingContainer{
+        width: 90%;
+        height: 90px;
+        background-color: var(--text-color);
+        margin-top: 1.5rem;
+        border-radius: 20px;
+        padding: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .training__section{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        text-align: center;
+    }
+    .training__text{
+        font-size: var(--text-size);
+        font-family: var(--mobile-font);
+        padding-top: 0.2rem
+    }
+
+    .training__workerLogo{
+        height: 30px;
+        width: 30px
+    }
+
+    .training__techLogo, .training__upgradeLogo{
+        height: 25px;
+        width: 25px
+    }
+    .segs{
+       display: none;
+    }
+}

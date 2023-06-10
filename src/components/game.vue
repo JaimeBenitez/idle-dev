@@ -215,8 +215,8 @@ export default {
       workers: [],
       workerToTrain: {},
       techToTrain: {},
-      inTraining: [],
-      userAvatar: null
+      inTraining: [], 
+      avatar: null
     }
   },
   computed: {

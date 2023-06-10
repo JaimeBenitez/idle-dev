@@ -5,24 +5,40 @@
 @import './components/header.css';
 @import './components/button.css';
 @import './components/techButton.css';
+@import './components/techButton-mobile.css';
 @import './components/modal.css';
+@import './components/modal-mobile.css';
 @import './components/tabButton.css';
+@import './components/tabButton-mobile.css';
 @import './components/tabsNav.css';
+@import './components/tabsNav-mobile.css';
 @import './components/companyButton.css';
 @import './components/companyDetails.css';
+@import './components/companyDetails-mobile.css';
 @import './components/workerButton.css';
+@import './components/workerButton-mobile.css';
 @import './components/workerDetails.css';
+@import './components/workerDetails-mobile.css';
 @import './components/hireModal.css';
+@import './components/hireModal-mobile.css';
 @import './components/trainingModal.css';
 @import './components/techTrainingButton.css';
+@import './components/techTrainingButton-mobile.css';
 @import './components/trainingInfo.css';
+@import './components/trainingInfo-mobile.css';
 
 
 @import './layouts/base.css';
 
 @import './views/index.css';
+@import './views/index-mobile.css';
 @import 'views/contact.css';
+@import 'views/contact-mobile.css';
 @import 'views/register.css';
+@import 'views/register-mobile.css';
 @import 'views/edit.css';
+@import 'views/edit-mobile.css';
 @import 'views/login.css';
+@import 'views/login-mobile.css';
 @import 'views/game.css';
+@import 'views/game-mobile.css';

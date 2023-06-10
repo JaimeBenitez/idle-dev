@@ -54,9 +54,11 @@ export default function unlockedUpgrade(techId, newLevel){
         junior: juniorUpgradeIds,
         senior: seniorUpgradeIds
     }
+    
+    const actualLevel = levels[newLevel] || {}
 
-    const actualLevel = levels[newLevel] || null 
     const finalId = actualLevel[techId] || null
+    
 
     return finalId
 }

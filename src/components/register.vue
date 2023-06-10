@@ -20,7 +20,7 @@
         <p class="toLoginQuestion">¿Ya tienes una cuenta?</p>
         <RouterLink to="/login" class="toLogin">Ve al login</RouterLink>
         <button v-if="!loading" type="submit" class="register-submit">Enviar</button>
-        <button v-if="loading" type="submit" class="register-submit">Enviar</button>
+        <button v-if="loading" type="submit" class="register-submit">Guardando...</button>
       </form>
     </section>
     <Modal v-if="submitted" msg="Registro exitoso, haz login de comenzar tu viaje" buttonMsg="Entrar" redirect="/login"

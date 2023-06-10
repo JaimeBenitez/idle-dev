@@ -1,0 +1,19 @@
+@media only screen and (max-width: 500px){
+
+    .worker-detailed__container{
+        overflow: hidden;
+    }
+    .worker-detailed__image{
+        width: 80px;
+        height: 80px;
+    }
+    .worker-detailed__name{
+        font-size: var(--subtitle-size);
+    }
+    .worker-detailed__upgrade{
+        grid-template-columns: 13% 35% 50%;
+    }
+    .worker-detailed__upgrade-logo{
+        padding-left: 0
+    }
+}

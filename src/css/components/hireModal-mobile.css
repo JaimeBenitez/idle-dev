@@ -1,0 +1,16 @@
+@media only screen and (max-width: 500px){
+
+    .hiremodal-container {
+        width: 80%; 
+        height: 50%;   
+    }
+    .hireOptions-container {
+        height: 80%;    
+    }
+    .option-container {
+        width: 32%;
+    }
+    #hireButton {
+        width: 80%
+    }
+}

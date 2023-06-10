@@ -1,5 +1,5 @@
 <template>
-  <Header icon="arrow-back.svg" :avatar="avatar" :isGame=true  />
+  <Header icon="logout.svg" :avatar="avatar" :isGame=true  />
   <div class="register">
     <section class="edit-container">
       <form class="register-form" v-on:submit.prevent="submit" method="PUT" enctype="multipart/form-data">
@@ -20,8 +20,8 @@
             <input type="file" name="imagen" aria-label="imagen" accept="image/*" @change="onFileChange( $event )" />
           </div>
         </div>
-        <button v-if="!loading" type="submit" class="register-submit">Enviar</button>
-        <button v-if="loading" type="submit" class="register-submit">Enviar</button>
+        <button v-if="!loading" type="submit" class="register-submit">Guardar</button>
+        <button v-if="loading" type="submit" class="register-submit">Guardando...</button>
         
       </form>
     </section>

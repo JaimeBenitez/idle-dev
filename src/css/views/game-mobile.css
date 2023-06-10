@@ -1,0 +1,34 @@
+@media only screen and (max-width: 500px){
+
+    .game {
+        flex-direction: column;  
+    }
+    .principal-container {
+        margin-left: 3rem;
+        height: 450px;
+        width: 300px;
+    
+    } 
+    .workers_list{
+        height: 40vh;
+        grid-template-columns: 33.3% 33.3% 33.3%;
+    }
+    .no-training-text{
+        font-size: var(--text-size);
+    }
+    .principal-resources{
+        flex-direction: column;
+        align-items: center;   
+        width: 100%;      
+    }
+    .principal-score{
+        margin-top: 1rem
+    }
+    .money {
+        font-size: 3rem;
+    }
+    .principal-pc{
+        width: 15rem;
+        height: 15rem;    
+    }
+}

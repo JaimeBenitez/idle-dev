@@ -75,14 +75,11 @@
     display: grid;
     grid-template-columns: 33% 33% 33%;
     grid-template-rows: unset;
-    /* grid-row: 100% 100%; */
-    /* grid-column-gap: 20px; */
     grid-auto-flow: row;
     grid-row-gap: 20px ;
     justify-items: center;
     overflow-y: scroll;
     scrollbar-width: none;  
-    /* background-color: aqua  */
 }
 
 .workers_list::-webkit-scrollbar{

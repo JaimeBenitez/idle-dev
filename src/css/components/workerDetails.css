@@ -86,21 +86,14 @@
     justify-content: center;
     text-align: center;
 }
-
-
-
-
-
 .worker-detailed__tech-logo, .worker-detailed__upgrade-logo{
     width: 30px; 
     height: 30px;
 }
-
 .upgrade-name{
     font-weight: bolder;
     font-family: var(--title-font);
 }
-
 .worker-detailed__upgrade-logo{
     padding-left: 50%
 }

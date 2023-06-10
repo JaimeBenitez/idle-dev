@@ -1,0 +1,6 @@
+@media only screen and (max-width: 500px){
+    .tab-nav {
+        margin-left: 3rem;
+        width: 300px
+    }
+}
