@@ -38,6 +38,7 @@ import Header from './header.vue'
 import Modal from './modal.vue'
 import validator from '@/utils/validator'
 import { checkValidToken } from "@/utils/checkValidToken"
+import { register } from '@/services/publicServices'
 
 /**
  * @vue-data {Array<Object>} [users = []] - Lista de usuarios registrados
@@ -88,11 +89,7 @@ export default {
 
       try {
         this.loading = true;
-        await fetch("http://localhost:8080/registro", {
-          method: "POST",
-          body: JSON.stringify(user),
-          headers: { 'Content-type': 'application/json; charset=UTF-8' },              
-        });
+        await register(user);
         this.loading = false;
   
       } catch (error) {
