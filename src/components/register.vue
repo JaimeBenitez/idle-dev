@@ -91,6 +91,7 @@ export default {
         this.loading = true;
         await register(user);
         this.loading = false;
+        this.submitted = true;
   
       } catch (error) {
         console.log(error)
@@ -144,7 +145,6 @@ export default {
           "contrasenia": this.password,
         }
         await this.postUser(user)
-        this.submitted = true;
       }
     },
     /**

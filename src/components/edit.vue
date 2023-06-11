@@ -27,6 +27,8 @@
     </section>
     <Modal v-if="submitted" msg="Cambio realizado con exito" buttonMsg="Volver" redirect="/game"
       :isGame=false />
+    <Modal v-if="submittedError" msg="Ha ocurrido un error y los datos no se han guardado" buttonMsg="Volver" redirect="/game"
+      :isGame=false />
   </div>
 </template>
 
@@ -77,6 +79,7 @@ export default {
       emailError: false,
       newPasswordError: false,
       submitted: false,
+      submittedError: false,
       loading: false,
       usernameRegexp: new RegExp(/^[\S]{3,20}$/),
       emailRegexp: new RegExp(/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/),
@@ -101,6 +104,7 @@ export default {
         this.username =  this.user.nombre
         this.email = this.user.email 
         this.avatar = this.user.avatar
+        this.submitted = true;
          
       } catch (error) {
         console.error("Error");
@@ -175,7 +179,7 @@ export default {
         }
         localStorage.setItem("username", this.username)
         await this.putUser(putUser, this.user.id)
-        this.submitted = true;
+        
       }
     },
     async redirect() {
