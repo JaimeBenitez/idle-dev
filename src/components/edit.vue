@@ -103,9 +103,7 @@ export default {
         this.user = await getOneUser(actualUser.usuarioNombre);     
         this.username =  this.user.nombre
         this.email = this.user.email 
-        this.avatar = this.user.avatar
-        this.submitted = true;
-         
+        this.avatar = this.user.avatar    
       } catch (error) {
         console.error("Error");
       }
@@ -129,6 +127,7 @@ export default {
         this.loading = true;
         const modifiedUser = await editUser(userId,formData)
         this.loading = false;
+        this.submitted = true
         this.users.push(modifiedUser);
       } catch (error) {
         console.log(error)
