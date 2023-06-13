@@ -1,6 +1,6 @@
 # IdleDev
 
-[![Desarrollo Web en Entorno Cliente](https://img.shields.io/badge/Asignatura-DWEC-blue?style=for-the-badge)](https://iesrafaelalberti.es/c-f-g-s-desarrollo-de-aplicaciones-web/)
+[![Desarrollo Web en Entorno Cliente](https://img.shields.io/badge/PROYECTO-blue?style=for-the-badge)](https://iesrafaelalberti.es/c-f-g-s-desarrollo-de-aplicaciones-web/)
 
 ![Logo](/src/assets/idledev-logo.png)
 
