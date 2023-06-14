@@ -70,6 +70,8 @@ export default {
     validTextArea() {
       //Esta regexp nos permite establecer que minimo se necesiten 3 palabras para que sea válido el campo      
       this.textAreaError = validator(this.suggestionRegexp, this.textArea)
+      console.log(validator(this.suggestionRegexp, this.textArea))
+      console.log(this.textAreaError)
     },
     /**    
      * Funcion que valida el email
