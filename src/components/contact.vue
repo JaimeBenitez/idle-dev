@@ -90,6 +90,9 @@ export default {
      * Funcion que controla que cuando todo sea válido, se haga el submit y se envie un mensaje a mi correo
      */
     submit() {
+      this.validTextArea()
+      this.validEmail()
+      this.validName()
       if (!this.textAreaError && !this.emailError && !this.nameError) {
         emailjs.sendForm('service_eifxgyp', 'template_3ugrigt', this.$refs.form, 'LUxtrFSYPmdgvJjpP')
         .then((result) => {
