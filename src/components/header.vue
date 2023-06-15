@@ -24,6 +24,7 @@
 /**
 * @vue-prop {String} icon - Establece la ruta del icono a usar en el boton de logout
 * @vue-prop {Boolean} isGame - Le dice al header si estamos en la pantalla de juego para adaptar su comportamiento a dicha pantalla
+* @vue-prop {Boolean} avatar - Avatar del usuario
 */
 export default {
   name: 'HeaderComponent',
@@ -39,7 +40,7 @@ export default {
   },
   methods: {
     /**
-     * Si estamos en la pantalla de juego quita al usuario del localStorage lo que causará el logout del mismo
+     * Si estamos en la pantalla de juego quita los datos del localStorage lo que causará el logout del mismo
      */
     logout() {
       //Solo lo haremos en el caso de que pulsemos el boton desde la pantalla de juego, esto evitara que desde el contacto, al pulsar atras nos desloguee

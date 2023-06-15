@@ -30,7 +30,20 @@
 <script>
     
     import WorkerUpgrade from "./workerUpgrade.vue"
-
+    /**
+     * @file workerDetails.vue - Pestaña de detalle del trabajador
+     * @author Jaime Benitez
+     * @see <a href="https://jaimebenitez.com" target="_blank">Jaime Benitez </a>
+     */
+    /**
+     * @vue-prop {String} workerName - Nombre del trabajador
+     * @vue-prop {String} image - Imagen del trabajador
+     * @vue-prop {String} companyName - Nombre de la compañia
+     * @vue-prop {Number} totalLevel - Nivel total del trabajdor entre todas las tecnologias aprendidas
+     * @vue-prop {Number} PA - PA del trabajador
+     * @vue-prop {Array<Object>} techs - Tecnologias del trabajador
+     * @vue-prop {Array<Object>} upgrades - Mejoras del trabajador
+     */
     export default{
         "name": "workerDetails",
         "props": {

@@ -9,18 +9,32 @@
 </template>
 
 <script>
+
 import displayWorkerLanguageHireOption from "@/utils/displayWorkerLanguageHireOption"
 import makeWorker from "@/utils/makeWorker"
 import { techLevelToNumber } from "@/utils/techLevelToNumber"
 import GameButton from "./gameButton.vue"
 import { hireWorker } from "@/services/workerServices"
-
+/**
+ * @file workerHireOptions.vue - Opcion de contratación de un trabajador
+ * @author Jaime Benitez
+ * @see <a href="https://jaimebenitez.com" target="_blank">Jaime Benitez </a>
+ */
+/**
+ * @vue-prop {String} gameId - Id de la partida
+ * @vue-prop {Array<Object>} techs - Tecnologias
+ * @vue-prop {Number} slotsOcuppied - Ranuras de trabajador ocupadas actualmente 
+ * @vue-data {Object} worker - Trabajador generado
+ * @vue-data {Object} language - Tecnología generada
+ * @vue-data {Number} workerPrice - Precio del trabajador
+ * @vue-event {Number} hired - Precio del trabajador
+ */
 export default {
     name: 'WorkerHireOption',
     props: {        
         gameId: Number,
         techs: Array[Object],
-        slotsOcuppied:  Number   
+        slotsOcuppied: Number   
     },
     components: {
         GameButton

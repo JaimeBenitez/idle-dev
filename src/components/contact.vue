@@ -36,11 +36,14 @@ import emailjs from '@emailjs/browser'
 /**
  * @vue-data {Boolean} [textAreaError = false]  - Establece si el error en el campo del textArea se muestra o no
  * @vue-data {Boolean} [emailError = false] - Establece si el error en el campo email se muestra o no
+ * @vue-data {Boolean} [nameError = false] - Establece si el error en el campo nombre se muestra o no
  * @vue-data {String} [textArea = ""] - Campo que toma el valor del input textArea
  * @vue-data {String} [email = ""] - Campo que toma el valor del input email
+ * @vue-data {String} [name = ""] - Campo que toma el valor del input name
  * @vue-data {Boolean} [submitted = false] - Establece cuando se valida el formulario
  * @vue-data {String} [suggestionRegexp = new RegExp(/^[\w,]+\s[\w,]+\s[\w,]+/gm)] - Expresion regular que testea si el campo textArea tiene al menos 3 palabras. 
  * @vue-data {String} [emailRegexp = new RegExp(/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/)] - Expresion regular que testea si el campo email es valido (por ejemplo ejemplo@test.com)
+ * @vue-data {String} [nameRegexp = new RegExp(/^[\S]{3,20}$/)] - Expresion regular que testea si el campo nombre tiene entre 3 y 20 caracteres 
  */
 export default {
   name: 'ContactPage',

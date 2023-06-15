@@ -16,6 +16,19 @@
 </template>
 
 <script>
+    /**
+     * @file companyDetails.vue - Pestaña de detalle de compañia
+     * @author Jaime Benitez
+     * @see <a href="https://jaimebenitez.com" target="_blank">Jaime Benitez </a>
+     */
+    /**
+     * @vue-prop {Number} id - Establece la id de la compañia
+     * @vue-prop {String} logo - Establece la ruta al logo de la compañia
+     * @vue-prop {Array<Object>} techLogos - Establece las rutas de los logos de las tecnologías a las que la empresa afecta
+     * @vue-prop {String} companyName - Establece el nombre de la compañia
+     * @vue-prop {String} level - Establece el nivel actual de la compañia
+     * @vue-prop {String} requirement - Establece el requisito para la subida de nivel de la compañia
+     */
     export default{
         "name": "companyDetails",
         "props": {

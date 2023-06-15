@@ -41,7 +41,6 @@ import { checkValidToken } from "@/utils/checkValidToken"
 import { register } from '@/services/publicServices'
 
 /**
- * @vue-data {Array<Object>} [users = []] - Lista de usuarios registrados
  * @vue-data {String} [username = ""] - Toma el valor del input de nombre de usuario
  * @vue-data {String} [email = ""] - Toma el valor del input de email
  * @vue-data {String} [password = ""] - Toma el valor del input de contraseña

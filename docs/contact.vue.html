@@ -30,14 +30,17 @@
   &lt;Header icon="arrow-back.svg" :isGame=false />
   &lt;div class="contact">
     &lt;section class="contact-container">
-      &lt;form class="contact-form" v-on:submit.prevent="submit">
+      &lt;form class="contact-form" ref="form" v-on:submit.prevent="submit">
         &lt;h1 class="contact-title">Contacto&lt;/h1>
-        &lt;textarea cols="30" rows="5" class="textarea contact-input" v-model="textArea" v-on:blur="validTextArea"
+        &lt;textarea cols="30" rows="5" name="message" class="textarea contact-input" v-model="textArea" v-on:blur="validTextArea"
           placeholder="Escríbenos para ayudarnos a mejorar">&lt;/textarea>
         &lt;p v-if="textAreaError" class="error-message">Escribe al menos 3 palabras&lt;/p>
-        &lt;input type="email" class="contact-email contact-input" v-model="email" v-on:blur="validEmail"
+        &lt;input type="text" name="user_name" class="contact-name contact-input" v-model="name" v-on:blur="validName"
+          placeholder="Nombre de usuario">
+        &lt;p v-if="nameError" class="error-message">El nombre debe tener entre 3 y 20 caracteres.&lt;/p>
+        &lt;input type="email" name="user_email" class="contact-email contact-input" v-model="email" v-on:blur="validEmail"
           placeholder="Correo electrónico">
-        &lt;p v-if="emailError" class="error-message">El email no es valido.&lt;/p>
+        &lt;p v-if="emailError" class="error-message">Introduce un email valido.&lt;/p>
         &lt;button type="submit" class="contact-submit">Enviar&lt;/button>
       &lt;/form>
     &lt;/section>
@@ -57,14 +60,18 @@
 import Header from './header.vue'
 import Modal from './modal.vue'
 import validator from '@/utils/validator'
+import emailjs from '@emailjs/browser'
 /**
  * @vue-data {Boolean} [textAreaError = false]  - Establece si el error en el campo del textArea se muestra o no
  * @vue-data {Boolean} [emailError = false] - Establece si el error en el campo email se muestra o no
+ * @vue-data {Boolean} [nameError = false] - Establece si el error en el campo nombre se muestra o no
  * @vue-data {String} [textArea = ""] - Campo que toma el valor del input textArea
  * @vue-data {String} [email = ""] - Campo que toma el valor del input email
+ * @vue-data {String} [name = ""] - Campo que toma el valor del input name
  * @vue-data {Boolean} [submitted = false] - Establece cuando se valida el formulario
  * @vue-data {String} [suggestionRegexp = new RegExp(/^[\w,]+\s[\w,]+\s[\w,]+/gm)] - Expresion regular que testea si el campo textArea tiene al menos 3 palabras. 
  * @vue-data {String} [emailRegexp = new RegExp(/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/)] - Expresion regular que testea si el campo email es valido (por ejemplo ejemplo@test.com)
+ * @vue-data {String} [nameRegexp = new RegExp(/^[\S]{3,20}$/)] - Expresion regular que testea si el campo nombre tiene entre 3 y 20 caracteres 
  */
 export default {
   name: 'ContactPage',
@@ -76,11 +83,15 @@ export default {
     return {
       textAreaError: false,
       emailError: false,
+      nameError: false,
       textArea: "",
       email: "",
+      name: "",
       submitted: false,
       suggestionRegexp: new RegExp(/^[\w',]+\s[\w',]+\s[\w',]+/gm),
-      emailRegexp: new RegExp(/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/)
+      emailRegexp: new RegExp(/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/),
+      nameRegexp: new RegExp(/^[\S]{3,20}$/)
+
     }
   },
   methods: {
@@ -90,6 +101,8 @@ export default {
     validTextArea() {
       //Esta regexp nos permite establecer que minimo se necesiten 3 palabras para que sea válido el campo      
       this.textAreaError = validator(this.suggestionRegexp, this.textArea)
+      console.log(validator(this.suggestionRegexp, this.textArea))
+      console.log(this.textAreaError)
     },
     /**    
      * Funcion que valida el email
@@ -99,11 +112,27 @@ export default {
         Luego tendrá una @, luego otro set igual que en la primera parte, un punto y finalmente otro set del mismo tipo*/
       this.emailError = validator(this.emailRegexp, this.email)
     },
+    /**
+     * Función que valida el nombre de usuario
+     */
+     validName() {
+      //El usuario admitirá cualquier caracter pero tendrá entre 3 y 20 caracteres     
+      this.nameError = validator(this.nameRegexp, this.name)
+    },
     /**    
-     * Funcion que controla que cuando todo sea válido, se haga el submit
+     * Funcion que controla que cuando todo sea válido, se haga el submit y se envie un mensaje a mi correo
      */
     submit() {
-      if (!this.textAreaError &amp;&amp; !this.emailError) {
+      this.validTextArea()
+      this.validEmail()
+      this.validName()
+      if (!this.textAreaError &amp;&amp; !this.emailError &amp;&amp; !this.nameError) {
+        emailjs.sendForm('service_eifxgyp', 'template_3ugrigt', this.$refs.form, 'LUxtrFSYPmdgvJjpP')
+        .then((result) => {
+            console.log('SUCCESS!', result.text);
+        }, (error) => {
+            console.log('FAILED...', error.text);
+        });
         this.submitted = true;
       }
     }
@@ -115,6 +144,8 @@ export default {
     },
     email: function () {
     },
+    name: function () {
+    }
   }
 }
 &lt;/script></code></pre>
@@ -127,13 +158,13 @@ export default {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-button.html">button</a></li><li><a href="module-contact.html">contact</a></li><li><a href="module-game.html">game</a></li><li><a href="module-header.html">header</a></li><li><a href="module-login.html">login</a></li><li><a href="module-modal.html">modal</a></li><li><a href="module-multiplier-button.html">multiplier-button</a></li><li><a href="module-register.html">register</a></li><li><a href="module-tech-button.html">tech-button</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-button.html">button</a></li><li><a href="module-companyButton.html">companyButton</a></li><li><a href="module-companyDetails.html">companyDetails</a></li><li><a href="module-contact.html">contact</a></li><li><a href="module-edit.html">edit</a></li><li><a href="module-game.html">game</a></li><li><a href="module-gameButton.html">gameButton</a></li><li><a href="module-header.html">header</a></li><li><a href="module-hireModal.html">hireModal</a></li><li><a href="module-login.html">login</a></li><li><a href="module-modal.html">modal</a></li><li><a href="module-register.html">register</a></li><li><a href="module-tabButton.html">tabButton</a></li><li><a href="module-tabsNav.html">tabsNav</a></li><li><a href="module-techButton.html">techButton</a></li><li><a href="module-techTrainingButton.html">techTrainingButton</a></li><li><a href="module-trainingInfo.html">trainingInfo</a></li><li><a href="module-trainingTechModal.html">trainingTechModal</a></li><li><a href="module-trainingWorkerModal.html">trainingWorkerModal</a></li><li><a href="module-workerButton.html">workerButton</a></li><li><a href="module-workerDetails.html">workerDetails</a></li><li><a href="module-workerHireOption.html">workerHireOption</a></li><li><a href="module-workerUpgrade.html">workerUpgrade</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Tue Feb 14 2023 13:02:05 GMT+0100 (hora estándar de Europa central)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Thu Jun 15 2023 17:11:55 GMT+0200 (hora de verano de Europa central)
 </footer>
 
 <script> prettyPrint(); </script>

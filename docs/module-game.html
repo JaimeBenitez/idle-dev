@@ -50,6 +50,21 @@
     </tr>
     </thead>
     <tbody><tr>
+        <td><code>moneyInterval</code></td>
+        <td>Number</td>
+        <td><code>null</code></td>
+        <td>La id del intervalo que controla la ganancia de dinero</td>
+    </tr><tr>
+        <td><code>saveInterval</code></td>
+        <td>Number</td>
+        <td><code>null</code></td>
+        <td>La id del intervalo que controla el guardado de partida</td>
+    </tr><tr>
+        <td><code>user</code></td>
+        <td>String</td>
+        <td><code>localStorage.getItem("user")</code></td>
+        <td>La id de la partida del usuario</td>
+    </tr><tr>
         <td><code>userData</code></td>
         <td>Object</td>
         <td><code>{}</code></td>
@@ -59,6 +74,51 @@
         <td>Array.&lt;Object></td>
         <td><code>[]</code></td>
         <td>Almacenara los datos de partida de todos los jugadores registrados, para poder guardar partida</td>
+    </tr><tr>
+        <td><code>userLanguages</code></td>
+        <td>Array.&lt;Object></td>
+        <td><code>[]</code></td>
+        <td>Almacenara los datos de los lenguajes en el estado actual de partida</td>
+    </tr><tr>
+        <td><code>userCompanies</code></td>
+        <td>Array.&lt;Object></td>
+        <td><code>[]</code></td>
+        <td>Almacenara los datos de las empresas en el estado actual de partida</td>
+    </tr><tr>
+        <td><code>userWorkers</code></td>
+        <td>Array.&lt;Object></td>
+        <td><code>[]</code></td>
+        <td>Almacenara los datos de los trabajadores en el estado actual de partida</td>
+    </tr><tr>
+        <td><code>workerSlots</code></td>
+        <td>Number</td>
+        <td><code>1</code></td>
+        <td>Ranuras para contratar trabajadores</td>
+    </tr><tr>
+        <td><code>slotsOccupied</code></td>
+        <td>Number</td>
+        <td><code>1</code></td>
+        <td>Ranuras ocupadas en este momento</td>
+    </tr><tr>
+        <td><code>actualTab</code></td>
+        <td>Number</td>
+        <td><code>1</code></td>
+        <td>Pestaña del menú actualmente activa</td>
+    </tr><tr>
+        <td><code>companyDetailed</code></td>
+        <td>Object</td>
+        <td><code>{}</code></td>
+        <td>Detalles de la empresa elegida</td>
+    </tr><tr>
+        <td><code>workerDetailed</code></td>
+        <td>Object</td>
+        <td><code>{}</code></td>
+        <td>Detalles del trabajdor elegido</td>
+    </tr><tr>
+        <td><code>techsPerCompany</code></td>
+        <td>Array.&lt;Object></td>
+        <td><code>[]</code></td>
+        <td>Tecnologias a las que afecta cada compañia</td>
     </tr><tr>
         <td><code>quantityToBuy</code></td>
         <td>Number</td>
@@ -102,8 +162,38 @@
     </tr><tr>
         <td><code>techs</code></td>
         <td>Array.&lt;Object></td>
-        <td>-</td>
-        <td>Contiene los datos de las diferentes tecnologías. Registra los siguientes campos: <br><strong>id</strong> - Id del lenguaje <br><strong>name</strong> - Nombre del lenguaje <br><strong>logo</strong> - Ruta al logo <br><strong>initialCost</strong> - Coste inicial del lenguaje. Irá incrementando a medida que se compre <br><strong>profitPerUnit</strong> - La cantidad de beneficios que aporta cada unidad <br><strong>growthRatio</strong> - El ratio de aumento del coste por compra de la unidad <br><strong>minMoneyToUnlock</strong> - El minimo necesario de dinero para poder desbloquear el lenguaje por primera vez <br><strong>unlocked</strong> - Si el lenguaje esta o no desbloqueado <br><strong>quantityOwned</strong> - La contidad actual de tecnologia obtenida <br><strong>currentCost</strong> - El coste actual del lenguaje <br><strong>totalProfit</strong> - El beneficio actual que reporta el total de unidades de esta tecnología <br><strong>msg</strong> - El mensaje que se mostrará en el modal al ser desbloqueada por primera vez</td>
+        <td><code>[]</code></td>
+        <td>Contiene los datos generales de todas las tecnologías.</td>
+    </tr><tr>
+        <td><code>companies</code></td>
+        <td>Array.&lt;Object></td>
+        <td><code>[]</code></td>
+        <td>Contiene los datos generales de todas las empresas.</td>
+    </tr><tr>
+        <td><code>workers</code></td>
+        <td>Array.&lt;Object></td>
+        <td><code>[]</code></td>
+        <td>Contiene los datos generales de todos los trabajadores.</td>
+    </tr><tr>
+        <td><code>workerToTrain</code></td>
+        <td>Object</td>
+        <td><code>{}</code></td>
+        <td>El trabajador elegida en el entrenamiento.</td>
+    </tr><tr>
+        <td><code>techToTrain</code></td>
+        <td>Object</td>
+        <td><code>{}</code></td>
+        <td>La tecnología elegida en el entrenamiento.</td>
+    </tr><tr>
+        <td><code>inTraining</code></td>
+        <td>Array.&lt;Object></td>
+        <td><code>[]</code></td>
+        <td>Lista de entrenamientos en activo.</td>
+    </tr><tr>
+        <td><code>avatar</code></td>
+        <td>String</td>
+        <td><code>null</code></td>
+        <td>Avatar del usuario.</td>
     </tr></tbody>
 </table>
 
@@ -219,7 +309,7 @@
 
 
 <div class="description">
-    Funcíon que coge de la API los datos de juego de todos los usuarios
+    Función que coge de la API los datos de juego de todos los usuarios
 </div>
 
 
@@ -263,7 +353,144 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line212">line 212</a>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line246">line 246</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getCompanies"><span class="type-signature"></span>getCompanies<span class="signature">(user)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Función que coge de la API los datos de las compañias de la partida actual
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>user</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">La id de la partida actual</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line276">line 276</a>
     </li></ul></dd>
     
 
@@ -307,7 +534,7 @@
 
 
 <div class="description">
-    Función que coge de la API los datos de juego del usuario registrado. En caso de no existir los crea con los parametros base
+    Función que coge de la API los datos de juego del usuario registrado.
 </div>
 
 
@@ -351,7 +578,369 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line223">line 223</a>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line456">line 456</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getLanguages"><span class="type-signature"></span>getLanguages<span class="signature">(user)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Función que coge de la API los datos de los lenguajes de la partida actual
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>user</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">La id de la partida actual</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line257">line 257</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getWorkerSlots"><span class="type-signature"></span>getWorkerSlots<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Función que calcula las ranuras de trabajador actuales
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line314">line 314</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getWorkers"><span class="type-signature"></span>getWorkers<span class="signature">(user)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Función que coge de la API los datos de los trabajadores de la partida actual
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>user</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">La id de la partida actual</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line295">line 295</a>
     </li></ul></dd>
     
 
@@ -488,7 +1077,281 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line350">line 350</a>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line556">line 556</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="handleChosenTraining"><span class="type-signature"></span>handleChosenTraining<span class="signature">(techId)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Función que activa el entrenamiento con los parámetros elegidos
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>techId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">La id de la tecnología seleccionada</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line391">line 391</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="handleClearInterval"><span class="type-signature"></span>handleClearInterval<span class="signature">(workerID)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Función que limpia el intervalo de entrenamiento
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>workerID</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">La id del trabajador entrenándose</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line412">line 412</a>
     </li></ul></dd>
     
 
@@ -576,7 +1439,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line372">line 372</a>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line617">line 617</a>
     </li></ul></dd>
     
 
@@ -664,7 +1527,754 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line308">line 308</a>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line496">line 496</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="handleCompanyBonus"><span class="type-signature"></span>handleCompanyBonus<span class="signature">(companyToChange)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Función que gestiona los bonus que aportan las compañias
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>companyToChange</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">id de la compañia que sube de nivel</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line584">line 584</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="handleDetails"><span class="type-signature"></span>handleDetails<span class="signature">(companyId)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Función que lleva a la pantalla de detalle de la compañia seleccionada
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>companyId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">La id de la compañia seleccionada</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line339">line 339</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="handleHireClose"><span class="type-signature"></span>handleHireClose<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Función que le dice al modal de contratación cuando cerrarse
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line502">line 502</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="handleHireModal"><span class="type-signature"></span>handleHireModal<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Función que lanza el modal de contratación
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line355">line 355</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="handleIntervalID"><span class="type-signature"></span>handleIntervalID<span class="signature">(workerID, intervalID)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Función que fija el intervalo creado en la función anterior con el entrenamiento concreto
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>workerID</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">La id del trabajador entrenándose</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>intervalID</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">La id del intervalo</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line404">line 404</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="handleLevelUp"><span class="type-signature"></span>handleLevelUp<span class="signature">(workerID)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Función que gestiona la subida de nivel de una tecnología al terminar un entrenamiento
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>workerID</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">La id del trabajador entrenándose</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line433">line 433</a>
     </li></ul></dd>
     
 
@@ -752,7 +2362,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line327">line 327</a>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line527">line 527</a>
     </li></ul></dd>
     
 
@@ -788,7 +2398,7 @@
     
 
     
-    <h4 class="name" id="redirect"><span class="type-signature"></span>redirect<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="handleTabs"><span class="type-signature"></span>handleTabs<span class="signature">(tab)</span><span class="type-signature"></span></h4>
     
 
     
@@ -796,7 +2406,144 @@
 
 
 <div class="description">
-    Función que redirecciona al index si no estamos logueados
+    Función que gestiona el cambio de tabs
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>tab</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">La tab elegida</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line490">line 490</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="handleTrainingClose"><span class="type-signature"></span>handleTrainingClose<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Función que le dice a los modales de entrenamiento cuando cerrarse
 </div>
 
 
@@ -840,7 +2587,868 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line432">line 432</a>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line508">line 508</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="handleTrainingTechModal"><span class="type-signature"></span>handleTrainingTechModal<span class="signature">(workerId)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Función que lanza el modal de selección de tecnologías para el entrenamiento
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>workerId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">La id del trabajador seleccionado</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line372">line 372</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="handleTrainingTimer"><span class="type-signature"></span>handleTrainingTimer<span class="signature">(workerID)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Función que gestiona el temporizador del entrenamiento
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>workerID</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">La id del trabajador entrenándose</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line420">line 420</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="handleTrainingWorkerModal"><span class="type-signature"></span>handleTrainingWorkerModal<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Función que lanza el modal de selección de trabajadores para el entrenamiento
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line365">line 365</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="handleUpgradeBonus"><span class="type-signature"></span>handleUpgradeBonus<span class="signature">(techId)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Función que gestiona los bonus que aportan las mejoras
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>techId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">id del lenguaje que obtiene la mejora</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line598">line 598</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="handleWorkerDetails"><span class="type-signature"></span>handleWorkerDetails<span class="signature">(workerId)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Función que lleva a la pantalla de detalle del trabajador seleccionado
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>workerId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">La id del trabajador seleccionado</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line348">line 348</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="hiredWorker"><span class="type-signature"></span>hiredWorker<span class="signature">(workerPrice)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Función que gestiona la contratación de un trabajador
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>workerPrice</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">El precio del trabajador contratado</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line326">line 326</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="redirect"><span class="type-signature"></span>redirect<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Función que redirecciona al index si nuestro token no es valido
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line654">line 654</a>
     </li></ul></dd>
     
 
@@ -928,7 +3536,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line381">line 381</a>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line626">line 626</a>
     </li></ul></dd>
     
 
@@ -1016,7 +3624,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line343">line 343</a>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line543">line 543</a>
     </li></ul></dd>
     
 
@@ -1153,7 +3761,95 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line315">line 315</a>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line515">line 515</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="setSaveDataInterval"><span class="type-signature"></span>setSaveDataInterval<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Función que guarda la partida cada 2 min
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.vue.html">game.vue</a>, <a href="game.vue.html#line549">line 549</a>
     </li></ul></dd>
     
 
@@ -1199,13 +3895,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-button.html">button</a></li><li><a href="module-contact.html">contact</a></li><li><a href="module-game.html">game</a></li><li><a href="module-header.html">header</a></li><li><a href="module-login.html">login</a></li><li><a href="module-modal.html">modal</a></li><li><a href="module-multiplier-button.html">multiplier-button</a></li><li><a href="module-register.html">register</a></li><li><a href="module-tech-button.html">tech-button</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-button.html">button</a></li><li><a href="module-companyButton.html">companyButton</a></li><li><a href="module-companyDetails.html">companyDetails</a></li><li><a href="module-contact.html">contact</a></li><li><a href="module-edit.html">edit</a></li><li><a href="module-game.html">game</a></li><li><a href="module-gameButton.html">gameButton</a></li><li><a href="module-header.html">header</a></li><li><a href="module-hireModal.html">hireModal</a></li><li><a href="module-login.html">login</a></li><li><a href="module-modal.html">modal</a></li><li><a href="module-register.html">register</a></li><li><a href="module-tabButton.html">tabButton</a></li><li><a href="module-tabsNav.html">tabsNav</a></li><li><a href="module-techButton.html">techButton</a></li><li><a href="module-techTrainingButton.html">techTrainingButton</a></li><li><a href="module-trainingInfo.html">trainingInfo</a></li><li><a href="module-trainingTechModal.html">trainingTechModal</a></li><li><a href="module-trainingWorkerModal.html">trainingWorkerModal</a></li><li><a href="module-workerButton.html">workerButton</a></li><li><a href="module-workerDetails.html">workerDetails</a></li><li><a href="module-workerHireOption.html">workerHireOption</a></li><li><a href="module-workerUpgrade.html">workerUpgrade</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Tue Feb 14 2023 13:02:05 GMT+0100 (hora estándar de Europa central)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Thu Jun 15 2023 17:11:55 GMT+0200 (hora de verano de Europa central)
 </footer>
 
 <script> prettyPrint(); </script>

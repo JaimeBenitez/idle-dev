@@ -26,6 +26,15 @@
 </template>
 
 <script>
+    /**
+     * @file trainingInfo.vue - Componente con la información del entrenamiento en activo
+     * @author Jaime Benitez
+     * @see <a href="https://jaimebenitez.com" target="_blank">Jaime Benitez </a>
+     */
+    /**
+     * @vue-prop {Object} training - El entrenamiento
+     * @vue-computed {Number} timeToLevelUp - Devuelve el tiempo para terminar el entrenamiento
+     */
     export default {
         name: "TrainingInfo",
         props: {

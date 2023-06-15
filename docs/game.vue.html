@@ -27,19 +27,80 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>&lt;template>
-  &lt;Header icon="logout.svg" :isGame=true />
+  &lt;Header icon="logout.svg" :avatar="avatar" :isGame=true   />
   &lt;div class="game">
-    &lt;section class="tech-container">
-      &lt;nav class="multipliers-nav">
-        &lt;MultiplierButton text="x1" v-on:click="setQuantityToBuy(1)" />
-        &lt;MultiplierButton text="x10" v-on:click="setQuantityToBuy(10)" />
-        &lt;MultiplierButton text="x100" v-on:click="setQuantityToBuy(100)" />
-      &lt;/nav>
-      &lt;TechButton v-for="tech in activeTechs" :key="tech.id" :id="tech.id" :logo="tech.logo" :techName="tech.name"
-        :totalProfit="tech.totalProfit" :quantity="tech.quantityOwned" :quantityToBuy="quantityToBuy"
-        :currentCost="tech.currentCost" @buy="handleBuy" :canBuy="tech.currentCost &lt;= principalMoney" />
-    &lt;/section>
-    &lt;section class="principal">
+    &lt;div class="principal-menu">
+      &lt;TabNav @tab1="handleTabs(1)" @tab2="handleTabs(2)" @tab3="handleTabs(3)" @tab4="handleTabs(4)" >&lt;/TabNav>
+      &lt;div class="principal-container">      
+        &lt;nav v-if="actualTab == 1" class="multipliers-nav">
+          &lt;GameButton text="x1" v-on:click="setQuantityToBuy(1)" />
+          &lt;GameButton text="x10" v-on:click="setQuantityToBuy(10)" />
+          &lt;GameButton text="x100" v-on:click="setQuantityToBuy(100)" />
+        &lt;/nav>
+        &lt;div v-if="actualTab == 1" class="technologies_list">
+          &lt;TechButton v-for="tech in activeTechs" 
+          :key="tech.id" 
+          :id="tech.id" 
+          :logo="tech.logo" 
+          :techName="tech.name"
+          :totalProfit="tech.totalProfit" 
+          :quantity="tech.quantityOwned" 
+          :quantityToBuy="quantityToBuy"
+          :currentCost="tech.currentCost" 
+          @buy="handleBuy" 
+          :canBuy="tech.currentCost &lt;= principalMoney" />
+        &lt;/div>
+        &lt;div v-if="actualTab == 2" class="workers-tab">
+          &lt;div class="workers_list">
+            &lt;WorkerButton v-for="worker in workers" 
+            :key="worker.id" 
+            :id="worker.id" 
+            :logo="worker.image" 
+            :workerName="worker.name" 
+            @details="handleWorkerDetails" />
+          &lt;/div>
+          &lt;GameButton text="Contratar" class="hire-button" @click ="handleHireModal()" />
+        &lt;/div>
+        &lt;div v-if="actualTab == 3" class="training-tab">
+          &lt;div class="training-list">
+            &lt;div v-if="inTraining.length == 0" class="no-training">
+              &lt;p class="no-training-text">No hay trabajadores formandose&lt;/p>
+            &lt;/div>
+            &lt;div v-if="inTraining.length != 0" class="training-list">
+              &lt;TrainingInfo v-for="training in inTraining" :key="training.workerId" :training=training
+              />
+            &lt;/div>
+            
+          &lt;/div>
+          &lt;GameButton text="Entrenar" class="training-button" @click ="handleTrainingWorkerModal()" />
+        &lt;/div>
+        &lt;div v-if="actualTab == 4" class="companies_list">
+          &lt;CompanyButton v-for="company in companies" 
+          :key="company.id" 
+          :id="company.id" 
+          :logo="company.logo" 
+          :companyName="company.level == 0 ? '?????????' : company.name" 
+          :level="'Nivel' + company.level" 
+          @details="handleDetails" />
+        &lt;/div>
+        &lt;CompanyDetails v-if="actualTab == 5" 
+        :companyName="companyDetailed.name" 
+        :logo="companyDetailed.logo" 
+        :level="companyDetailed.level"
+        :bonus="companyDetailed.multiplier" 
+        :techsLogos="techsPerCompany" 
+        :requirement="companyDetailed.nextLevelRequirement" />
+        &lt;WorkerDetails v-if="actualTab == 6"  
+        :companyName="workerDetailed.company" 
+        :workerName="workerDetailed.name" 
+        :image="workerDetailed.image" 
+        :totalLevel="workerDetailed.totalLevel"
+        :PA="workerDetailed.pa" 
+        :techs="workerDetailed.languages"
+        :upgrades="workerDetailed.upgrades" />
+      &lt;/div>      
+    &lt;/div>
+    &lt;section class="principal-resources">
       &lt;section class="principal-score">
         &lt;span class="money">{{ formattedPrincipalMoney }}&lt;/span>
         &lt;span class="generation">{{ formattedMoneyPerSecond }}&lt;/span>
@@ -48,11 +109,16 @@
       &lt;/section>
       &lt;button class="computer-button" @click="handleClicks">&lt;img :class="bounce" src="@/assets/ordenador.png"
           alt="click me" />&lt;/button>
-      &lt;button v-if="!saving" class="button save-button" @click="saveData">Guardar&lt;/button>
-      &lt;button v-if="saving" class="button save-button" @click="saveData">Guardando...&lt;/button>
+      &lt;p v-if="saving" class="save">Guardando...&lt;/p>
     &lt;/section>
     &lt;Modal v-if="modalmsg != ''" :msg="modalmsg" buttonMsg="Continuar" textClass="modal-game-message" :isGame=true
       @close="handleClose" />
+    &lt;HireModal v-if="actualTab == 7" :gameId="parseInt(user)" :techs="techs" :slotsOcuppied="slotsOccupied"
+      @close="handleHireClose" @hired="hiredWorker"/>
+    &lt;TrainingWorkerModal v-if="actualTab == 8"  :workers="workers" 
+      @close="handleTrainingClose" @chosen="handleTrainingTechModal"/>
+    &lt;TrainingTechModal v-if="actualTab == 9"  :techs="techs" :workerTechs="workerToTrain.languages"
+      @close="handleTrainingClose" @chosen="handleChosenTraining"/>
       &lt;!-- Modal que se mostrará mientras cargan los datos de partida -->
     &lt;section v-if="loading" class="modal">
         &lt;div class="modal-container">
@@ -68,21 +134,53 @@
  * @author Jaime Benitez
  * @see &lt;a href="https://jaimebenitez.com" target="_blank">Jaime Benitez &lt;/a>
  */
-//Para poder usar las imagenes correctamente como props tenemos que importarlas aqui y usarlas como variable de Data
 import Header from './header.vue'
-import MultiplierButton from './multiplier-button.vue'
-import TechButton from './tech-button.vue'
-import HTML from '@/assets/html.svg'
-import CSS from '@/assets/css.svg'
-import JS from '@/assets/js.svg'
-import Node from '@/assets/nodejs.svg'
-import Java from '@/assets/java.svg'
-import PHP from '@/assets/php.svg'
+import GameButton from './gameButton.vue'
+import TechButton from './techButton.vue'
+import CompanyButton from './companyButton.vue'
 import formatNumber from '@/utils/formatters'
 import Modal from './modal.vue'
+import TabNav from './tabsNav.vue'
+import CompanyDetails from './companyDetails.vue'
+import { getGameWorkers, postGameWorker } from '@/services/workerServices'
+import { getUsersData, getOneUser } from '@/services/userServices'
+import { getAllLanguages } from '@/services/languageServices'
+import { getGameLanguages, saveGameLanguages } from '@/services/gameLanguageServices'
+import makeLanguagesFinalList from '@/utils/makeLanguagesFinalList'
+import { getAllCompanies } from '@/services/companyServices'
+import { getGameCompanies, saveGameCompanies } from '@/services/gameCompanyServices'
+import makeCompaniesFinalList from '@/utils/makeCompaniesFinalList'
+import chooseTechsPerCompany from '@/utils/chooseTechsPerCompany'
+import { getGame, saveGameMoney } from '@/services/gameServices'
+import gameCalculator from '@/utils/gameCalculator'
+import buyTech from '@/utils/buyTech'
+import makeWorkersFinalList from '@/utils/makeWorkersFinalList'
+import WorkerButton from './workerButton.vue'
+import WorkerDetails from './workerDetails.vue'
+import unlockCompanies from '@/utils/unlockCompanies'
+import HireModal from './hireModal.vue'
+import TrainingWorkerModal from './trainingWorkerModal.vue'
+import TrainingTechModal from './trainingTechModal.vue'
+import { makeTraining } from '@/utils/makeTraining'
+import TrainingInfo from './trainingInfo.vue'
+import { newWorkerLanguage, levelUpLanguage } from '@/services/workerLanguagesServices'
+import calcUpgradeBonus from '@/utils/calcUpgradeBonus'
+import { checkValidToken } from "@/utils/checkValidToken"
 /**
+ * @vue-data {Number} [moneyInterval = null] -  La id del intervalo que controla la ganancia de dinero
+ * @vue-data {Number} [saveInterval = null] -  La id del intervalo que controla el guardado de partida
+ * @vue-data {String} [user = localStorage.getItem("user")] -  La id de la partida del usuario
  * @vue-data {Object} [userData = {}] -  Almacenara los datos de partida del usuario actual
  * @vue-data {Array&lt;Object>} [allUsersData = []] -  Almacenara los datos de partida de todos los jugadores registrados, para poder guardar partida
+ * @vue-data {Array&lt;Object>} [userLanguages = []] -  Almacenara los datos de los lenguajes en el estado actual de partida 
+ * @vue-data {Array&lt;Object>} [userCompanies = []] -  Almacenara los datos de las empresas en el estado actual de partida
+ * @vue-data {Array&lt;Object>} [userWorkers = []] -  Almacenara los datos de los trabajadores en el estado actual de partida
+ * @vue-data {Number} [workerSlots = 1] - Ranuras para contratar trabajadores
+ * @vue-data {Number} [slotsOccupied = 1] - Ranuras ocupadas en este momento
+ * @vue-data {Number} [actualTab = 1] - Pestaña del menú actualmente activa
+ * @vue-data {Object} [companyDetailed = {}] - Detalles de la empresa elegida
+ * @vue-data {Object} [workerDetailed = {}] - Detalles del trabajdor elegido
+ * @vue-data {Array&lt;Object>} [ techsPerCompany = []] - Tecnologias a las que afecta cada compañia
  * @vue-data {Number} [quantityToBuy = 1] - Establece la cantidad de recurso a comprar
  * @vue-data {Number} [principalMoney = 0] - Establece la cantidad de dinero actual del jugador
  * @vue-data {Number} [moneyPerSecond = 0] - Establece la generación de dinero por segundo
@@ -91,19 +189,13 @@ import Modal from './modal.vue'
  * @vue-data {String} [modalMsg = ''] - Establece el mensaje que se mostrará en el modal. Tambien sirve para controlar cuando este aparece y desaparece
  * @vue-data {Boolean} [loading = false] - Controla lo que se mostrará mientras cargan los datos de la api
  * @vue-data {Boolean} [saving = false] - Controla lo que se mostrará mientras se guardan los datos en la api
- * @vue-data {Array&lt;Object>} techs - Contiene los datos de las diferentes tecnologías. Registra los siguientes campos: &lt;br>
- * &lt;strong>id&lt;/strong> - Id del lenguaje &lt;br>
- * &lt;strong>name&lt;/strong> - Nombre del lenguaje &lt;br>
- * &lt;strong>logo&lt;/strong> - Ruta al logo &lt;br>
- * &lt;strong>initialCost&lt;/strong> - Coste inicial del lenguaje. Irá incrementando a medida que se compre &lt;br>
- * &lt;strong>profitPerUnit&lt;/strong> - La cantidad de beneficios que aporta cada unidad &lt;br>
- * &lt;strong>growthRatio&lt;/strong> - El ratio de aumento del coste por compra de la unidad &lt;br>
- * &lt;strong>minMoneyToUnlock&lt;/strong> - El minimo necesario de dinero para poder desbloquear el lenguaje por primera vez &lt;br>
- * &lt;strong>unlocked&lt;/strong> - Si el lenguaje esta o no desbloqueado &lt;br>
- * &lt;strong>quantityOwned&lt;/strong> - La contidad actual de tecnologia obtenida &lt;br>
- * &lt;strong>currentCost&lt;/strong> - El coste actual del lenguaje &lt;br>
- * &lt;strong>totalProfit&lt;/strong> - El beneficio actual que reporta el total de unidades de esta tecnología &lt;br>
- * &lt;strong>msg&lt;/strong> - El mensaje que se mostrará en el modal al ser desbloqueada por primera vez 
+ * @vue-data {Array&lt;Object>} [techs = []] - Contiene los datos generales de todas las tecnologías.
+ * @vue-data {Array&lt;Object>} [companies = []] - Contiene los datos generales de todas las empresas.
+ * @vue-data {Array&lt;Object>} [workers = []] - Contiene los datos generales de todos los trabajadores.
+ * @vue-data {Object} [workerToTrain = {}] - El trabajador elegida en el entrenamiento.
+ * @vue-data {Object} [techToTrain = {}] - La tecnología elegida en el entrenamiento.
+ * @vue-data {Array&lt;Object>} [inTraining = []] - Lista de entrenamientos en activo.
+ * @vue-data {String} [avatar = null] - Avatar del usuario.
  * @vue-computed {String} formattedPrincipalMoney - Devuelve el dinero principal formateado
  * @vue-computed {String} formattedMoneyPerSecond - Devuelve el dinero por segundo formateado
  * @vue-computed {String} formattedMoneyPerClick - Devuelve el dinero por click formateado
@@ -113,14 +205,36 @@ export default {
   name: 'GamePage',
   components: {
     Header,
-    MultiplierButton,
+    GameButton,
+    CompanyButton,
     TechButton,
     Modal,
-  },
+    TabNav,
+    CompanyDetails,
+    WorkerButton,
+    WorkerDetails,
+    HireModal,
+    TrainingWorkerModal,
+    TrainingTechModal,
+    TrainingInfo
+    
+},
   data() {
     return {
+      moneyInterval: null,
+      saveInterval: null,
+      user: localStorage.getItem("user"),
       userData: {},
       allUsersData: [],
+      userLanguages: [],
+      userCompanies: [],
+      userWorkers: [],
+      workerSlots: 1,
+      slotsOccupied: 1,
+      actualTab: 1,
+      companyDetailed: {},
+      workerDetailed: {},
+      techsPerCompany: [],
       quantityToBuy: 1,
       principalMoney: 0,
       moneyPerSecond: 0,
@@ -129,93 +243,13 @@ export default {
       modalmsg: '',
       loading: false,
       saving: false,
-      techs: [
-        {
-          "id": 1,
-          "name": "Html",
-          "logo": HTML,
-          "initialCost": 3.7,
-          "profitPerUnit": 1.67,
-          "growthRatio": 1.07,
-          "minMoneyToUnlock": 3.7,
-          "unlocked": false,
-          "quantityOwned": 0,
-          "currentCost": 3.7,
-          "totalProfit": 0,
-          "msg": "HTML es el lenguaje esqueleto de cualquier web, con el podrás comenzar a construir la estructura de una web"
-        },
-        {
-          "id": 2,
-          "name": "Css",
-          "logo": CSS,
-          "initialCost": 60,
-          "profitPerUnit": 20,
-          "growthRatio": 1.15,
-          "minMoneyToUnlock": 60,
-          "unlocked": false,
-          "quantityOwned": 0,
-          "currentCost": 60,
-          "totalProfit": 0,
-          "msg": "CSS te permitirá dotar de estilos a tu web. Hazla brillar e impresiona a todo el mundo con tus animaciones"
-        },
-        {
-          "id": 3,
-          "name": "JavaScript",
-          "logo": JS,
-          "initialCost": 720,
-          "profitPerUnit": 90,
-          "growthRatio": 1.14,
-          "minMoneyToUnlock": 720,
-          "unlocked": false,
-          "quantityOwned": 0,
-          "currentCost": 720,
-          "totalProfit": 0,
-          "msg": "JS es el nucleo duro de toda página web. Con el podras dotar a tu web de interactividad."
-        },
-        {
-          "id": 4,
-          "name": "NodeJS",
-          "logo": Node,
-          "initialCost": 8640,
-          "profitPerUnit": 360,
-          "growthRatio": 1.13,
-          "minMoneyToUnlock": 8640,
-          "unlocked": false,
-          "quantityOwned": 0,
-          "currentCost": 8640,
-          "totalProfit": 0,
-          "msg": "¿Por que no montar nuestro servidor usando también JS? Node lo hará posible"
-        },
-        {
-          "id": 5,
-          "name": "Java",
-          "logo": Java,
-          "initialCost": 103680,
-          "profitPerUnit": 2160,
-          "growthRatio": 1.12,
-          "minMoneyToUnlock": 103680,
-          "unlocked": false,
-          "quantityOwned": 0,
-          "currentCost": 103680,
-          "totalProfit": 0,
-          "msg": "Java fue durante mucho tiempo uno de los lenguajes mas usados del mundo y aún hoy se usa mucho. Piensa, hasta minecraft está hecho en Java"
-        },
-        {
-          "id": 6,
-          "name": "PHP",
-          "logo": PHP,
-          "initialCost": 1244160,
-          "profitPerUnit": 6480,
-          "growthRatio": 1.11,
-          "minMoneyToUnlock": 1244160,
-          "unlocked": false,
-          "quantityOwned": 0,
-          "currentCost": 1244160,
-          "totalProfit": 0,
-          "msg": "PHP es un lenguaje ampliamente usado en web desde la parte del servidor ¿Te gusta concatenar con un punto? Con PHP tienes la oportunidad"
-        },
-
-      ]
+      techs: [],
+      companies: [],
+      workers: [],
+      workerToTrain: {},
+      techToTrain: {},
+      inTraining: [], 
+      avatar: null
     }
   },
   computed: {
@@ -235,106 +269,272 @@ export default {
   },
   methods: {
     /**
-     * Funcíon que coge de la API los datos de juego de todos los usuarios
+     * Función que coge de la API los datos de juego de todos los usuarios
      */
     async getAllUsersData() {
       try {
-        const response = await fetch(`https://idle-dev-apirest.onrender.com/api/V1/gameData`)
-        this.allUsersData = await response.json();
+        this.allUsersData = await getUsersData()
       } catch (error) {
         this.modalmsg = "Ha ocurrido un error y los datos no se han cargado"
       }
     },
     /**
-     * Función que coge de la API los datos de juego del usuario registrado. En caso de no existir los crea con los parametros base
+     * Función que coge de la API los datos de los lenguajes de la partida actual
+     * @param {Number} user - La id de la partida actual
+     */
+     async getLanguages(user) {
+      try {  
+        const techs = await getAllLanguages()
+        try {
+          //Cogemos los datos sobre los lenguajes que tiene la partida del jugador
+          this.userLanguages =  await getGameLanguages(user, techs)
+        } catch (error) {
+          this.modalmsg = "Ha ocurrido un error y los datos de lenguajes del usuario no se guardaron correctamente"
+        }
+        //Si todo va bien vamos creando la lista definitiva de tecnologias con los datos de ambas tablas
+          this.techs = makeLanguagesFinalList(techs, this.userLanguages)       
+      } catch (error) {
+        this.modalmsg = "Ha ocurrido un error y los datos de los lenguajes no se han cargado"
+      }
+    },
+    /**
+     * Función que coge de la API los datos de las compañias de la partida actual
+     * @param {Number} user - La id de la partida actual
+     */
+     async getCompanies(user) {
+      try {
+        const companies = await getAllCompanies()
+        try {
+          //Cogemos los datos sobre las empresas que tiene la partida del jugador
+          this.userCompanies =  await getGameCompanies(user,companies) || []
+        } catch(error) {
+          this.modalmsg = "Ha ocurrido un error y los datos de empresas del usuario no se han cargado"
+        }
+        this.companies = makeCompaniesFinalList(companies, this.userCompanies, this.techs)         
+      } catch (error) {
+        console.log(error)
+        this.modalmsg = "Ha ocurrido un error y los datos de las empresas no se han cargado"
+      }
+    },
+    /**
+     * Función que coge de la API los datos de los trabajadores de la partida actual
+     * @param {Number} user - La id de la partida actual
+     */
+    async getWorkers(user) {
+
+        try { 
+          let workersData =  await getGameWorkers(user)
+          if(!workersData){
+            //Si no encuentra datos de trabajadores en la partida actual crea el primero y vuelve a llamar a la api
+            await postGameWorker(user, this.techs)
+            workersData = await getGameWorkers(user)        
+          }
+          //Seteamos la info sobre los trabajadores del usuario
+          this.userWorkers = workersData
+          this.workers = await makeWorkersFinalList(this.userWorkers)
+        } catch (error) {
+          this.modalmsg = "Ha ocurrido un error y los datos de trabajadores no se guardaron correctamente"
+        }
+    },
+    /**
+     * Función que calcula las ranuras de trabajador actuales
+     */
+    getWorkerSlots(){
+      let workerSlots = 0
+      for(let i = 0; i &lt; this.companies.length ; i++){
+      
+        workerSlots += this.companies[i].slots
+      }
+      this.workerSlots = workerSlots
+    },
+    /**
+     * Función que gestiona la contratación de un trabajador
+     * @param {Number} workerPrice - El precio del trabajador contratado
+     */
+    async hiredWorker(workerPrice){
+      this.moneyPerSecond -= workerPrice
+      this.moneyPerClick = this.moneyPerSecond * 0.1
+      this.slotsOccupied += 1
+      this.actualTab = 2
+      await this.getWorkers(this.user)
+      this.modalmsg= 'Trabajador contratado'
+    
+    },
+    /**
+     * Función que lleva a la pantalla de detalle de la compañia seleccionada
+     * @param {Number} companyId - La id de la compañia seleccionada
+     */
+    handleDetails(companyId){
+      this.actualTab = 5
+      this.companyDetailed = this.companies.find((company) => company.id == companyId)
+      this.techsPerCompany = chooseTechsPerCompany(companyId)
+    },
+    /**
+     * Función que lleva a la pantalla de detalle del trabajador seleccionado
+     * @param {Number} workerId - La id del trabajador seleccionado
+     */
+    handleWorkerDetails(workerId){
+      this.actualTab = 6
+      this.workerDetailed = this.workers.find((worker) => worker.id == workerId) 
+    },
+    /**
+     * Función que lanza el modal de contratación
+     */
+    handleHireModal(){
+      if(this.workerSlots > this.slotsOccupied){
+      this.actualTab = 7
+      } else {
+        this.modalmsg = "No tienes hueco para mas trabajadores"
+      }
+    },
+    /**
+     * Función que lanza el modal de selección de trabajadores para el entrenamiento
+     */
+    handleTrainingWorkerModal(){
+      this.actualTab = 8
+    },
+    /**
+     * Función que lanza el modal de selección de tecnologías para el entrenamiento
+     * @param {Number} workerId - La id del trabajador seleccionado
+     */
+    handleTrainingTechModal(workerId){
+      this.workerToTrain = this.workers.find((worker) => worker.id == workerId)
+      let isInTraining = this.inTraining.find((training) => training.workerId == workerId)
+      if(isInTraining){
+        this.actualTab = 3
+        this.modalmsg = "Este trabajador ya se está entrenando"
+      }
+      else if(this.workerToTrain.totalLevel == 30){
+        this.actualTab = 3
+        this.modalmsg = "Este trabajador ha llegado a su limite de aprendizaje"
+      }
+      else{
+      this.actualTab = 9
+      }
+    },
+    /**
+     * Función que activa el entrenamiento con los parámetros elegidos
+     * @param {Number} techId - La id de la tecnología seleccionada
+     */
+    async handleChosenTraining(techId){
+      this.techToTrain = this.techs.find((tech) => tech.id == techId)
+      this.actualTab = 3
+      let newTraining = await makeTraining(this.workerToTrain, this.techToTrain)
+      //Creamos el intervalo concreto
+      newTraining.intervalID = setInterval(this.handleTrainingTimer, 1000, newTraining.workerId)
+      this.inTraining.push(newTraining)
+    },
+    /**
+     * Función que fija el intervalo creado en la función anterior con el entrenamiento concreto
+     * @param {Number} workerID - La id del trabajador entrenándose
+     * @param {Number} intervalID - La id del intervalo
+     */
+    handleIntervalID(intervalID, workerID){
+      let trainingIndex = this.inTraining.findIndex((training) => training.workerId == workerID)
+      this.inTraining[trainingIndex].intervalID = intervalID
+    },
+    /**
+     * Función que limpia el intervalo de entrenamiento
+     * @param {Number} workerID - La id del trabajador entrenándose
+     */
+    handleClearInterval(workerID){
+      let trainingIndex = this.inTraining.findIndex((training) => training.workerId == workerID)
+      this.inTraining[trainingIndex].intervalID = null
+    },
+    /**
+     * Función que gestiona el temporizador del entrenamiento
+     * @param {Number} workerID - La id del trabajador entrenándose
+     */
+    handleTrainingTimer(workerID){
+      let trainingIndex = this.inTraining.findIndex((training) => training.workerId == workerID)
+      if(this.inTraining[trainingIndex].actualExp &lt; this.inTraining[trainingIndex].expToLevelUp){
+        this.inTraining[trainingIndex].actualExp += parseInt(this.inTraining[trainingIndex].pa.toFixed(0));
+      } else{
+          clearInterval(this.inTraining[trainingIndex].intervalID)
+          this.handleLevelUp(workerID)
+          }
+    },
+    /**
+     * Función que gestiona la subida de nivel de una tecnología al terminar un entrenamiento
+     * @param {Number} workerID - La id del trabajador entrenándose
+     */
+    async handleLevelUp(workerId){
+     let trainingIndex = this.inTraining.findIndex((training) => training.workerId == workerId)
+     let training = this.inTraining[trainingIndex]
+     
+      try{
+        if(training.relationId){
+          await levelUpLanguage(training.workerId, training.techId, training.techNextLevel, training.relationId)
+
+        }else{
+          await newWorkerLanguage(training.workerId, training.techId)
+        }
+        this.inTraining.splice(trainingIndex, 1)
+        this.modalmsg=`${training.workerName} subio su nivel de ${training.techName} a ${training.techNextLevel} y has desbloqueado ${training.upgradeDescription}`
+        await this.getData()
+      }catch(error){
+        console.log(error)
+        this.modalmsg="Ocurrio un error y no se pudo actualizar el lenguaje"
+      }
+      
+    },
+    /**
+     * Función que coge de la API los datos de juego del usuario registrado. 
      */
     async getData() {
-      const user = localStorage.getItem("user")
       try {
-        this.loading = true
-        const response = await fetch(`https://idle-dev-apirest.onrender.com/api/V1/gameData/${user}`)
-
-        this.userData = await response.json()
+        this.loading = true 
+        let user = await getOneUser(localStorage.getItem("username"))
+        this.avatar = user.avatar    
+        this.userData = await getGame(this.user)
+        //Seteamos el dinero con la información de la api
+        this.principalMoney = this.userData.dinero
+        //Como necesitamos la lista que genera la función, usamos await para esperar a que esta termine antes del for
+        await this.getLanguages(this.user)
+        await this.getCompanies(this.user)
+        this.getWorkerSlots()
+        await this.getWorkers(this.user)
+        this.companies.forEach(company => this.handleCompanyBonus(company))
+        this.techs.forEach(tech => this.handleUpgradeBonus(tech.id))
+        //Volvemos a hacer los calculos necesarios usando la info de la api y los vamos seteando a sus respectivas variables      
+        let gameData = gameCalculator(this.techs, this.moneyPerSecond, this.quantityToBuy)
+        this.techs = gameData[0]
+        this.moneyPerClick = gameData[1] 
+        this.moneyPerSecond = gameData[2] 
+        this.slotsOccupied = this.workers.length
         this.loading = false
-        //Seteamos las variables que necesitamos con la información de la api
-
-        this.principalMoney = this.userData.principalMoney
-        this.techs[0].quantityOwned = this.userData.HTMLAmount
-        this.techs[0].unlocked = this.userData.HTMLUnlocked
-        this.techs[1].quantityOwned = this.userData.CSSAmount
-        this.techs[1].unlocked = this.userData.CSSUnlocked
-        this.techs[2].quantityOwned = this.userData.JSAmount
-        this.techs[2].unlocked = this.userData.JSUnlocked
-        this.techs[3].quantityOwned = this.userData.NodeAmount
-        this.techs[3].unlocked = this.userData.NodeUnlocked
-        this.techs[4].quantityOwned = this.userData.JavaAmount
-        this.techs[4].unlocked = this.userData.JavaUnlocked
-        this.techs[4].quantityOwned = this.userData.PHPAmount
-        this.techs[4].unlocked = this.userData.PHPUnlocked
-        this.modalmsg = ''
-        //Volvemos a hacer los calculos necesarios usando la info de la api        
-        for (let i = 0; i &lt; this.techs.length; i++) {
-          let tech = this.techs[i]
-          tech.currentCost = tech.initialCost * ((tech.growthRatio ** tech.quantityOwned * ((tech.growthRatio ** this.quantityToBuy) - 1)) / (tech.growthRatio - 1))
-          tech.totalProfit = tech.profitPerUnit * tech.quantityOwned
-          this.moneyPerSecond += tech.totalProfit
-        }
-        if (this.moneyPerSecond) {
-          this.moneyPerClick = this.moneyPerSecond * 0.1
-        }
-
+        if (this.principalMoney == 0){
+          this.modalmsg = "Bienvenido al fantástico mundo de la programación. Te espera un gran viaje a traves de la historia de la informática. Haz click en el ordenador para ganar beneficios y empezar a comprar las tecnologías que irás aprendiendo"
+        }  
       } catch (error) {
-        //Si no encuentra datos de partida simplemente se considera que inicia una nueva partida y se crean los datos de partida,
-        //haremos las mismas comprobaciones que con el PUT
-        const userData = {
-          "playerName": localStorage.getItem("user"),
-          "principalMoney": this.principalMoney,
-          "HTMLAmount": this.techs[0].quantityOwned,
-          "HTMLUnlocked": this.techs[0].unlocked,
-          "CSSAmount": this.techs[1].quantityOwned,
-          "CSSUnlocked": this.techs[1].unlocked,
-          "JSAmount": this.techs[2].quantityOwned,
-          "JSUnlocked": this.techs[2].unlocked,
-          "NodeAmount": this.techs[3].quantityOwned,
-          "NodeUnlocked": this.techs[3].unlocked,
-          "JavaAmount": this.techs[4].quantityOwned,
-          "JavaUnlocked": this.techs[4].unlocked,
-          "PHPAmount": this.techs[5].quantityOwned,
-          "PHPUnlocked": this.techs[5].unlocked,
-        }
-        try {
-          this.loading = true
-          const response = await fetch(`https://idle-dev-apirest.onrender.com/api/V1/gameData`, {
-            method: "POST",
-            body: JSON.stringify(userData),
-            headers: { 'Content-type': 'application/json; charset=UTF-8' },            
-          });
-          const createdUser = await response.json()
-          this.loading = false;
-          const createdKeys = Object.keys(createdUser);
-          const inputKeys = Object.keys(userData);
-
-          if (createdKeys.length !== inputKeys.length) {
-            this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"
-            return false
-          }
-          for (let key of createdKeys) {
-            if (createdUser[key] !== userData[key]) {
-              this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"
-              return false
-            }
-          }
-        } catch (error) {
-          this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"
-        }
-        this.modalmsg = "Bienvenido al fantástico mundo de la programación. Te espera un gran viaje a traves de la historia de la informática. Haz click en el ordenador para ganar beneficios y empezar a comprar las tecnologías que irás aprendiendo"
+        console.log(error)
+        this.modalmsg = "Ha ocurrido un error y los datos no se cargaron correctamente"        
       }
+    },
+    /**
+     * Función que gestiona el cambio de tabs
+     * @param {Number} tab - La tab elegida
+     */
+     handleTabs(tab) {
+      this.actualTab = tab;
     },
     /**
      * Función que le dice a los modales cuando cerrarse
      */
     handleClose() {
       this.modalmsg = '';
+    },
+    /**
+     * Función que le dice al modal de contratación cuando cerrarse
+     */
+    handleHireClose() {
+      this.actualTab = 2;
+    },
+    /**
+     * Función que le dice a los modales de entrenamiento cuando cerrarse
+     */
+    handleTrainingClose(){
+      this.actualTab = 3;
     },
     /**
      * Función que setea la cantidad que queremos comprar y su coste. Se activa con los botones de cantidad
@@ -369,30 +569,75 @@ export default {
      * Función que activa la función handleMoney a cada segundo
      */
     setMoneyPerSecondInterval() {
-      setInterval(this.handleMoney, 1000);
+      this.moneyInterval = setInterval(this.handleMoney, 1000);
+    },
+    /**
+     * Función que guarda la partida cada 2 min
+     */
+    setSaveDataInterval() {
+      this.saveInterval = setInterval(this.saveData, 120000);
     },
     /**
      * Función que gestiona toda la compra de tecnologias y setea todos los valores de ganancias acorde a la tecnologia comprada
      * @param {Number} techId - id de la tecnología a comprar
      */
     handleBuy(techId) {
-      const tech = this.techs.find((tech) => tech.id == techId)
+      let tech = this.techs.find((tech) => tech.id == techId)
       //Solo reacciona si encontramos anteriormente una tecnologia con la ID que buscamos
       if (tech) {
-        //Añadimos la cantidad de la tecnologia concreta
-        tech.quantityOwned += this.quantityToBuy
-        //Establecemos la diferencia de ganancia entre antes y despues de la compra
-        let profitDiff = (tech.quantityOwned * tech.profitPerUnit) - tech.totalProfit
-        //Cantidad total de ganancia
-        tech.totalProfit = tech.profitPerUnit * tech.quantityOwned
-        //Quitamos del dinero principal el coste actual 
-        this.principalMoney -= tech.currentCost
-        //Establecemos el nuevo coste
-        tech.currentCost = tech.initialCost * ((tech.growthRatio ** tech.quantityOwned * ((tech.growthRatio ** this.quantityToBuy) - 1)) / (tech.growthRatio - 1))
-        //Añadimos la nueva ganancia a la ganancia/segundo actual
-        this.moneyPerSecond += profitDiff
-        this.moneyPerClick = this.moneyPerSecond * 0.1
+        let buy =  buyTech(tech,this.quantityToBuy,this.principalMoney,this.moneyPerSecond)
+        this.principalMoney = buy[0]
+        this.moneyPerSecond = buy[1] 
+        this.moneyPerClick = buy[2] 
       }
+      for (let i = 0; i &lt; this.companies.length; i++) {
+        let previousCompanyLevel = this.companies[i].level
+        this.companies[i] = unlockCompanies(this.techs, this.companies[i])
+        if(this.companies[i].level != previousCompanyLevel){
+          this.modalmsg = `${this.companies[i].name} subió al nivel ${this.companies[i].level}`
+          this.handleCompanyBonus(this.companies[i])
+          this.saveData()
+        }
+      }
+      let gameData = gameCalculator(this.techs, this.moneyPerSecond, this.quantityToBuy)
+      this.techs = gameData[0]
+      this.moneyPerClick = gameData[1] 
+      this.moneyPerSecond = gameData[2] 
+      
+    },
+    /**
+     * Función que gestiona los bonus que aportan las compañias
+     * @param {Number} companyToChange - id de la compañia que sube de nivel
+     */
+    handleCompanyBonus(companyToChange){
+      let companyIndex = this.companies.findIndex((company) => company.id == companyToChange.id)
+      //Recorremos la lista de lenguajes a los que la compañia afecta
+      for(let i = 0; i &lt; this.companies[companyIndex].influencedTechs.length; i++){
+        let techIndex = this.techs.findIndex((tech) => tech.id == this.companies[companyIndex].influencedTechs[i].id)
+
+        this.techs[techIndex].companyMultiplier += this.companies[companyIndex].baseMultiplier
+        
+      }
+    },
+    /**
+     * Función que gestiona los bonus que aportan las mejoras
+     * @param {Number} techId - id del lenguaje que obtiene la mejora
+     */
+    handleUpgradeBonus(techId){
+      let techIndex = this.techs.findIndex((tech) => tech.id == techId)
+      //Filtramos los trabajadores que tengan conocimiento de ese lenguaje
+      let filteredWorkers = []
+      for(let i = 0 ; i &lt; this.workers.length; i++){
+        if(this.workers[i].languages.findIndex((language) => language.languageId == techId) != -1){
+          filteredWorkers.push(this.workers[i])
+        }
+      }
+      const {totalMoneyBonus, totalPaBonus, totalDiscountBonus } = calcUpgradeBonus(filteredWorkers, this.techs[techIndex].name)
+      
+      this.techs[techIndex].upgradeMoneyMultiplier += totalMoneyBonus
+      this.techs[techIndex].upgradePAMultiplier += totalPaBonus
+      this.techs[techIndex].upgradeMoneyDiscount = totalDiscountBonus
+      
     },
     /**
      * Función que causa el rebote del pc cuando se hace click y añade el dinero por click al dinero total
@@ -407,68 +652,54 @@ export default {
      * Función que guarda la partida en la base de datos
      */
     async saveData() {
-      //Cogemos los datos que queremos guardar
-      const userData = {
-        "playerName": localStorage.getItem("user"),
-        "principalMoney": this.principalMoney,
-        "HTMLAmount": this.techs[0].quantityOwned,
-        "HTMLUnlocked": this.techs[0].unlocked,
-        "CSSAmount": this.techs[1].quantityOwned,
-        "CSSUnlocked": this.techs[1].unlocked,
-        "JSAmount": this.techs[2].quantityOwned,
-        "JSUnlocked": this.techs[2].unlocked,
-        "NodeAmount": this.techs[3].quantityOwned,
-        "NodeUnlocked": this.techs[3].unlocked,
-        "JavaAmount": this.techs[4].quantityOwned,
-        "JavaUnlocked": this.techs[4].unlocked,
-        "PHPAmount": this.techs[5].quantityOwned,
-        "PHPUnlocked": this.techs[5].unlocked,
-      }
-
+      console.log("Saving data...")
+      const user = localStorage.getItem("user")
+      //Guardamos el dinero principal
       try {
         this.saving = true
-        const response = await fetch(`https://idle-dev-apirest.onrender.com/api/V1/gameData/${userData.playerName}`, {
-          method: "PUT",
-          body: JSON.stringify(userData),
-          headers: { 'Content-type': 'application/json; charset=UTF-8' },
-        })
-
-        const updatedUser = await response.json();
+        await saveGameMoney(this.principalMoney, user)
+        //Guardamos los cambios en los lenguajes de la partida
+        try{
+          await saveGameLanguages(this.userLanguages, this.techs)
+        }
+        catch{
+          this.modalmsg = "Ha ocurrido un error y los datos de lenguajes no se guardaron correctamente"
+        }
+        try{
+          await saveGameCompanies(this.userCompanies, this.companies)
+        }
+        catch{
+          this.modalmsg = "Ha ocurrido un error y los datos de las empresas no se guardaron correctamente"
+        }
         this.saving = false
-        //Como no podemos comparar directamente dos objetos usaremos sus keys para hacer las comprobaciones
-        const updatedKeys = Object.keys(updatedUser);
-        const inputKeys = Object.keys(userData);
-
-        if (updatedKeys.length !== inputKeys.length) {
-          this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"
-          return false
-        }
-        for (let key of updatedKeys) {
-          if (updatedUser[key] !== userData[key]) {
-            this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"
-            return false
-          }
-        }
-        this.modalmsg = "Partida guardada correctamente"
       } catch (error) {
         this.modalmsg = "Ha ocurrido un error y los datos no se guardaron correctamente"
       }
     },
     /**
-     * Función que redirecciona al index si no estamos logueados
+     * Función que redirecciona al index si nuestro token no es valido
      */
-    redirect() {
-      if (!localStorage.getItem("user")) {
-        this.$router.push('/')
-      }
-    }
+     async redirect() {
+        const check = await checkValidToken()
+        if (!check) {
+          this.$router.push('/')
+        }
+    }  
+    
   },
-  mounted() {
-    this.redirect();
+  async mounted() {
+   await this.redirect();
     this.setMoneyPerSecondInterval();
-    this.getAllUsersData()
-    this.getData()
-  }
+    this.setSaveDataInterval()
+    this.getAllUsersData()  
+    this.getData()    
+  },
+  beforeUnmount() {
+    clearInterval(this.moneyInterval)
+    clearInterval(this.saveInterval)
+    this.moneyInterval = null
+    this.saveInterval = null
+  },
 }
 &lt;/script></code></pre>
         </article>
@@ -480,13 +711,13 @@ export default {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-button.html">button</a></li><li><a href="module-contact.html">contact</a></li><li><a href="module-game.html">game</a></li><li><a href="module-header.html">header</a></li><li><a href="module-login.html">login</a></li><li><a href="module-modal.html">modal</a></li><li><a href="module-multiplier-button.html">multiplier-button</a></li><li><a href="module-register.html">register</a></li><li><a href="module-tech-button.html">tech-button</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-button.html">button</a></li><li><a href="module-companyButton.html">companyButton</a></li><li><a href="module-companyDetails.html">companyDetails</a></li><li><a href="module-contact.html">contact</a></li><li><a href="module-edit.html">edit</a></li><li><a href="module-game.html">game</a></li><li><a href="module-gameButton.html">gameButton</a></li><li><a href="module-header.html">header</a></li><li><a href="module-hireModal.html">hireModal</a></li><li><a href="module-login.html">login</a></li><li><a href="module-modal.html">modal</a></li><li><a href="module-register.html">register</a></li><li><a href="module-tabButton.html">tabButton</a></li><li><a href="module-tabsNav.html">tabsNav</a></li><li><a href="module-techButton.html">techButton</a></li><li><a href="module-techTrainingButton.html">techTrainingButton</a></li><li><a href="module-trainingInfo.html">trainingInfo</a></li><li><a href="module-trainingTechModal.html">trainingTechModal</a></li><li><a href="module-trainingWorkerModal.html">trainingWorkerModal</a></li><li><a href="module-workerButton.html">workerButton</a></li><li><a href="module-workerDetails.html">workerDetails</a></li><li><a href="module-workerHireOption.html">workerHireOption</a></li><li><a href="module-workerUpgrade.html">workerUpgrade</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Tue Feb 14 2023 13:02:05 GMT+0100 (hora estándar de Europa central)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Thu Jun 15 2023 17:11:55 GMT+0200 (hora de verano de Europa central)
 </footer>
 
 <script> prettyPrint(); </script>

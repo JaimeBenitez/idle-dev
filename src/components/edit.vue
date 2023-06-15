@@ -34,7 +34,7 @@
 
 <script>
 /**
- * @file register.vue - Pagina de registro
+ * @file edit.vue - Pagina de edición de usuario
  * @author Jaime Benitez
  * @see <a href="https://jaimebenitez.com" target="_blank">Jaime Benitez </a>
  */
@@ -46,15 +46,17 @@ import { checkValidToken } from "@/utils/checkValidToken"
 
 /**
  * @vue-data {Array<Object>} [users = []] - Lista de usuarios registrados
+ * @vue-data {Object} [user = {}] - usuario logueado en este momento
  * @vue-data {String} [username = ""] - Toma el valor del input de nombre de usuario
  * @vue-data {String} [email = ""] - Toma el valor del input de email
- * @vue-data {String} [password = ""] - Toma el valor del input de contraseña
- * @vue-data {String} [confirmPassword = ""] - Toma el valor del input de confirmar contraseña
+ * @vue-data {String} [newPassword = ""] - Toma el valor del input de nueva contraseña
+ * @vue-data {String} [avatar = null] - Ruta a la imagen de avatar del usuario
+ * @vue-data {File} [avatarFile = null] - Archivo de la imagen de avatar del usuario
  * @vue-data {Boolean} [usernameError = false] - Controla cuando aparece el error de nombre de usuario
  * @vue-data {Boolean} [emailError = false] - Controla cuando aparece el error de email
- * @vue-data {Boolean} [passwordError = false] - Controla cuando aparece el error de contraseña
- * @vue-data {Boolean} [passwordConfirmError = false] - Controla cuando aparece el error de confirmación de contraseña
+ * @vue-data {Boolean} [newPasswordError = false] - Controla cuando aparece el error de nueva contraseña
  * @vue-data {Boolean} [submitted = false] - Controla cuando se hace submit en el formulario
+ * @vue-data {Boolean} [submittedError = false] - Controla cuando aparece el error al hacer submit
  * @vue-data {Boolean}[loading = false] - Maneja el texto del boton de submit del formulario durante la carga de la API
  * @vue-data {String} [usernameRegexp = new RegExp(/^[\S]{3,20}$/)] - Regex para validar nombre de usuario
  * @vue-data {String} [emailRegexp = new RegExp(/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/)] - Regex para validar el email
@@ -97,6 +99,10 @@ export default {
         console.error("Error");
       }
     },
+    /**
+     * Función que saca un usuario de la base de datos usando el localStorage
+     * @param {Object} user - usuario a registrar
+     */
     async getUser(){
       const actualUser = this.users.find((user) => user.id == localStorage.getItem('user'))
       try {
@@ -109,7 +115,7 @@ export default {
       }
     },
     /**
-     * Función queactualiza usuario en la base de datos
+     * Función que actualiza usuario en la base de datos
      * @param {Object} user - usuario a registrar
      */
     async putUser(userData, userId) {
@@ -157,6 +163,10 @@ export default {
         this.newPasswordError = false
       }
     },
+    /**
+     * Función que permite mostrar la previsualización del avatar en el formulario
+     * @param {Event} e - Evento, en este caso, la elección de un archivo
+     */
     onFileChange(e){
       const file = e.target.files[0]
       this.avatar = URL.createObjectURL(file)
@@ -181,6 +191,9 @@ export default {
         
       }
     },
+    /**
+     * Función que, de no tener token válido, redirecciona a la pantalla inicial
+     */
     async redirect() {
         const check = await checkValidToken()
         if (!check) {

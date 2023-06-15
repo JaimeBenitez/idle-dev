@@ -48,7 +48,7 @@
         &lt;p class="toLoginQuestion">¿Ya tienes una cuenta?&lt;/p>
         &lt;RouterLink to="/login" class="toLogin">Ve al login&lt;/RouterLink>
         &lt;button v-if="!loading" type="submit" class="register-submit">Enviar&lt;/button>
-        &lt;button v-if="loading" type="submit" class="register-submit">Enviar&lt;/button>
+        &lt;button v-if="loading" type="submit" class="register-submit">Guardando...&lt;/button>
       &lt;/form>
     &lt;/section>
     &lt;Modal v-if="submitted" msg="Registro exitoso, haz login de comenzar tu viaje" buttonMsg="Entrar" redirect="/login"
@@ -65,10 +65,10 @@
 import Header from './header.vue'
 import Modal from './modal.vue'
 import validator from '@/utils/validator'
-import sha1 from '@/utils/hash1.js'
+import { checkValidToken } from "@/utils/checkValidToken"
+import { register } from '@/services/publicServices'
 
 /**
- * @vue-data {Array&lt;Object>} [users = []] - Lista de usuarios registrados
  * @vue-data {String} [username = ""] - Toma el valor del input de nombre de usuario
  * @vue-data {String} [email = ""] - Toma el valor del input de email
  * @vue-data {String} [password = ""] - Toma el valor del input de contraseña
@@ -91,7 +91,6 @@ export default {
   },
   data() {
     return {
-      users: [],
       username: "",
       email: "",
       password: "",
@@ -108,34 +107,21 @@ export default {
     }
   },
   methods: {
-    /**
-     * Función que saca de la api todos los usuarios para poder registrar nuevos
-     */
-    async getAllUsers() {
-      try {
-        const response = await fetch('https://idle-dev-apirest.onrender.com/api/V1/users');
-        this.users = await response.json();        
-      } catch (error) {
-        console.error("Error");
-      }
-    },
+   
     /**
      * Función que registra un nuevo usuario en la base de datos
      * @param {Object} user - usuario a registrar
      */
     async postUser(user) {
+
       try {
         this.loading = true;
-        const response = await fetch("https://idle-dev-apirest.onrender.com/api/V1/users", {
-          method: "POST",
-          body: JSON.stringify(user),
-          headers: { 'Content-Type': 'application/json; charset=utf-8' }         
-        });
-        const createdUser = await response.json();
+        await register(user);
         this.loading = false;
-        this.users = [...this.users, createdUser]
+        this.submitted = true;
+  
       } catch (error) {
-        console.log("Error")
+        console.log(error)
       }
     },
     /**
@@ -174,26 +160,29 @@ export default {
     /**
      * Función que, si todos los datos son correctos, encripta la contraseña e invoca a la función que introduce los datos en la BD
      */
-    submit() {
+    async submit() {
+      this.validUsername()
+      this.validEmail()
+      this.validPassword()
+      this.passwordConfirmed()
       if (!this.usernameError &amp;&amp; !this.emailError &amp;&amp; !this.passwordError &amp;&amp; !this.passwordConfirmError) {
         const user = {
-          "username": this.username,
+          "nombre": this.username,
           "email": this.email,
-          "password": sha1(this.password)
+          "contrasenia": this.password,
         }
-
-        this.postUser(user)
-        this.submitted = true;
+        await this.postUser(user)
       }
     },
     /**
      * Función que, de estar logueado, redirige al juego
      */
-    redirect() {
-      if (localStorage.getItem("user")) {
-        this.$router.push('/game')
-      }
-    }
+     async redirect() {
+        const check = await checkValidToken()
+        if (check) {
+          this.$router.push('/game')
+        }
+    }  
   },
   watch: {
     username: function () {
@@ -205,9 +194,8 @@ export default {
     confirmPassword: function () {
     },
   },
-  mounted() {
-    this.redirect()
-    this.getAllUsers();
+  async mounted() {
+   await this.redirect();
   }
 }
 &lt;/script></code></pre>
@@ -220,13 +208,13 @@ export default {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-button.html">button</a></li><li><a href="module-contact.html">contact</a></li><li><a href="module-game.html">game</a></li><li><a href="module-header.html">header</a></li><li><a href="module-login.html">login</a></li><li><a href="module-modal.html">modal</a></li><li><a href="module-multiplier-button.html">multiplier-button</a></li><li><a href="module-register.html">register</a></li><li><a href="module-tech-button.html">tech-button</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-button.html">button</a></li><li><a href="module-companyButton.html">companyButton</a></li><li><a href="module-companyDetails.html">companyDetails</a></li><li><a href="module-contact.html">contact</a></li><li><a href="module-edit.html">edit</a></li><li><a href="module-game.html">game</a></li><li><a href="module-gameButton.html">gameButton</a></li><li><a href="module-header.html">header</a></li><li><a href="module-hireModal.html">hireModal</a></li><li><a href="module-login.html">login</a></li><li><a href="module-modal.html">modal</a></li><li><a href="module-register.html">register</a></li><li><a href="module-tabButton.html">tabButton</a></li><li><a href="module-tabsNav.html">tabsNav</a></li><li><a href="module-techButton.html">techButton</a></li><li><a href="module-techTrainingButton.html">techTrainingButton</a></li><li><a href="module-trainingInfo.html">trainingInfo</a></li><li><a href="module-trainingTechModal.html">trainingTechModal</a></li><li><a href="module-trainingWorkerModal.html">trainingWorkerModal</a></li><li><a href="module-workerButton.html">workerButton</a></li><li><a href="module-workerDetails.html">workerDetails</a></li><li><a href="module-workerHireOption.html">workerHireOption</a></li><li><a href="module-workerUpgrade.html">workerUpgrade</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Tue Feb 14 2023 13:02:05 GMT+0100 (hora estándar de Europa central)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Thu Jun 15 2023 17:11:55 GMT+0200 (hora de verano de Europa central)
 </footer>
 
 <script> prettyPrint(); </script>

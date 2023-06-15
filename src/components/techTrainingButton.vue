@@ -6,6 +6,16 @@
 </template>
 
 <script>
+    /**
+     * @file techTrainingButton.vue - Botón que aparece en el modal de elegir tecnología a entrenar
+     * @author Jaime Benitez
+     * @see <a href="https://jaimebenitez.com" target="_blank">Jaime Benitez </a>
+     */
+    /**
+     * @vue-prop {Number} id - Id de la tecnología concreta
+     * @vue-prop {Array<Object>} workerTechs - Tecnologias del trabajador concreto
+     * @vue-prop {String} logo - Logo de la tecnología
+     */
    export default {
        name: "workerButton",
        props: {

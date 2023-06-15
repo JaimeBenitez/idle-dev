@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: edit.vue</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: edit.vue</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>&lt;template>
+  &lt;Header icon="logout.svg" :avatar="avatar" :isGame=true  />
+  &lt;div class="register">
+    &lt;section class="edit-container">
+      &lt;form class="register-form" v-on:submit.prevent="submit" method="PUT" enctype="multipart/form-data">
+        &lt;h1 class="register-title">Editar usuario&lt;/h1>
+        &lt;input type="text" class="register-username register-input" v-model="username" v-on:blur="validUsername"
+          placeholder="Nombre de usuario" disabled>
+        &lt;p v-if="usernameError" class="error-message username-error">El nombre debe tener entre 3 y 20 caracteres&lt;/p>
+        &lt;input type="email" class="register-email register-input" v-model="email" v-on:blur="validEmail"
+          placeholder="Correo electrónico">
+        &lt;p v-if="emailError" class="error-message">Introduce un email valido&lt;/p>
+        &lt;input type="password" class="register-password-confirm register-input" v-model="newPassword"
+          v-on:blur="validNewPassword" placeholder="Nueva contraseña">
+        &lt;p v-if="newPasswordError" class="error-message">La contraseña debe tener al menos una mayuscula,
+          una minuscula, un digito y entre 8 y 16 caracteres&lt;/p>
+        &lt;div class="register-avatar-container">
+          &lt;img v-if="avatar" :src="avatar" alt="hola" class="register-avatar" />
+          &lt;div class="register-input-file-container">  
+            &lt;input type="file" name="imagen" aria-label="imagen" accept="image/*" @change="onFileChange( $event )" />
+          &lt;/div>
+        &lt;/div>
+        &lt;button v-if="!loading" type="submit" class="register-submit">Guardar&lt;/button>
+        &lt;button v-if="loading" type="submit" class="register-submit">Guardando...&lt;/button>
+        
+      &lt;/form>
+    &lt;/section>
+    &lt;Modal v-if="submitted" msg="Cambio realizado con exito" buttonMsg="Volver" redirect="/game"
+      :isGame=false />
+    &lt;Modal v-if="submittedError" msg="Ha ocurrido un error y los datos no se han guardado" buttonMsg="Volver" redirect="/game"
+      :isGame=false />
+  &lt;/div>
+&lt;/template>
+
+&lt;script>
+/**
+ * @file edit.vue - Pagina de edición de usuario
+ * @author Jaime Benitez
+ * @see &lt;a href="https://jaimebenitez.com" target="_blank">Jaime Benitez &lt;/a>
+ */
+import Header from './header.vue'
+import Modal from './modal.vue'
+import validator from '@/utils/validator'
+import { getUsersData, getOneUser, editUser } from '@/services/userServices'
+import { checkValidToken } from "@/utils/checkValidToken"
+
+/**
+ * @vue-data {Array&lt;Object>} [users = []] - Lista de usuarios registrados
+ * @vue-data {Object} [user = {}] - usuario logueado en este momento
+ * @vue-data {String} [username = ""] - Toma el valor del input de nombre de usuario
+ * @vue-data {String} [email = ""] - Toma el valor del input de email
+ * @vue-data {String} [newPassword = ""] - Toma el valor del input de nueva contraseña
+ * @vue-data {String} [avatar = null] - Ruta a la imagen de avatar del usuario
+ * @vue-data {File} [avatarFile = null] - Archivo de la imagen de avatar del usuario
+ * @vue-data {Boolean} [usernameError = false] - Controla cuando aparece el error de nombre de usuario
+ * @vue-data {Boolean} [emailError = false] - Controla cuando aparece el error de email
+ * @vue-data {Boolean} [newPasswordError = false] - Controla cuando aparece el error de nueva contraseña
+ * @vue-data {Boolean} [submitted = false] - Controla cuando se hace submit en el formulario
+ * @vue-data {Boolean} [submittedError = false] - Controla cuando aparece el error al hacer submit
+ * @vue-data {Boolean}[loading = false] - Maneja el texto del boton de submit del formulario durante la carga de la API
+ * @vue-data {String} [usernameRegexp = new RegExp(/^[\S]{3,20}$/)] - Regex para validar nombre de usuario
+ * @vue-data {String} [emailRegexp = new RegExp(/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/)] - Regex para validar el email
+ * @vue-data {String} [passwordRegexp = new RegExp(/^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{8,16}$/)]  - Regex para validar la contraseña
+ */
+export default {
+  name: 'EditPage',
+  components: {
+    Header,
+    Modal
+  },
+  data() {
+    return {
+      users: [],
+      user: {},
+      username: "",
+      email: "",
+      newPassword: "",
+      avatar: null,
+      avatarFile: null,
+      usernameError: false,
+      emailError: false,
+      newPasswordError: false,
+      submitted: false,
+      submittedError: false,
+      loading: false,
+      usernameRegexp: new RegExp(/^[\S]{3,20}$/),
+      emailRegexp: new RegExp(/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/),
+      passwordRegexp: new RegExp(/^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{8,16}$/)
+    }
+  },
+  methods: {
+    /**
+     * Función que saca de la api todos los usuarios para poder encontrar el actual 
+     */
+    async getAllUsers() {
+      try {
+        this.users = await getUsersData();      
+      } catch (error) {
+        console.error("Error");
+      }
+    },
+    /**
+     * Función que saca un usuario de la base de datos usando el localStorage
+     * @param {Object} user - usuario a registrar
+     */
+    async getUser(){
+      const actualUser = this.users.find((user) => user.id == localStorage.getItem('user'))
+      try {
+        this.user = await getOneUser(actualUser.usuarioNombre);     
+        this.username =  this.user.nombre
+        this.email = this.user.email 
+        this.avatar = this.user.avatar    
+      } catch (error) {
+        console.error("Error");
+      }
+    },
+    /**
+     * Función que actualiza usuario en la base de datos
+     * @param {Object} user - usuario a registrar
+     */
+    async putUser(userData, userId) {
+       //IMPORTANTE: hay que pasar el objeto a tipo archivo usando el BLob, de lo contrario no lo aceptara
+       let formData = new FormData()
+
+       const json = JSON.stringify(userData)
+        const blob = new Blob([json], {
+            type: 'application/json'
+        })
+        formData.append('nuevo', blob )
+        formData.append('file', this.avatarFile)
+      //Importante en los multipart NO pasar headers
+      try {
+        this.loading = true;
+        const modifiedUser = await editUser(userId,formData)
+        this.loading = false;
+        this.submitted = true
+        this.users.push(modifiedUser);
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    /**
+     * Función que valida el nombre de usuario
+     */
+    validUsername() {
+      //El usuario admitirá cualquier caracter pero tendrá entre 3 y 20 caracteres     
+      this.usernameError = validator(this.usernameRegexp, this.username)
+    },
+    /**
+     * Función que valida el email
+     */
+    validEmail() {
+      /*El email puede tener cualquier caracter en cualquier cantidad siempre y cuando no sea una @, espacio o tabulación en la primera parte
+        Luego tendrá una @, luego otro set igual que en la primera parte, un punto y finalmente otro set del mismo tipo*/
+      this.emailError = validator(this.emailRegexp, this.email)
+    },
+    /**
+     * Función que valida la confirmación de contraseña
+     */
+    validNewPassword() {
+      this.newPasswordError = validator(this.passwordRegexp, this.newPassword) 
+      if(this.newPassword == ''){
+        this.newPasswordError = false
+      }
+    },
+    /**
+     * Función que permite mostrar la previsualización del avatar en el formulario
+     * @param {Event} e - Evento, en este caso, la elección de un archivo
+     */
+    onFileChange(e){
+      const file = e.target.files[0]
+      this.avatar = URL.createObjectURL(file)
+      this.avatarFile = file
+    },
+    /**
+     * Función que, si todos los datos son correctos, encripta la contraseña e invoca a la función que introduce los datos en la BD
+     */
+    async submit() {
+      //Volvemos aqui a hacer las validaciones para comprobar si los campos están vacios
+      this.validUsername()
+      this.validEmail()
+      this.validNewPassword()
+      if (!this.usernameError &amp;&amp; !this.emailError &amp;&amp; !this.newPasswordError) {
+        const putUser = {
+          "nombre": this.username,
+          "email": this.email,
+          "contrasenia": this.newPassword,
+        }
+        localStorage.setItem("username", this.username)
+        await this.putUser(putUser, this.user.id)
+        
+      }
+    },
+    /**
+     * Función que, de no tener token válido, redirecciona a la pantalla inicial
+     */
+    async redirect() {
+        const check = await checkValidToken()
+        if (!check) {
+          this.$router.push('/')
+        }
+    }  
+  },
+  watch: {
+    username: function () {
+    },
+    email: function () {
+    },
+    newPassword: function () {
+    },
+  },
+  async mounted() {
+    await this.getAllUsers();
+    await this.getUser();
+    await this.redirect()
+  }
+}
+&lt;/script></code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-button.html">button</a></li><li><a href="module-companyButton.html">companyButton</a></li><li><a href="module-companyDetails.html">companyDetails</a></li><li><a href="module-contact.html">contact</a></li><li><a href="module-edit.html">edit</a></li><li><a href="module-game.html">game</a></li><li><a href="module-gameButton.html">gameButton</a></li><li><a href="module-header.html">header</a></li><li><a href="module-hireModal.html">hireModal</a></li><li><a href="module-login.html">login</a></li><li><a href="module-modal.html">modal</a></li><li><a href="module-register.html">register</a></li><li><a href="module-tabButton.html">tabButton</a></li><li><a href="module-tabsNav.html">tabsNav</a></li><li><a href="module-techButton.html">techButton</a></li><li><a href="module-techTrainingButton.html">techTrainingButton</a></li><li><a href="module-trainingInfo.html">trainingInfo</a></li><li><a href="module-trainingTechModal.html">trainingTechModal</a></li><li><a href="module-trainingWorkerModal.html">trainingWorkerModal</a></li><li><a href="module-workerButton.html">workerButton</a></li><li><a href="module-workerDetails.html">workerDetails</a></li><li><a href="module-workerHireOption.html">workerHireOption</a></li><li><a href="module-workerUpgrade.html">workerUpgrade</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Thu Jun 15 2023 17:11:55 GMT+0200 (hora de verano de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

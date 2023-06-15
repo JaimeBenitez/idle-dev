@@ -106,7 +106,6 @@
  * @author Jaime Benitez
  * @see <a href="https://jaimebenitez.com" target="_blank">Jaime Benitez </a>
  */
-//Para poder usar las imagenes correctamente como props tenemos que importarlas aqui y usarlas como variable de Data
 import Header from './header.vue'
 import GameButton from './gameButton.vue'
 import TechButton from './techButton.vue'
@@ -140,8 +139,20 @@ import { newWorkerLanguage, levelUpLanguage } from '@/services/workerLanguagesSe
 import calcUpgradeBonus from '@/utils/calcUpgradeBonus'
 import { checkValidToken } from "@/utils/checkValidToken"
 /**
+ * @vue-data {Number} [moneyInterval = null] -  La id del intervalo que controla la ganancia de dinero
+ * @vue-data {Number} [saveInterval = null] -  La id del intervalo que controla el guardado de partida
+ * @vue-data {String} [user = localStorage.getItem("user")] -  La id de la partida del usuario
  * @vue-data {Object} [userData = {}] -  Almacenara los datos de partida del usuario actual
  * @vue-data {Array<Object>} [allUsersData = []] -  Almacenara los datos de partida de todos los jugadores registrados, para poder guardar partida
+ * @vue-data {Array<Object>} [userLanguages = []] -  Almacenara los datos de los lenguajes en el estado actual de partida 
+ * @vue-data {Array<Object>} [userCompanies = []] -  Almacenara los datos de las empresas en el estado actual de partida
+ * @vue-data {Array<Object>} [userWorkers = []] -  Almacenara los datos de los trabajadores en el estado actual de partida
+ * @vue-data {Number} [workerSlots = 1] - Ranuras para contratar trabajadores
+ * @vue-data {Number} [slotsOccupied = 1] - Ranuras ocupadas en este momento
+ * @vue-data {Number} [actualTab = 1] - Pestaña del menú actualmente activa
+ * @vue-data {Object} [companyDetailed = {}] - Detalles de la empresa elegida
+ * @vue-data {Object} [workerDetailed = {}] - Detalles del trabajdor elegido
+ * @vue-data {Array<Object>} [ techsPerCompany = []] - Tecnologias a las que afecta cada compañia
  * @vue-data {Number} [quantityToBuy = 1] - Establece la cantidad de recurso a comprar
  * @vue-data {Number} [principalMoney = 0] - Establece la cantidad de dinero actual del jugador
  * @vue-data {Number} [moneyPerSecond = 0] - Establece la generación de dinero por segundo
@@ -150,19 +161,13 @@ import { checkValidToken } from "@/utils/checkValidToken"
  * @vue-data {String} [modalMsg = ''] - Establece el mensaje que se mostrará en el modal. Tambien sirve para controlar cuando este aparece y desaparece
  * @vue-data {Boolean} [loading = false] - Controla lo que se mostrará mientras cargan los datos de la api
  * @vue-data {Boolean} [saving = false] - Controla lo que se mostrará mientras se guardan los datos en la api
- * @vue-data {Array<Object>} techs - Contiene los datos de las diferentes tecnologías. Registra los siguientes campos: <br>
- * <strong>id</strong> - Id del lenguaje <br>
- * <strong>name</strong> - Nombre del lenguaje <br>
- * <strong>logo</strong> - Ruta al logo <br>
- * <strong>initialCost</strong> - Coste inicial del lenguaje. Irá incrementando a medida que se compre <br>
- * <strong>profitPerUnit</strong> - La cantidad de beneficios que aporta cada unidad <br>
- * <strong>growthRatio</strong> - El ratio de aumento del coste por compra de la unidad <br>
- * <strong>minMoneyToUnlock</strong> - El minimo necesario de dinero para poder desbloquear el lenguaje por primera vez <br>
- * <strong>unlocked</strong> - Si el lenguaje esta o no desbloqueado <br>
- * <strong>quantityOwned</strong> - La contidad actual de tecnologia obtenida <br>
- * <strong>currentCost</strong> - El coste actual del lenguaje <br>
- * <strong>totalProfit</strong> - El beneficio actual que reporta el total de unidades de esta tecnología <br>
- * <strong>msg</strong> - El mensaje que se mostrará en el modal al ser desbloqueada por primera vez 
+ * @vue-data {Array<Object>} [techs = []] - Contiene los datos generales de todas las tecnologías.
+ * @vue-data {Array<Object>} [companies = []] - Contiene los datos generales de todas las empresas.
+ * @vue-data {Array<Object>} [workers = []] - Contiene los datos generales de todos los trabajadores.
+ * @vue-data {Object} [workerToTrain = {}] - El trabajador elegida en el entrenamiento.
+ * @vue-data {Object} [techToTrain = {}] - La tecnología elegida en el entrenamiento.
+ * @vue-data {Array<Object>} [inTraining = []] - Lista de entrenamientos en activo.
+ * @vue-data {String} [avatar = null] - Avatar del usuario.
  * @vue-computed {String} formattedPrincipalMoney - Devuelve el dinero principal formateado
  * @vue-computed {String} formattedMoneyPerSecond - Devuelve el dinero por segundo formateado
  * @vue-computed {String} formattedMoneyPerClick - Devuelve el dinero por click formateado
@@ -236,7 +241,7 @@ export default {
   },
   methods: {
     /**
-     * Funcíon que coge de la API los datos de juego de todos los usuarios
+     * Función que coge de la API los datos de juego de todos los usuarios
      */
     async getAllUsersData() {
       try {
@@ -246,8 +251,8 @@ export default {
       }
     },
     /**
-     * Funcíon que coge de la API los datos de los lenguajes de la partida actual
-     * @param {Number} user - La id del usuario actual
+     * Función que coge de la API los datos de los lenguajes de la partida actual
+     * @param {Number} user - La id de la partida actual
      */
      async getLanguages(user) {
       try {  
@@ -265,8 +270,8 @@ export default {
       }
     },
     /**
-     * Funcíon que coge de la API los datos de las compañias de la partida actual
-     * @param {Number} user - La id del usuario actual
+     * Función que coge de la API los datos de las compañias de la partida actual
+     * @param {Number} user - La id de la partida actual
      */
      async getCompanies(user) {
       try {
@@ -283,6 +288,10 @@ export default {
         this.modalmsg = "Ha ocurrido un error y los datos de las empresas no se han cargado"
       }
     },
+    /**
+     * Función que coge de la API los datos de los trabajadores de la partida actual
+     * @param {Number} user - La id de la partida actual
+     */
     async getWorkers(user) {
 
         try { 
@@ -298,9 +307,10 @@ export default {
         } catch (error) {
           this.modalmsg = "Ha ocurrido un error y los datos de trabajadores no se guardaron correctamente"
         }
-        //Si todo va bien vamos creando la lista definitiva de empresas con los datos de ambas tablas
-        
-      },
+    },
+    /**
+     * Función que calcula las ranuras de trabajador actuales
+     */
     getWorkerSlots(){
       let workerSlots = 0
       for(let i = 0; i < this.companies.length ; i++){
@@ -309,6 +319,10 @@ export default {
       }
       this.workerSlots = workerSlots
     },
+    /**
+     * Función que gestiona la contratación de un trabajador
+     * @param {Number} workerPrice - El precio del trabajador contratado
+     */
     async hiredWorker(workerPrice){
       this.moneyPerSecond -= workerPrice
       this.moneyPerClick = this.moneyPerSecond * 0.1
@@ -318,15 +332,26 @@ export default {
       this.modalmsg= 'Trabajador contratado'
     
     },
+    /**
+     * Función que lleva a la pantalla de detalle de la compañia seleccionada
+     * @param {Number} companyId - La id de la compañia seleccionada
+     */
     handleDetails(companyId){
       this.actualTab = 5
       this.companyDetailed = this.companies.find((company) => company.id == companyId)
       this.techsPerCompany = chooseTechsPerCompany(companyId)
     },
+    /**
+     * Función que lleva a la pantalla de detalle del trabajador seleccionado
+     * @param {Number} workerId - La id del trabajador seleccionado
+     */
     handleWorkerDetails(workerId){
       this.actualTab = 6
       this.workerDetailed = this.workers.find((worker) => worker.id == workerId) 
     },
+    /**
+     * Función que lanza el modal de contratación
+     */
     handleHireModal(){
       if(this.workerSlots > this.slotsOccupied){
       this.actualTab = 7
@@ -334,9 +359,16 @@ export default {
         this.modalmsg = "No tienes hueco para mas trabajadores"
       }
     },
+    /**
+     * Función que lanza el modal de selección de trabajadores para el entrenamiento
+     */
     handleTrainingWorkerModal(){
       this.actualTab = 8
     },
+    /**
+     * Función que lanza el modal de selección de tecnologías para el entrenamiento
+     * @param {Number} workerId - La id del trabajador seleccionado
+     */
     handleTrainingTechModal(workerId){
       this.workerToTrain = this.workers.find((worker) => worker.id == workerId)
       let isInTraining = this.inTraining.find((training) => training.workerId == workerId)
@@ -352,6 +384,10 @@ export default {
       this.actualTab = 9
       }
     },
+    /**
+     * Función que activa el entrenamiento con los parámetros elegidos
+     * @param {Number} techId - La id de la tecnología seleccionada
+     */
     async handleChosenTraining(techId){
       this.techToTrain = this.techs.find((tech) => tech.id == techId)
       this.actualTab = 3
@@ -360,14 +396,27 @@ export default {
       newTraining.intervalID = setInterval(this.handleTrainingTimer, 1000, newTraining.workerId)
       this.inTraining.push(newTraining)
     },
+    /**
+     * Función que fija el intervalo creado en la función anterior con el entrenamiento concreto
+     * @param {Number} workerID - La id del trabajador entrenándose
+     * @param {Number} intervalID - La id del intervalo
+     */
     handleIntervalID(intervalID, workerID){
       let trainingIndex = this.inTraining.findIndex((training) => training.workerId == workerID)
       this.inTraining[trainingIndex].intervalID = intervalID
     },
+    /**
+     * Función que limpia el intervalo de entrenamiento
+     * @param {Number} workerID - La id del trabajador entrenándose
+     */
     handleClearInterval(workerID){
       let trainingIndex = this.inTraining.findIndex((training) => training.workerId == workerID)
       this.inTraining[trainingIndex].intervalID = null
     },
+    /**
+     * Función que gestiona el temporizador del entrenamiento
+     * @param {Number} workerID - La id del trabajador entrenándose
+     */
     handleTrainingTimer(workerID){
       let trainingIndex = this.inTraining.findIndex((training) => training.workerId == workerID)
       if(this.inTraining[trainingIndex].actualExp < this.inTraining[trainingIndex].expToLevelUp){
@@ -376,7 +425,11 @@ export default {
           clearInterval(this.inTraining[trainingIndex].intervalID)
           this.handleLevelUp(workerID)
           }
-      },
+    },
+    /**
+     * Función que gestiona la subida de nivel de una tecnología al terminar un entrenamiento
+     * @param {Number} workerID - La id del trabajador entrenándose
+     */
     async handleLevelUp(workerId){
      let trainingIndex = this.inTraining.findIndex((training) => training.workerId == workerId)
      let training = this.inTraining[trainingIndex]
@@ -443,9 +496,15 @@ export default {
     handleClose() {
       this.modalmsg = '';
     },
+    /**
+     * Función que le dice al modal de contratación cuando cerrarse
+     */
     handleHireClose() {
       this.actualTab = 2;
     },
+    /**
+     * Función que le dice a los modales de entrenamiento cuando cerrarse
+     */
     handleTrainingClose(){
       this.actualTab = 3;
     },
@@ -485,7 +544,7 @@ export default {
       this.moneyInterval = setInterval(this.handleMoney, 1000);
     },
     /**
-     * Función que guarda la partida cada 5 min
+     * Función que guarda la partida cada 2 min
      */
     setSaveDataInterval() {
       this.saveInterval = setInterval(this.saveData, 120000);
@@ -518,6 +577,10 @@ export default {
       this.moneyPerSecond = gameData[2] 
       
     },
+    /**
+     * Función que gestiona los bonus que aportan las compañias
+     * @param {Number} companyToChange - id de la compañia que sube de nivel
+     */
     handleCompanyBonus(companyToChange){
       let companyIndex = this.companies.findIndex((company) => company.id == companyToChange.id)
       //Recorremos la lista de lenguajes a los que la compañia afecta
@@ -528,6 +591,10 @@ export default {
         
       }
     },
+    /**
+     * Función que gestiona los bonus que aportan las mejoras
+     * @param {Number} techId - id del lenguaje que obtiene la mejora
+     */
     handleUpgradeBonus(techId){
       let techIndex = this.techs.findIndex((tech) => tech.id == techId)
       //Filtramos los trabajadores que tengan conocimiento de ese lenguaje
@@ -582,9 +649,8 @@ export default {
       }
     },
     /**
-     * Función que redirecciona al index si no estamos logueados
+     * Función que redirecciona al index si nuestro token no es valido
      */
- 
      async redirect() {
         const check = await checkValidToken()
         if (!check) {
@@ -594,14 +660,13 @@ export default {
     
   },
   async mounted() {
-   await  this.redirect();
+   await this.redirect();
     this.setMoneyPerSecondInterval();
     this.setSaveDataInterval()
     this.getAllUsersData()  
     this.getData()    
   },
   beforeUnmount() {
-    console.log("desmontado")
     clearInterval(this.moneyInterval)
     clearInterval(this.saveInterval)
     this.moneyInterval = null
